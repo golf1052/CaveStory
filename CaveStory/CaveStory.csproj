@@ -51,8 +51,12 @@
     <Compile Include="Game1.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Content\" />
+    <Content Include="Content\MyChar.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Content.mgcb" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
