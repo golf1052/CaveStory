@@ -15,6 +15,7 @@ namespace CaveStory
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         AnimatedSprite sprite;
+        Input input;
 
         public Game1() : base()
         {
@@ -30,6 +31,8 @@ namespace CaveStory
 
         protected override void Initialize()
         {
+            input = new Input();
+
             base.Initialize();
         }
 
@@ -48,7 +51,12 @@ namespace CaveStory
 
         protected override void Update(GameTime gameTime)
         {
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            input.BeginNewFrame();
+            KeyboardState keyboardState = Keyboard.GetState();
+            input.KeyDownEvent(keyboardState);
+            input.KeyUpEvent(keyboardState);
+
+            if (input.WasKeyPressed(Keys.Escape))
             {
                 Exit();
             }
