@@ -40,6 +40,8 @@
       <HintPath>..\..\..\..\..\..\Program Files (x86)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\GLX\GLX\GLX.csproj">
@@ -50,6 +52,7 @@
   <ItemGroup>
     <Compile Include="Game1.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Sprite.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

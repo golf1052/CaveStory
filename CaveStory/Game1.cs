@@ -5,24 +5,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GLX;
 
 namespace CaveStory
 {
     public class Game1 : Game
     {
-        const string game1 = "game1";
-
         GraphicsDeviceManager graphics;
-        World world;
-        GameTimeWrapper mainGameTime;
-        Texture2D sprites;
+        SpriteBatch spriteBatch;
         Sprite sprite;
 
         public Game1() : base()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            System.Windows.Forms.Screen screen = System.Windows.Forms.Screen.AllScreens[0];
+            Window.IsBorderless = true;\W
+            Window.Position = new Point(screen.Bounds.X, screen.Bounds.Y);
             graphics.PreferredBackBufferWidth = 640;
             graphics.PreferredBackBufferHeight = 480;
             graphics.IsFullScreen = false;
@@ -35,18 +33,9 @@ namespace CaveStory
 
         protected override void LoadContent()
         {
-            world = new World(graphics);
-            mainGameTime = new GameTimeWrapper(MainUpdate, this, 1.0m);
-            world.AddGameState(game1, graphics);
-            world.gameStates[game1].AddTime(mainGameTime);
-            world.gameStates[game1].AddDraw(MainDraw);
-            world.ActivateGameState(game1);
-            sprites = Content.Load<Texture2D>("MyChar");
-            sprite = new Sprite(new SpriteSheetInfo(32, 32), mainGameTime);
-            sprite.animations["stand"] = sprite.animations.AddSpriteSheet(sprites, 1, 1, 1, SpriteSheet.Direction.LeftToRight, 100, true);
-            sprite.animations.currentAnimation = "stand";
-            sprite.Ready(graphics);
-            sprite.pos = new Vector2(100, 100);
+            spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
+
+            sprite = new Sprite(Content.Load<Texture2D>("MyChar"), 0, 0, 32, 32);
             base.LoadContent();
         }
 
@@ -57,26 +46,25 @@ namespace CaveStory
 
         protected override void Update(GameTime gameTime)
         {
-            world.Update(gameTime);
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            {
+                Exit();
+            }
+            base.Update(gameTime);
         }
 
-        public void MainUpdate(GameTimeWrapper gameTime)
+        public void Draw()
         {
-            sprite.Update(gameTime, graphics);
-            world.gameStates[game1].UpdateCurrentCamera(gameTime);
+            sprite.Draw(spriteBatch, 320, 240);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-            world.DrawWorld();
-        }
-
-        public void MainDraw()
-        {
-            world.BeginDraw();
-            world.Draw(sprite.Draw);
-            world.EndDraw();
+            GraphicsDevice.Clear(Color.Black);
+            spriteBatch.Begin();
+            Draw();
+            spriteBatch.End();
+            base.Draw(gameTime);
         }
     }
 }
