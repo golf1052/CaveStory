@@ -19,7 +19,7 @@ namespace CaveStory
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             System.Windows.Forms.Screen screen = System.Windows.Forms.Screen.AllScreens[0];
-            Window.IsBorderless = true;\W
+            Window.IsBorderless = true;
             Window.Position = new Point(screen.Bounds.X, screen.Bounds.Y);
             graphics.PreferredBackBufferWidth = 640;
             graphics.PreferredBackBufferHeight = 480;
