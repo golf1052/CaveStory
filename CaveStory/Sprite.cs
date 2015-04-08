@@ -10,7 +10,7 @@ namespace CaveStory
     public class Sprite
     {
         Texture2D tex;
-        Rectangle sourceRect;
+        protected Rectangle sourceRect;
 
         public Sprite(Texture2D loadedTex,
             int sourceX, int sourceY,
@@ -18,6 +18,11 @@ namespace CaveStory
         {
             tex = loadedTex;
             sourceRect = new Rectangle(sourceX, sourceY, width, height);
+        }
+
+        public virtual void Update(GameTime gameTime)
+        {
+
         }
 
         public void Draw(SpriteBatch spriteBatch, int x, int y)

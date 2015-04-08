@@ -10,9 +10,11 @@ namespace CaveStory
 {
     public class Game1 : Game
     {
+        public const int TileSize = 32;
+
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Sprite sprite;
+        AnimatedSprite sprite;
 
         public Game1() : base()
         {
@@ -35,7 +37,7 @@ namespace CaveStory
         {
             spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
 
-            sprite = new Sprite(Content.Load<Texture2D>("MyChar"), 0, 0, 32, 32);
+            sprite = new AnimatedSprite(Content.Load<Texture2D>("MyChar"), 0, 0, Game1.TileSize, Game1.TileSize, 15, 3);
             base.LoadContent();
         }
 
@@ -50,6 +52,7 @@ namespace CaveStory
             {
                 Exit();
             }
+            sprite.Update(gameTime);
             base.Update(gameTime);
         }
 
