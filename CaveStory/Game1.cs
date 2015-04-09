@@ -58,6 +58,7 @@ namespace CaveStory
                 Exit();
             }
 
+            // Player horizontal movement
             if (input.IsKeyHeld(Keys.Left) && input.IsKeyHeld(Keys.Right))
             {
                 player.StopMoving();
@@ -75,6 +76,15 @@ namespace CaveStory
                 player.StopMoving();
             }
 
+            // Player Jump Logic
+            if (input.WasKeyPressed(Keys.Z))
+            {
+                player.StartJump();
+            }
+            else if (input.WasKeyReleased(Keys.Z))
+            {
+                player.StopJump();
+            }
             player.Update(gameTime);
 
             input.EndFrame();

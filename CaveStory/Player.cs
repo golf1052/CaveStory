@@ -14,11 +14,27 @@ namespace CaveStory
         const float WalkingAcceleration = 0.0012f; // (pixels / millisecond) / millisecond
         const float MaxSpeedX = 0.325f; // pixels / millisecond
 
+        const float Gravity = 0.0012f; // (pixels / millisecond) / millisecond
+
+        const float JumpSpeed = 0.325f; // pixels / millisecond
+        const float MaxSpeedY = 0.325f; // pixels / millisecond
+        public static TimeSpan JumpTime = TimeSpan.FromMilliseconds(275);
+
         int x;
         int y;
         float velocityX;
+        float velocityY;
         float accelerationX;
         SpriteState.HorizontalFacing horizontalFacing;
+        private bool onGround;
+        bool OnGround
+        {
+            get
+            {
+                return onGround;
+            }
+        }
+        private Jump jump;
 
         Dictionary<SpriteState, Sprite> sprites;
 
@@ -39,8 +55,11 @@ namespace CaveStory
             this.x = x;
             this.y = y;
             velocityX = 0;
+            velocityY = 0;
             accelerationX = 0;
             horizontalFacing = SpriteState.HorizontalFacing.Left;
+            onGround = false;
+            jump = new Jump();
         }
 
         public void InitializeSprites(ContentManager Content)
@@ -59,6 +78,8 @@ namespace CaveStory
         public void Update(GameTime gameTime)
         {
             sprites[SpriteState].Update(gameTime);
+            jump.Update(gameTime);
+
             x += (int)Math.Round(velocityX * gameTime.ElapsedGameTime.TotalMilliseconds);
             velocityX += accelerationX * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
             if (accelerationX < 0.0f)
@@ -69,10 +90,24 @@ namespace CaveStory
             {
                 velocityX = Math.Min(velocityX, MaxSpeedX);
             }
-            else
+            else if (OnGround)
             {
                 velocityX *= SlowDownFactor;
             }
+
+            y += (int)Math.Round(velocityY * gameTime.ElapsedGameTime.TotalMilliseconds);
+            if (!jump.Active)
+            {
+                velocityY = (float)Math.Min(velocityY + Gravity * gameTime.ElapsedGameTime.TotalMilliseconds, MaxSpeedY);
+            }
+
+            if (y >= 320)
+            {
+                y = 320;
+                velocityY = 0;
+            }
+
+            onGround = y == 320;
         }
 
         public void StartMovingLeft()
@@ -95,6 +130,24 @@ namespace CaveStory
         public void Draw(SpriteBatch spriteBatch)
         {
             sprites[SpriteState].Draw(spriteBatch, x, y);
+        }
+
+        public void StartJump()
+        {
+            if (OnGround)
+            {
+                jump.Reset();
+                velocityY = -JumpSpeed;
+            }
+            else if (velocityY < 0.0f)
+            {
+                jump.Reactivate();
+            }
+        }
+
+        public void StopJump()
+        {
+            jump.Deactivate();
         }
     }
 }

@@ -53,6 +53,7 @@
     <Compile Include="AnimatedSprite.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Input.cs" />
+    <Compile Include="Jump.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Sprite.cs" />
