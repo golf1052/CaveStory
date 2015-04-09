@@ -40,7 +40,7 @@ namespace CaveStory
         {
             spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
 
-            player = new Player(320, 240, new AnimatedSprite(Content.Load<Texture2D>("MyChar"), 0, 0, Game1.TileSize, Game1.TileSize, 15, 3));
+            player = new Player(Content, 320, 240);
             base.LoadContent();
         }
 

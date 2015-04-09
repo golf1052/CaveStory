@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -19,11 +20,11 @@ namespace CaveStory
         float velocityX;
         float accelerationX;
 
-        public Player(int x, int y, Sprite sprite)
+        public Player(ContentManager Content, int x, int y)
         {
+            sprite = new AnimatedSprite(Content, "MyChar", 0, 0, Game1.TileSize, Game1.TileSize, 15, 3);
             this.x = x;
             this.y = y;
-            this.sprite = sprite;
             velocityX = 0;
             accelerationX = 0;
         }

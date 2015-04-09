@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -12,11 +13,12 @@ namespace CaveStory
         Texture2D tex;
         protected Rectangle sourceRect;
 
-        public Sprite(Texture2D loadedTex,
+        public Sprite(ContentManager Content,
+            string fileName,
             int sourceX, int sourceY,
             int width, int height)
         {
-            tex = loadedTex;
+            tex = Content.Load<Texture2D>(fileName);
             sourceRect = new Rectangle(sourceX, sourceY, width, height);
         }
 

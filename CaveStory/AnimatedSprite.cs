@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 
 namespace CaveStory
 {
@@ -14,10 +15,11 @@ namespace CaveStory
         int currentFrame;
         TimeSpan elapsedTime; // Elapsed time sinced the last frame change
 
-        public AnimatedSprite(Texture2D loadedTex,
+        public AnimatedSprite(ContentManager Content,
+            string fileName,
             int sourceX, int sourceY,
             int width, int height,
-            int fps, int numberOfFrames) : base(loadedTex, sourceX, sourceY, width, height)
+            int fps, int numberOfFrames) : base(Content, fileName, sourceX, sourceY, width, height)
         {
             frameTime = TimeSpan.FromMilliseconds(1000 / fps);
             this.numberOfFrames = numberOfFrames;
