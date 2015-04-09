@@ -51,16 +51,15 @@ namespace CaveStory
 
         protected override void Update(GameTime gameTime)
         {
-            input.BeginNewFrame();
-            KeyboardState keyboardState = Keyboard.GetState();
-            input.KeyDownEvent(keyboardState);
-            input.KeyUpEvent(keyboardState);
+            input.BeginFrame();
 
             if (input.WasKeyPressed(Keys.Escape))
             {
                 Exit();
             }
             sprite.Update(gameTime);
+
+            input.EndFrame();
             base.Update(gameTime);
         }
 
