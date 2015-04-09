@@ -15,6 +15,7 @@ namespace CaveStory
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Player player;
+        Map map;
         Input input;
 
         public Game1() : base()
@@ -41,6 +42,7 @@ namespace CaveStory
             spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
 
             player = new Player(Content, 320, 240);
+            map = Map.CreateTestMap(Content);
             base.LoadContent();
         }
 
@@ -102,7 +104,9 @@ namespace CaveStory
             {
                 player.StopJump();
             }
+
             player.Update(gameTime);
+            map.Update(gameTime);
 
             input.EndFrame();
             base.Update(gameTime);
@@ -111,6 +115,7 @@ namespace CaveStory
         public void Draw()
         {
             player.Draw(spriteBatch);
+            map.Draw(spriteBatch);
         }
 
         protected override void Draw(GameTime gameTime)

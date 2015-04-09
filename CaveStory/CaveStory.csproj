@@ -54,6 +54,7 @@
     <Compile Include="Game1.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="Jump.cs" />
+    <Compile Include="Map.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Sprite.cs" />
@@ -62,6 +63,7 @@
   <ItemGroup />
   <ItemGroup>
     <Content Include="Content\MyChar.bmp" />
+    <Content Include="Content\PrtCave.bmp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Content.mgcb" />
