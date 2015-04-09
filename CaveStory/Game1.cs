@@ -14,7 +14,7 @@ namespace CaveStory
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        AnimatedSprite sprite;
+        Player player;
         Input input;
 
         public Game1() : base()
@@ -40,7 +40,7 @@ namespace CaveStory
         {
             spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
 
-            sprite = new AnimatedSprite(Content.Load<Texture2D>("MyChar"), 0, 0, Game1.TileSize, Game1.TileSize, 15, 3);
+            player = new Player(320, 240, new AnimatedSprite(Content.Load<Texture2D>("MyChar"), 0, 0, Game1.TileSize, Game1.TileSize, 15, 3));
             base.LoadContent();
         }
 
@@ -57,7 +57,25 @@ namespace CaveStory
             {
                 Exit();
             }
-            sprite.Update(gameTime);
+
+            if (input.IsKeyHeld(Keys.Left) && input.IsKeyHeld(Keys.Right))
+            {
+                player.StopMoving();
+            }
+            else if (input.IsKeyHeld(Keys.Left))
+            {
+                player.StartMovingLeft();
+            }
+            else if (input.IsKeyHeld(Keys.Right))
+            {
+                player.StartMovingRight();
+            }
+            else
+            {
+                player.StopMoving();
+            }
+
+            player.Update(gameTime);
 
             input.EndFrame();
             base.Update(gameTime);
@@ -65,7 +83,7 @@ namespace CaveStory
 
         public void Draw()
         {
-            sprite.Draw(spriteBatch, 320, 240);
+            player.Draw(spriteBatch);
         }
 
         protected override void Draw(GameTime gameTime)
