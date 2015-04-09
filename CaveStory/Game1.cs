@@ -76,6 +76,23 @@ namespace CaveStory
                 player.StopMoving();
             }
 
+            if (input.IsKeyHeld(Keys.Up) && input.IsKeyHeld(Keys.Down))
+            {
+                player.LookHorizontal();
+            }
+            else if (input.IsKeyHeld(Keys.Up))
+            {
+                player.LookUp();
+            }
+            else if (input.IsKeyHeld(Keys.Down))
+            {
+                player.LookDown();
+            }
+            else
+            {
+                player.LookHorizontal();
+            }
+
             // Player Jump Logic
             if (input.WasKeyPressed(Keys.Z))
             {
