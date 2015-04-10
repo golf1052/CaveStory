@@ -78,6 +78,10 @@ namespace CaveStory
             {
                 return onGround;
             }
+            set
+            {
+                onGround = value;
+            }
         }
         private Jump jump;
 
@@ -213,7 +217,12 @@ namespace CaveStory
             sprites[SpriteState].Update(gameTime);
             jump.Update(gameTime);
 
-            x += (int)Math.Round(velocityX * gameTime.ElapsedGameTime.TotalMilliseconds);
+            UpdateX(gameTime, map);
+            UpdateY(gameTime, map);
+        }
+
+        public void UpdateX(GameTime gameTime, Map map)
+        {
             velocityX += accelerationX * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
             if (accelerationX < 0.0f)
             {
@@ -228,19 +237,122 @@ namespace CaveStory
                 velocityX *= SlowDownFactor;
             }
 
-            y += (int)Math.Round(velocityY * gameTime.ElapsedGameTime.TotalMilliseconds);
+            int delta = (int)Math.Round(velocityX * gameTime.ElapsedGameTime.TotalMilliseconds);
+            
+            if (delta > 0)
+            {
+                CollisionInfo info = GetWallCollisionInfo(map, RightCollision(delta));
+
+                if (info.collided)
+                {
+                    x = info.col * Game1.TileSize - CollisionX.Right;
+                    velocityX = 0;
+                }
+                else
+                {
+                    x += delta;
+                }
+
+                info = GetWallCollisionInfo(map, LeftCollision(0));
+
+                if (info.collided)
+                {
+                    x = info.col * Game1.TileSize + CollisionX.Right;
+                }
+            }
+            else
+            {
+                CollisionInfo info = GetWallCollisionInfo(map, LeftCollision(delta));
+
+                if (info.collided)
+                {
+                    x = info.col * Game1.TileSize + CollisionX.Right;
+                    velocityX = 0;
+                }
+                else
+                {
+                    x += delta;
+                }
+
+                info = GetWallCollisionInfo(map, RightCollision(0));
+
+                if (info.collided)
+                {
+                    x = info.col * Game1.TileSize - CollisionX.Right;
+                }
+            }
+        }
+
+        public void UpdateY(GameTime gameTime, Map map)
+        {
             if (!jump.Active)
             {
                 velocityY = (float)Math.Min(velocityY + Gravity * gameTime.ElapsedGameTime.TotalMilliseconds, MaxSpeedY);
             }
 
-            if (y >= 320)
-            {
-                y = 320;
-                velocityY = 0;
-            }
+            int delta = (int)Math.Round(velocityY * gameTime.ElapsedGameTime.TotalMilliseconds);
 
-            onGround = y == 320;
+            if (delta > 0)
+            {
+                CollisionInfo info = GetWallCollisionInfo(map, bottomCollision(delta));
+
+                if (info.collided)
+                {
+                    y = info.row * Game1.TileSize - CollisionY.Bottom;
+                    velocityY = 0;
+                    OnGround = true;
+                }
+                else
+                {
+                    y += delta;
+                    OnGround = false;
+                }
+
+                info = GetWallCollisionInfo(map, TopCollision(0));
+
+                if (info.collided)
+                {
+                    y = info.row * Game1.TileSize + CollisionY.Height;
+                }
+            }
+            else
+            {
+                CollisionInfo info = GetWallCollisionInfo(map, TopCollision(delta));
+
+                if (info.collided)
+                {
+                    y = info.row * Game1.TileSize + CollisionY.Height;
+                    velocityY = 0;
+                }
+                else
+                {
+                    y += delta;
+                    OnGround = false;
+                }
+
+                info = GetWallCollisionInfo(map, bottomCollision(0));
+
+                if (info.collided)
+                {
+                    y = info.row * Game1.TileSize - CollisionY.Bottom;
+                    OnGround = true;
+                }
+            }
+        }
+
+        CollisionInfo GetWallCollisionInfo(Map map, Rectangle rectangle)
+        {
+            CollisionInfo info = new CollisionInfo(false, 0, 0);
+            List<CollisionTile> tiles = map.GetCollidingTiles(rectangle);
+            for (int i = 0; i < tiles.Count; i++)
+            {
+                if (tiles[i].tileType == Tile.TileType.WallTile)
+                {
+                    info = new CollisionInfo(true, tiles[i].row, tiles[i].col);
+                    break;
+                }
+            }
+            return info;
         }
 
         public void StartMovingLeft()

@@ -5,17 +5,17 @@ using System.Text;
 
 namespace CaveStory
 {
-    public class CollisionTile
+    public struct CollisionInfo
     {
+        public bool collided;
         public int row;
         public int col;
-        public Tile.TileType tileType;
 
-        public CollisionTile(int row, int col, Tile.TileType tileType)
+        public CollisionInfo(bool collided, int row, int col)
         {
+            this.collided = collided;
             this.row = row;
             this.col = col;
-            this.tileType = tileType;
         }
     }
 }

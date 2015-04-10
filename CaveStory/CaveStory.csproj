@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnimatedSprite.cs" />
+    <Compile Include="CollisionInfo.cs" />
     <Compile Include="CollisionTile.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Input.cs" />
