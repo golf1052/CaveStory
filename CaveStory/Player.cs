@@ -10,8 +10,6 @@ namespace CaveStory
 {
     public class Player
     {
-        
-
         // Walk Motion
         const float SlowDownFactor = 0.8f;
         const float WalkingAcceleration = 0.0012f; // (pixels / millisecond) / millisecond
@@ -23,7 +21,13 @@ namespace CaveStory
 
         // Jump Motion
         const float JumpSpeed = 0.325f; // pixels / millisecond
-        public static TimeSpan JumpTime = TimeSpan.FromMilliseconds(275);
+        public static TimeSpan JumpTime
+        {
+            get
+            {
+                return TimeSpan.FromMilliseconds(275);
+            }
+        }
 
         // Sprites
         const string SpriteFilePath = "MyChar";
@@ -42,6 +46,23 @@ namespace CaveStory
         // Walk Animation
         const int NumWalkFrames = 3;
         const int WalkFps = 15;
+
+        // Collision Rectangle
+        Rectangle CollisionX
+        {
+            get
+            {
+                return new Rectangle(6, 10, 20, 12);
+            }
+        }
+
+        Rectangle CollisionY
+        {
+            get
+            {
+                return new Rectangle(10, 2, 12, 30);
+            }
+        }
 
         int x;
         int y;
@@ -62,7 +83,6 @@ namespace CaveStory
 
         Dictionary<SpriteState, Sprite> sprites;
 
-        private SpriteState spriteState;
         public SpriteState SpriteState
         {
             get
@@ -156,7 +176,39 @@ namespace CaveStory
             }
         }
 
-        public void Update(GameTime gameTime)
+        public Rectangle LeftCollision(int delta)
+        {
+            return new Rectangle(x + CollisionX.Left + delta,
+                y + CollisionX.Top,
+                CollisionX.Width / 2 - delta,
+                CollisionX.Height);
+        }
+
+        public Rectangle RightCollision(int delta)
+        {
+            return new Rectangle(x + CollisionX.Left + CollisionX.Width / 2,
+                y + CollisionX.Top,
+                CollisionX.Width / 2 + delta,
+                CollisionX.Height);
+        }
+
+        public Rectangle TopCollision(int delta)
+        {
+            return new Rectangle(x + CollisionY.Left,
+                y + CollisionY.Top + delta,
+                CollisionY.Width / 2,
+                CollisionY.Height / 2 - delta);
+        }
+
+        public Rectangle bottomCollision(int delta)
+        {
+            return new Rectangle(x + CollisionY.Left,
+                y + CollisionY.Top + CollisionY.Height / 2,
+                CollisionY.Width,
+                CollisionY.Height / 2 + delta);
+        }
+
+        public void Update(GameTime gameTime, Map map)
         {
             sprites[SpriteState].Update(gameTime);
             jump.Update(gameTime);

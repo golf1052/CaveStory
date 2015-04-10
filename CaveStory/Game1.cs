@@ -105,7 +105,7 @@ namespace CaveStory
                 player.StopJump();
             }
 
-            player.Update(gameTime);
+            player.Update(gameTime, map);
             map.Update(gameTime);
 
             input.EndFrame();
