@@ -10,11 +10,11 @@ namespace CaveStory
 {
     public class Map
     {
-        List<List<Sprite>> foregroundSprites;
+        List<List<Tile>> tiles;
 
         public Map()
         {
-            foregroundSprites = new List<List<Sprite>>();
+            tiles = new List<List<Tile>>();
         }
 
         public static Map CreateTestMap(ContentManager Content)
@@ -24,39 +24,57 @@ namespace CaveStory
             const int numRows = 15;
             const int numCols = 20;
 
-            map.foregroundSprites = new List<List<Sprite>>();
+            map.tiles = new List<List<Tile>>();
             for (int i = 0; i < numRows; i++)
             {
-                map.foregroundSprites.Add(new List<Sprite>());
+                map.tiles.Add(new List<Tile>());
                 for (int j = 0; j < numCols; j++)
                 {
-                    map.foregroundSprites[i].Add(null);
+                    map.tiles[i].Add(new Tile());
                 }
             }
 
             Sprite sprite = new Sprite(Content, "PrtCave", Game1.TileSize, 0, Game1.TileSize, Game1.TileSize);
+            Tile tile = new Tile(Tile.TileType.WallTile, sprite);
             const int row = 11;
             for (int col = 0; col < numCols; col++)
             {
-                map.foregroundSprites[row][col] = sprite;
+                map.tiles[row][col] = tile;
             }
-            map.foregroundSprites[10][5] = sprite;
-            map.foregroundSprites[9][4] = sprite;
-            map.foregroundSprites[8][3] = sprite;
-            map.foregroundSprites[7][2] = sprite;
-            map.foregroundSprites[10][3] = sprite;
+            map.tiles[10][5] = tile;
+            map.tiles[9][4] = tile;
+            map.tiles[8][3] = tile;
+            map.tiles[7][2] = tile;
+            map.tiles[10][3] = tile;
             return map;
+        }
+
+        public List<CollisionTile> GetCollidingTiles(Rectangle rectangle)
+        {
+            int firstRow = rectangle.Top / Game1.TileSize;
+            int lastRow = rectangle.Bottom / Game1.TileSize;
+            int firstCol = rectangle.Left / Game1.TileSize;
+            int lastCol = rectangle.Right / Game1.TileSize;
+            List<CollisionTile> collisionTiles = new List<CollisionTile>();
+            for (int row = firstRow; row <= lastRow; row++)
+            {
+                for (int col = firstCol; col <= lastCol; col++)
+                {
+                    collisionTiles.Add(new CollisionTile(row, col, tiles[row][col].tileType));
+                }
+            }
+            return collisionTiles;
         }
 
         public void Update(GameTime gameTime)
         {
-            for (int row = 0; row < foregroundSprites.Count; row++)
+            for (int row = 0; row < tiles.Count; row++)
             {
-                for (int col = 0; col < foregroundSprites[row].Count; col++)
+                for (int col = 0; col < tiles[row].Count; col++)
                 {
-                    if (foregroundSprites[row][col] != null)
+                    if (tiles[row][col].sprite != null)
                     {
-                        foregroundSprites[row][col].Update(gameTime);
+                        tiles[row][col].sprite.Update(gameTime);
                     }
                 }
             }
@@ -64,13 +82,13 @@ namespace CaveStory
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            for (int row = 0; row < foregroundSprites.Count; row++)
+            for (int row = 0; row < tiles.Count; row++)
             {
-                for (int col = 0; col < foregroundSprites[row].Count; col++)
+                for (int col = 0; col < tiles[row].Count; col++)
                 {
-                    if (foregroundSprites[row][col] != null)
+                    if (tiles[row][col].sprite != null)
                     {
-                        foregroundSprites[row][col].Draw(spriteBatch,
+                        tiles[row][col].sprite.Draw(spriteBatch,
                             col * Game1.TileSize, row * Game1.TileSize);
                     }
                 }

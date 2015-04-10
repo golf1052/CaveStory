@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnimatedSprite.cs" />
+    <Compile Include="CollisionTile.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="Jump.cs" />
@@ -59,6 +60,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Sprite.cs" />
     <Compile Include="SpriteState.cs" />
+    <Compile Include="Tile.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
