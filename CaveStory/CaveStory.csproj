@@ -55,7 +55,6 @@
     <Compile Include="CollisionTile.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Input.cs" />
-    <Compile Include="Jump.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />

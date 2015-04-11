@@ -11,6 +11,7 @@ namespace CaveStory
         {
             FirstMotionType,
             Standing = FirstMotionType,
+            Interacting,
             Walking,
             Jumping,
             Falling,

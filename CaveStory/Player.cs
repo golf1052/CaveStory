@@ -11,23 +11,18 @@ namespace CaveStory
     public class Player
     {
         // Walk Motion
-        const float SlowDownFactor = 0.8f;
-        const float WalkingAcceleration = 0.0012f; // (pixels / millisecond) / millisecond
-        const float MaxSpeedX = 0.325f; // pixels / millisecond
+        const float Friction = 0.00049804687f;
+        const float WalkingAcceleration = 0.00083007812f; // (pixels / millisecond) / millisecond
+        const float MaxSpeedX = 0.15859375f; // pixels / millisecond
 
         // Fall Motion
-        const float Gravity = 0.0012f; // (pixels / millisecond) / millisecond
-        const float MaxSpeedY = 0.325f; // pixels / millisecond
+        const float Gravity = 0.00078125f; // (pixels / millisecond) / millisecond
+        const float MaxSpeedY = 0.2998046875f; // pixels / millisecond
 
         // Jump Motion
-        const float JumpSpeed = 0.325f; // pixels / millisecond
-        public static TimeSpan JumpTime
-        {
-            get
-            {
-                return TimeSpan.FromMilliseconds(275);
-            }
-        }
+        const float JumpSpeed = 0.25f; // pixels / millisecond
+        const float AirAcceleration = 0.0003125f;
+        const float JumpGravity = 0.0003125f;
 
         // Sprites
         const string SpriteFilePath = "MyChar";
@@ -68,7 +63,7 @@ namespace CaveStory
         int y;
         float velocityX;
         float velocityY;
-        float accelerationX;
+        int accelerationX;
         SpriteState.HorizontalFacing horizontalFacing;
         SpriteState.VerticalFacing verticalFacing;
         private bool onGround;
@@ -83,7 +78,8 @@ namespace CaveStory
                 onGround = value;
             }
         }
-        private Jump jump;
+        private bool jumpActive;
+        bool interacting;
 
         Dictionary<SpriteState, Sprite> sprites;
 
@@ -92,9 +88,13 @@ namespace CaveStory
             get
             {
                 SpriteState.MotionType motion;
-                if (OnGround)
+                if (interacting)
                 {
-                    motion = accelerationX == 0.0f ? SpriteState.MotionType.Standing : SpriteState.MotionType.Walking;
+                    motion = SpriteState.MotionType.Interacting;
+                }
+                else if (OnGround)
+                {
+                    motion = accelerationX == 0 ? SpriteState.MotionType.Standing : SpriteState.MotionType.Walking;
                 }
                 else
                 {
@@ -116,7 +116,8 @@ namespace CaveStory
             horizontalFacing = SpriteState.HorizontalFacing.Left;
             verticalFacing = SpriteState.VerticalFacing.Horizontal;
             onGround = false;
-            jump = new Jump();
+            jumpActive = false;
+            interacting = false;
         }
 
         public void InitializeSprites(ContentManager Content)
@@ -153,6 +154,9 @@ namespace CaveStory
                 case SpriteState.MotionType.Standing:
                     sourceX = StandFrame * Game1.TileSize;
                     break;
+                case SpriteState.MotionType.Interacting:
+                    sourceX = BackFrame * Game1.TileSize;
+                    break;
                 case SpriteState.MotionType.Jumping:
                     sourceX = JumpFrame * Game1.TileSize;
                     break;
@@ -171,10 +175,10 @@ namespace CaveStory
             }
             else
             {
-                if (spriteState.verticalFacing == SpriteState.VerticalFacing.Down)
+                if (spriteState.verticalFacing == SpriteState.VerticalFacing.Down &&
+                    (spriteState.motionType == SpriteState.MotionType.Jumping || spriteState.motionType == SpriteState.MotionType.Falling))
                 {
-                    sourceX = spriteState.motionType == SpriteState.MotionType.Standing ?
-                        BackFrame * Game1.TileSize : DownFrame * Game1.TileSize;
+                    sourceX = DownFrame * Game1.TileSize;
                 }
                 sprites.Add(spriteState, new Sprite(Content, SpriteFilePath, sourceX, sourceY, Game1.TileSize, Game1.TileSize));
             }
@@ -215,7 +219,6 @@ namespace CaveStory
         public void Update(GameTime gameTime, Map map)
         {
             sprites[SpriteState].Update(gameTime);
-            jump.Update(gameTime);
 
             UpdateX(gameTime, map);
             UpdateY(gameTime, map);
@@ -223,18 +226,29 @@ namespace CaveStory
 
         public void UpdateX(GameTime gameTime, Map map)
         {
-            velocityX += accelerationX * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (accelerationX < 0.0f)
+            float accX = 0;
+            if (accelerationX < 0)
+            {
+                accX = OnGround ? -WalkingAcceleration : -AirAcceleration;
+            }
+            else if (accelerationX > 0)
+            {
+                accX = OnGround ? WalkingAcceleration : AirAcceleration;
+            }
+            velocityX += accX * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (accelerationX < 0)
             {
                 velocityX = Math.Max(velocityX, -MaxSpeedX);
             }
-            else if (accelerationX > 0.0f)
+            else if (accelerationX > 0)
             {
                 velocityX = Math.Min(velocityX, MaxSpeedX);
             }
             else if (OnGround)
             {
-                velocityX *= SlowDownFactor;
+                velocityX = velocityX > 0.0f ?
+                    (float)Math.Max(0.0f, velocityX - Friction * gameTime.ElapsedGameTime.TotalMilliseconds) :
+                    (float)Math.Min(0.0f, velocityX + Friction * gameTime.ElapsedGameTime.TotalMilliseconds);
             }
 
             int delta = (int)Math.Round(velocityX * gameTime.ElapsedGameTime.TotalMilliseconds);
@@ -285,10 +299,9 @@ namespace CaveStory
 
         public void UpdateY(GameTime gameTime, Map map)
         {
-            if (!jump.Active)
-            {
-                velocityY = (float)Math.Min(velocityY + Gravity * gameTime.ElapsedGameTime.TotalMilliseconds, MaxSpeedY);
-            }
+            float gravity = jumpActive && velocityY < 0 ?
+                JumpGravity : Gravity;
+            velocityY = (float)Math.Min(velocityY + gravity * gameTime.ElapsedGameTime.TotalMilliseconds, MaxSpeedY);
 
             int delta = (int)Math.Round(velocityY * gameTime.ElapsedGameTime.TotalMilliseconds);
 
@@ -357,13 +370,15 @@ namespace CaveStory
 
         public void StartMovingLeft()
         {
-            accelerationX = -WalkingAcceleration;
+            interacting = false;
+            accelerationX = -1;
             horizontalFacing = SpriteState.HorizontalFacing.Left;
         }
 
         public void StartMovingRight()
         {
-            accelerationX = WalkingAcceleration;
+            interacting = false;
+            accelerationX = 1;
             horizontalFacing = SpriteState.HorizontalFacing.Right;
         }
 
@@ -374,11 +389,17 @@ namespace CaveStory
 
         public void LookUp()
         {
+            interacting = false;
             verticalFacing = SpriteState.VerticalFacing.Up;
         }
 
         public void LookDown()
         {
+            if (verticalFacing == SpriteState.VerticalFacing.Down)
+            {
+                return;
+            }
+            interacting = OnGround;
             verticalFacing = SpriteState.VerticalFacing.Down;
         }
 
@@ -394,20 +415,18 @@ namespace CaveStory
 
         public void StartJump()
         {
+            interacting = false;
+            jumpActive = true;
             if (OnGround)
             {
-                jump.Reset();
+                
                 velocityY = -JumpSpeed;
-            }
-            else if (velocityY < 0.0f)
-            {
-                jump.Reactivate();
             }
         }
 
         public void StopJump()
         {
-            jump.Deactivate();
+            jumpActive = false;
         }
     }
 }
