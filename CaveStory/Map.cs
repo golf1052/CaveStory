@@ -11,6 +11,7 @@ namespace CaveStory
     public class Map
     {
         List<List<Tile>> tiles;
+        Backdrop backdrop;
 
         public Map()
         {
@@ -20,6 +21,7 @@ namespace CaveStory
         public static Map CreateTestMap(ContentManager Content)
         {
             Map map = new Map();
+            map.backdrop = new FixedBackdrop("bkBlue", Content);
 
             const int numRows = 15;
             const int numCols = 20;
@@ -93,6 +95,11 @@ namespace CaveStory
                     }
                 }
             }
+        }
+
+        public void DrawBackground(SpriteBatch spriteBatch)
+        {
+            backdrop.Draw(spriteBatch);
         }
     }
 }

@@ -11,6 +11,8 @@ namespace CaveStory
     public class Game1 : Game
     {
         public const int TileSize = 32;
+        public const int ScreenWidth = 640;
+        public const int ScreenHeight = 480;
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -114,6 +116,7 @@ namespace CaveStory
 
         public void Draw()
         {
+            map.DrawBackground(spriteBatch);
             player.Draw(spriteBatch);
             map.Draw(spriteBatch);
         }
