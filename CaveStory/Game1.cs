@@ -11,9 +11,9 @@ namespace CaveStory
 {
     public class Game1 : Game
     {
-        public const int TileSize = 32;
-        public const int ScreenWidth = 640;
-        public const int ScreenHeight = 480;
+        public const int TileSize = 16;
+        public const int ScreenWidth = 20 * TileSize;
+        public const int ScreenHeight = 15 * TileSize;
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -28,9 +28,35 @@ namespace CaveStory
             System.Windows.Forms.Screen screen = System.Windows.Forms.Screen.AllScreens[0];
             Window.IsBorderless = true;
             Window.Position = new Point(screen.Bounds.X, screen.Bounds.Y);
-            graphics.PreferredBackBufferWidth = 640;
-            graphics.PreferredBackBufferHeight = 480;
+            graphics.PreferredBackBufferWidth = ScreenWidth;
+            graphics.PreferredBackBufferHeight = ScreenHeight;
             graphics.IsFullScreen = false;
+        }
+
+        public static T GameUnitsToPixels<T>(T gameUnits)
+        {
+            if (gameUnits is int)
+            {
+                int units = Convert.ToInt32(gameUnits);
+                int result = units * Game1.TileSize / 32;
+                return (T)Convert.ChangeType(result, typeof(T));
+            }
+            else if (gameUnits is float)
+            {
+                float units = Convert.ToSingle(gameUnits);
+                float result = units * (float)TileSize / 32.0f;
+                return (T)Convert.ChangeType(result, typeof(T));
+            }
+            else if (gameUnits is double)
+            {
+                double units = Convert.ToDouble(gameUnits);
+                double result = units * (double)TileSize / 32.0d;
+                return (T)Convert.ChangeType(result, typeof(T));
+            }
+            else
+            {
+                return default(T);
+            }
         }
 
         protected override void Initialize()
@@ -44,7 +70,7 @@ namespace CaveStory
         {
             spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
 
-            player = new Player(Content, 320, 240);
+            player = new Player(Content, ScreenWidth / 2, ScreenHeight / 2);
             map = Map.CreateTestMap(Content);
             base.LoadContent();
         }

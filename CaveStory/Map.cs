@@ -40,7 +40,7 @@ namespace CaveStory
                 }
             }
 
-            Sprite sprite = new Sprite(Content, "PrtCave", Game1.TileSize, 0, Game1.TileSize, Game1.TileSize);
+            Sprite sprite = new Sprite(Content, "Stage/PrtCave", Game1.TileSize, 0, Game1.TileSize, Game1.TileSize);
             Tile tile = new Tile(Tile.TileType.WallTile, sprite);
             const int row = 11;
             for (int col = 0; col < numCols; col++)
@@ -53,9 +53,9 @@ namespace CaveStory
             map.tiles[7][2] = tile;
             map.tiles[10][3] = tile;
 
-            Sprite chainTop = new Sprite(Content, "PrtCave", 11 * Game1.TileSize, 2 * Game1.TileSize, Game1.TileSize, Game1.TileSize);
-            Sprite chainMiddle = new Sprite(Content, "PrtCave", 12 * Game1.TileSize, 2 * Game1.TileSize, Game1.TileSize, Game1.TileSize);
-            Sprite chainBottom = new Sprite(Content, "PrtCave", 13 * Game1.TileSize, 2 * Game1.TileSize, Game1.TileSize, Game1.TileSize);
+            Sprite chainTop = new Sprite(Content, "Stage/PrtCave", 11 * Game1.TileSize, 2 * Game1.TileSize, Game1.TileSize, Game1.TileSize);
+            Sprite chainMiddle = new Sprite(Content, "Stage/PrtCave", 12 * Game1.TileSize, 2 * Game1.TileSize, Game1.TileSize, Game1.TileSize);
+            Sprite chainBottom = new Sprite(Content, "Stage/PrtCave", 13 * Game1.TileSize, 2 * Game1.TileSize, Game1.TileSize, Game1.TileSize);
 
             map.backgroundTiles[8][2] = chainTop;
             map.backgroundTiles[9][2] = chainMiddle;

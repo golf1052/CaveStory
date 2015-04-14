@@ -11,18 +11,26 @@ namespace CaveStory
     public class Player
     {
         // Walk Motion
-        const float Friction = 0.00049804687f;
-        const float WalkingAcceleration = 0.00083007812f; // (pixels / millisecond) / millisecond
-        const float MaxSpeedX = 0.15859375f; // pixels / millisecond
+        // (pixels / millisecond) / millisecond
+        static float Friction { get { return Game1.GameUnitsToPixels(0.00049804687f); } }
+        // (pixels / millisecond) / millisecond
+        static float WalkingAcceleration { get { return Game1.GameUnitsToPixels(0.00083007812f); } }
+        // pixels / millisecond
+        static float MaxSpeedX { get { return Game1.GameUnitsToPixels(0.15859375f); } }
 
         // Fall Motion
-        const float Gravity = 0.00078125f; // (pixels / millisecond) / millisecond
-        const float MaxSpeedY = 0.2998046875f; // pixels / millisecond
+        // (pixels / millisecond) / millisecond
+        static float Gravity { get { return Game1.GameUnitsToPixels(0.00078125f); } }
+        // pixels / millisecond
+        static float MaxSpeedY { get { return Game1.GameUnitsToPixels(0.2998046875f); } }
 
         // Jump Motion
-        const float JumpSpeed = 0.25f; // pixels / millisecond
-        const float AirAcceleration = 0.0003125f;
-        const float JumpGravity = 0.0003125f;
+        // pixels / millisecond
+        static float JumpSpeed { get { return Game1.GameUnitsToPixels(0.25f); } }
+        // (pixels / millisecond) / millisecond
+        static float AirAcceleration { get { return Game1.GameUnitsToPixels(0.0003125f); } }
+        // (pixels / millisecond) / millisecond
+        static float JumpGravity { get { return Game1.GameUnitsToPixels(0.0003125f); } }
 
         // Sprites
         const string SpriteFilePath = "MyChar";
@@ -47,7 +55,8 @@ namespace CaveStory
         {
             get
             {
-                return new Rectangle(6, 10, 20, 12);
+                return new Rectangle(Game1.GameUnitsToPixels(6), Game1.GameUnitsToPixels(10),
+                    Game1.GameUnitsToPixels(20), Game1.GameUnitsToPixels(12));
             }
         }
 
@@ -55,7 +64,8 @@ namespace CaveStory
         {
             get
             {
-                return new Rectangle(10, 2, 12, 30);
+                return new Rectangle(Game1.GameUnitsToPixels(10), Game1.GameUnitsToPixels(2),
+                    Game1.GameUnitsToPixels(12), Game1.GameUnitsToPixels(30));
             }
         }
 

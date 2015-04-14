@@ -64,12 +64,8 @@
     <Compile Include="SpriteState.cs" />
     <Compile Include="Tile.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Content Include="Content\bkBlue.bmp" />
-    <Content Include="Content\MyChar.bmp" />
-    <Content Include="Content\MyChar.png" />
-    <Content Include="Content\PrtCave.bmp" />
+    <Folder Include="Content\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Content.mgcb" />

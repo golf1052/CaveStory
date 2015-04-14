@@ -11,7 +11,7 @@ namespace CaveStory
     public class FixedBackdrop : Backdrop
     {
         Texture2D tex;
-        const int BackgroundSize = 128;
+        const int BackgroundSize = Game1.TileSize * 4;
 
         public FixedBackdrop(string filePath, ContentManager Content)
         {
