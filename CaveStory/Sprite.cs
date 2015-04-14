@@ -12,6 +12,7 @@ namespace CaveStory
     {
         Texture2D tex;
         protected Rectangle sourceRect;
+        const bool blackIsTransparent = true;
 
         public Sprite(ContentManager Content,
             string fileName,
@@ -19,6 +20,7 @@ namespace CaveStory
             int width, int height)
         {
             tex = Content.Load<Texture2D>(fileName);
+            //tex = Game1.LoadImage(Content, fileName, blackIsTransparent);
             sourceRect = new Rectangle(sourceX, sourceY, width, height);
         }
 

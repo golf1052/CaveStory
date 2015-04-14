@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +47,22 @@ namespace CaveStory
             player = new Player(Content, 320, 240);
             map = Map.CreateTestMap(Content);
             base.LoadContent();
+        }
+
+        public static Texture2D LoadImage(ContentManager Content, string filePath, bool blackIsTransparent = false)
+        {
+            Texture2D tex = Content.Load<Texture2D>(filePath);
+            Color[] colorData = new Color[tex.Width * tex.Height];
+            tex.GetData(colorData);
+            for (long i = 0; i < colorData.LongLength; i++)
+            {
+                if (colorData[i] == Color.Black)
+                {
+                    colorData[i] = Color.Transparent;
+                }
+            }
+            tex.SetData(colorData);
+            return tex;
         }
 
         protected override void UnloadContent()
