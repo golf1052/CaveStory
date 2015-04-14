@@ -19,8 +19,8 @@ namespace CaveStory
             int sourceX, int sourceY,
             int width, int height)
         {
-            tex = Content.Load<Texture2D>(fileName);
-            //tex = Game1.LoadImage(Content, fileName, blackIsTransparent);
+            //tex = Content.Load<Texture2D>(fileName);
+            tex = Game1.LoadImage(Content, fileName, blackIsTransparent);
             sourceRect = new Rectangle(sourceX, sourceY, width, height);
         }
 

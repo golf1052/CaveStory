@@ -10,11 +10,13 @@ namespace CaveStory
 {
     public class Map
     {
+        List<List<Sprite>> backgroundTiles;
         List<List<Tile>> tiles;
         Backdrop backdrop;
 
         public Map()
         {
+            backgroundTiles = new List<List<Sprite>>();
             tiles = new List<List<Tile>>();
         }
 
@@ -29,9 +31,11 @@ namespace CaveStory
             map.tiles = new List<List<Tile>>();
             for (int i = 0; i < numRows; i++)
             {
+                map.backgroundTiles.Add(new List<Sprite>());
                 map.tiles.Add(new List<Tile>());
                 for (int j = 0; j < numCols; j++)
                 {
+                    map.backgroundTiles[i].Add(null);
                     map.tiles[i].Add(new Tile());
                 }
             }
@@ -48,6 +52,14 @@ namespace CaveStory
             map.tiles[8][3] = tile;
             map.tiles[7][2] = tile;
             map.tiles[10][3] = tile;
+
+            Sprite chainTop = new Sprite(Content, "PrtCave", 11 * Game1.TileSize, 2 * Game1.TileSize, Game1.TileSize, Game1.TileSize);
+            Sprite chainMiddle = new Sprite(Content, "PrtCave", 12 * Game1.TileSize, 2 * Game1.TileSize, Game1.TileSize, Game1.TileSize);
+            Sprite chainBottom = new Sprite(Content, "PrtCave", 13 * Game1.TileSize, 2 * Game1.TileSize, Game1.TileSize, Game1.TileSize);
+
+            map.backgroundTiles[8][2] = chainTop;
+            map.backgroundTiles[9][2] = chainMiddle;
+            map.backgroundTiles[10][2] = chainBottom;
             return map;
         }
 
@@ -100,6 +112,17 @@ namespace CaveStory
         public void DrawBackground(SpriteBatch spriteBatch)
         {
             backdrop.Draw(spriteBatch);
+            for (int row = 0; row < backgroundTiles.Count; row++)
+            {
+                for (int col = 0; col < backgroundTiles[row].Count; col++)
+                {
+                    if (backgroundTiles[row][col] != null)
+                    {
+                        backgroundTiles[row][col].Draw(spriteBatch,
+                            col * Game1.TileSize, row * Game1.TileSize);
+                    }
+                }
+            }
         }
     }
 }
