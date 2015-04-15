@@ -50,19 +50,27 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccelerationUnit.cs" />
     <Compile Include="AnimatedSprite.cs" />
     <Compile Include="Backdrop.cs" />
     <Compile Include="CollisionInfo.cs" />
     <Compile Include="CollisionTile.cs" />
     <Compile Include="FixedBackdrop.cs" />
+    <Compile Include="FPSUnit.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="GameUnit.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="Map.cs" />
+    <Compile Include="MSUnit.cs" />
+    <Compile Include="PixelUnit.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Sprite.cs" />
     <Compile Include="SpriteState.cs" />
     <Compile Include="Tile.cs" />
+    <Compile Include="TileUnit.cs" />
+    <Compile Include="Units.cs" />
+    <Compile Include="VelocityUnit.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\" />
