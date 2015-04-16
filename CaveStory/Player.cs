@@ -12,25 +12,25 @@ namespace CaveStory
     {
         // Walk Motion
         // (pixels / millisecond) / millisecond
-        static float Friction { get { return Game1.GameUnitsToPixels(0.00049804687f); } }
+        static AccelerationUnit Friction { get { return Game1.GameUnitsToPixels(0.00049804687f); } }
         // (pixels / millisecond) / millisecond
-        static float WalkingAcceleration { get { return Game1.GameUnitsToPixels(0.00083007812f); } }
+        static AccelerationUnit WalkingAcceleration { get { return Game1.GameUnitsToPixels(0.00083007812f); } }
         // pixels / millisecond
-        static float MaxSpeedX { get { return Game1.GameUnitsToPixels(0.15859375f); } }
+        static VelocityUnit MaxSpeedX { get { return Game1.GameUnitsToPixels(0.15859375f); } }
 
         // Fall Motion
         // (pixels / millisecond) / millisecond
-        static float Gravity { get { return Game1.GameUnitsToPixels(0.00078125f); } }
+        static AccelerationUnit Gravity { get { return Game1.GameUnitsToPixels(0.00078125f); } }
         // pixels / millisecond
-        static float MaxSpeedY { get { return Game1.GameUnitsToPixels(0.2998046875f); } }
+        static VelocityUnit MaxSpeedY { get { return Game1.GameUnitsToPixels(0.2998046875f); } }
 
         // Jump Motion
         // pixels / millisecond
-        static float JumpSpeed { get { return Game1.GameUnitsToPixels(0.25f); } }
+        static VelocityUnit JumpSpeed { get { return Game1.GameUnitsToPixels(0.25f); } }
         // (pixels / millisecond) / millisecond
-        static float AirAcceleration { get { return Game1.GameUnitsToPixels(0.0003125f); } }
+        static AccelerationUnit AirAcceleration { get { return Game1.GameUnitsToPixels(0.0003125f); } }
         // (pixels / millisecond) / millisecond
-        static float JumpGravity { get { return Game1.GameUnitsToPixels(0.0003125f); } }
+        static AccelerationUnit JumpGravity { get { return Game1.GameUnitsToPixels(0.0003125f); } }
 
         // Sprites
         const string SpriteFilePath = "MyChar";
@@ -71,8 +71,8 @@ namespace CaveStory
 
         int x;
         int y;
-        float velocityX;
-        float velocityY;
+        VelocityUnit velocityX;
+        VelocityUnit velocityY;
         int accelerationX;
         SpriteState.HorizontalFacing horizontalFacing;
         SpriteState.VerticalFacing verticalFacing;
@@ -236,7 +236,7 @@ namespace CaveStory
 
         public void UpdateX(GameTime gameTime, Map map)
         {
-            float accX = 0;
+            AccelerationUnit accX = 0;
             if (accelerationX < 0)
             {
                 accX = OnGround ? -WalkingAcceleration : -AirAcceleration;
@@ -309,7 +309,7 @@ namespace CaveStory
 
         public void UpdateY(GameTime gameTime, Map map)
         {
-            float gravity = jumpActive && velocityY < 0 ?
+            AccelerationUnit gravity = jumpActive && velocityY < 0 ?
                 JumpGravity : Gravity;
             velocityY = (float)Math.Min(velocityY + gravity * gameTime.ElapsedGameTime.TotalMilliseconds, MaxSpeedY);
 
