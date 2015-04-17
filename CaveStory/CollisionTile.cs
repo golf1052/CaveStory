@@ -7,11 +7,11 @@ namespace CaveStory
 {
     public class CollisionTile
     {
-        public int row;
-        public int col;
+        public TileUnit row;
+        public TileUnit col;
         public Tile.TileType tileType;
 
-        public CollisionTile(int row, int col, Tile.TileType tileType)
+        public CollisionTile(TileUnit row, TileUnit col, Tile.TileType tileType)
         {
             this.row = row;
             this.col = col;

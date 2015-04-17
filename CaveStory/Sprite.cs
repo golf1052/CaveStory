@@ -16,8 +16,8 @@ namespace CaveStory
 
         public Sprite(ContentManager Content,
             string fileName,
-            int sourceX, int sourceY,
-            int width, int height)
+            PixelUnit sourceX, PixelUnit sourceY,
+            PixelUnit width, PixelUnit height)
         {
             //tex = Content.Load<Texture2D>(fileName);
             tex = Game1.LoadImage(Content, fileName, blackIsTransparent);
@@ -29,9 +29,9 @@ namespace CaveStory
 
         }
 
-        public void Draw(SpriteBatch spriteBatch, int x, int y)
+        public void Draw(SpriteBatch spriteBatch, GameUnit x, GameUnit y)
         {
-            Rectangle destinationRect = new Rectangle(x, y, sourceRect.Width, sourceRect.Height);
+            Rectangle destinationRect = new Rectangle(Units.GameToPixel(x), Units.GameToPixel(y), sourceRect.Width, sourceRect.Height);
             spriteBatch.Draw(tex, destinationRect, sourceRect, Color.White);
         }
     }

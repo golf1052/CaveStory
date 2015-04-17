@@ -11,7 +11,7 @@ namespace CaveStory
     public class FixedBackdrop : Backdrop
     {
         Texture2D tex;
-        const int BackgroundSize = Game1.TileSize * 4;
+        static TileUnit BackgroundSize { get { return 4; } }
 
         public FixedBackdrop(string filePath, ContentManager Content)
         {
@@ -20,11 +20,11 @@ namespace CaveStory
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            for (int x = 0; x < Game1.ScreenWidth; x += BackgroundSize)
+            for (TileUnit x = 0; x < Game1.ScreenWidth; x += BackgroundSize)
             {
-                for (int y = 0; y < Game1.ScreenHeight; y += BackgroundSize)
+                for (TileUnit y = 0; y < Game1.ScreenHeight; y += BackgroundSize)
                 {
-                    spriteBatch.Draw(tex, new Vector2(x, y), Color.White);
+                    spriteBatch.Draw(tex, new Vector2(Units.TileToPixel(x), Units.TileToPixel(y)), Color.White);
                 }
             }
         }

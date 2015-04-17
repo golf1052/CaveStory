@@ -8,10 +8,10 @@ namespace CaveStory
     public struct CollisionInfo
     {
         public bool collided;
-        public int row;
-        public int col;
+        public TileUnit row;
+        public TileUnit col;
 
-        public CollisionInfo(bool collided, int row, int col)
+        public CollisionInfo(bool collided, TileUnit row, TileUnit col)
         {
             this.collided = collided;
             this.row = row;

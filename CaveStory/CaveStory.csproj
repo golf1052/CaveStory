@@ -57,6 +57,7 @@
     <Compile Include="CollisionTile.cs" />
     <Compile Include="FixedBackdrop.cs" />
     <Compile Include="FPSUnit.cs" />
+    <Compile Include="FrameUnit.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameUnit.cs" />
     <Compile Include="Input.cs" />

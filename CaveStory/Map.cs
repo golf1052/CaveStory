@@ -25,8 +25,8 @@ namespace CaveStory
             Map map = new Map();
             map.backdrop = new FixedBackdrop("bkBlue", Content);
 
-            const int numRows = 15;
-            const int numCols = 20;
+            TileUnit numRows = 15;
+            TileUnit numCols = 20;
 
             map.tiles = new List<List<Tile>>();
             for (int i = 0; i < numRows; i++)
@@ -40,12 +40,12 @@ namespace CaveStory
                 }
             }
 
-            Sprite sprite = new Sprite(Content, "Stage/PrtCave", Game1.TileSize, 0, Game1.TileSize, Game1.TileSize);
+            Sprite sprite = new Sprite(Content, "Stage/PrtCave", Units.TileToPixel(1), 0, Units.TileToPixel(1), Units.TileToPixel(1));
             Tile tile = new Tile(Tile.TileType.WallTile, sprite);
-            const int row = 11;
-            for (int col = 0; col < numCols; col++)
+            TileUnit row = 11;
+            for (TileUnit col = 0; col < numCols; col++)
             {
-                map.tiles[row][col] = tile;
+                map.tiles[Convert.ToInt32(row)][Convert.ToInt32(col)] = tile;
             }
             map.tiles[10][5] = tile;
             map.tiles[9][4] = tile;
@@ -53,9 +53,12 @@ namespace CaveStory
             map.tiles[7][2] = tile;
             map.tiles[10][3] = tile;
 
-            Sprite chainTop = new Sprite(Content, "Stage/PrtCave", 11 * Game1.TileSize, 2 * Game1.TileSize, Game1.TileSize, Game1.TileSize);
-            Sprite chainMiddle = new Sprite(Content, "Stage/PrtCave", 12 * Game1.TileSize, 2 * Game1.TileSize, Game1.TileSize, Game1.TileSize);
-            Sprite chainBottom = new Sprite(Content, "Stage/PrtCave", 13 * Game1.TileSize, 2 * Game1.TileSize, Game1.TileSize, Game1.TileSize);
+            Sprite chainTop = new Sprite(Content, "Stage/PrtCave", Units.TileToPixel(11), Units.TileToPixel(2),
+                Units.TileToPixel(1), Units.TileToPixel(1));
+            Sprite chainMiddle = new Sprite(Content, "Stage/PrtCave", Units.TileToPixel(12), Units.TileToPixel(2),
+                Units.TileToPixel(1), Units.TileToPixel(1));
+            Sprite chainBottom = new Sprite(Content, "Stage/PrtCave", Units.TileToPixel(13), Units.TileToPixel(2),
+                Units.TileToPixel(1), Units.TileToPixel(1));
 
             map.backgroundTiles[8][2] = chainTop;
             map.backgroundTiles[9][2] = chainMiddle;
@@ -65,16 +68,16 @@ namespace CaveStory
 
         public List<CollisionTile> GetCollidingTiles(Rectangle rectangle)
         {
-            int firstRow = rectangle.Top / Game1.TileSize;
-            int lastRow = rectangle.Bottom / Game1.TileSize;
-            int firstCol = rectangle.Left / Game1.TileSize;
-            int lastCol = rectangle.Right / Game1.TileSize;
+            TileUnit firstRow = Units.GameToTile(rectangle.Top);
+            TileUnit lastRow = Units.GameToTile(rectangle.Bottom);
+            TileUnit firstCol = Units.GameToTile(rectangle.Left);
+            TileUnit lastCol = Units.GameToTile(rectangle.Right);
             List<CollisionTile> collisionTiles = new List<CollisionTile>();
-            for (int row = firstRow; row <= lastRow; row++)
+            for (TileUnit row = firstRow; row <= lastRow; row++)
             {
-                for (int col = firstCol; col <= lastCol; col++)
+                for (TileUnit col = firstCol; col <= lastCol; col++)
                 {
-                    collisionTiles.Add(new CollisionTile(row, col, tiles[row][col].tileType));
+                    collisionTiles.Add(new CollisionTile(row, col, tiles[Convert.ToInt32(row)][Convert.ToInt32(col)].tileType));
                 }
             }
             return collisionTiles;
@@ -96,14 +99,14 @@ namespace CaveStory
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            for (int row = 0; row < tiles.Count; row++)
+            for (TileUnit row = 0; row < tiles.Count; row++)
             {
-                for (int col = 0; col < tiles[row].Count; col++)
+                for (TileUnit col = 0; col < tiles[Convert.ToInt32(row)].Count; col++)
                 {
-                    if (tiles[row][col].sprite != null)
+                    if (tiles[Convert.ToInt32(row)][Convert.ToInt32(col)].sprite != null)
                     {
-                        tiles[row][col].sprite.Draw(spriteBatch,
-                            col * Game1.TileSize, row * Game1.TileSize);
+                        tiles[Convert.ToInt32(row)][Convert.ToInt32(col)].sprite.Draw(spriteBatch,
+                            Units.TileToGame(col), Units.TileToGame(row));
                     }
                 }
             }
@@ -112,14 +115,14 @@ namespace CaveStory
         public void DrawBackground(SpriteBatch spriteBatch)
         {
             backdrop.Draw(spriteBatch);
-            for (int row = 0; row < backgroundTiles.Count; row++)
+            for (TileUnit row = 0; row < backgroundTiles.Count; row++)
             {
-                for (int col = 0; col < backgroundTiles[row].Count; col++)
+                for (TileUnit col = 0; col < backgroundTiles[Convert.ToInt32(row)].Count; col++)
                 {
-                    if (backgroundTiles[row][col] != null)
+                    if (backgroundTiles[Convert.ToInt32(row)][Convert.ToInt32(col)] != null)
                     {
-                        backgroundTiles[row][col].Draw(spriteBatch,
-                            col * Game1.TileSize, row * Game1.TileSize);
+                        backgroundTiles[Convert.ToInt32(row)][Convert.ToInt32(col)].Draw(spriteBatch,
+                            Units.TileToGame(col), Units.TileToGame(row));
                     }
                 }
             }

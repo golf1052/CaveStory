@@ -12,51 +12,50 @@ namespace CaveStory
     {
         // Walk Motion
         // (pixels / millisecond) / millisecond
-        static AccelerationUnit Friction { get { return Game1.GameUnitsToPixels(0.00049804687f); } }
+        static AccelerationUnit Friction { get { return 0.00049804687f; } }
         // (pixels / millisecond) / millisecond
-        static AccelerationUnit WalkingAcceleration { get { return Game1.GameUnitsToPixels(0.00083007812f); } }
+        static AccelerationUnit WalkingAcceleration { get { return 0.00083007812f; } }
         // pixels / millisecond
-        static VelocityUnit MaxSpeedX { get { return Game1.GameUnitsToPixels(0.15859375f); } }
+        static VelocityUnit MaxSpeedX { get { return 0.15859375f; } }
 
         // Fall Motion
         // (pixels / millisecond) / millisecond
-        static AccelerationUnit Gravity { get { return Game1.GameUnitsToPixels(0.00078125f); } }
+        static AccelerationUnit Gravity { get { return 0.00078125f; } }
         // pixels / millisecond
-        static VelocityUnit MaxSpeedY { get { return Game1.GameUnitsToPixels(0.2998046875f); } }
+        static VelocityUnit MaxSpeedY { get { return 0.2998046875f; } }
 
         // Jump Motion
         // pixels / millisecond
-        static VelocityUnit JumpSpeed { get { return Game1.GameUnitsToPixels(0.25f); } }
+        static VelocityUnit JumpSpeed { get { return 0.25f; } }
         // (pixels / millisecond) / millisecond
-        static AccelerationUnit AirAcceleration { get { return Game1.GameUnitsToPixels(0.0003125f); } }
+        static AccelerationUnit AirAcceleration { get { return 0.0003125f; } }
         // (pixels / millisecond) / millisecond
-        static AccelerationUnit JumpGravity { get { return Game1.GameUnitsToPixels(0.0003125f); } }
+        static AccelerationUnit JumpGravity { get { return 0.0003125f; } }
 
         // Sprites
         const string SpriteFilePath = "MyChar";
 
         // Sprite Frames
-        const int CharacterFrame = 0;
+        static FrameUnit CharacterFrame { get { return 0; } }
 
-        const int WalkFrame = 0;
-        const int StandFrame = 0;
-        const int JumpFrame = 1;
-        const int FallFrame = 2;
-        const int UpFrameOffset = 3;
-        const int DownFrame = 6;
-        const int BackFrame = 7;
+        static FrameUnit WalkFrame { get { return 0; } }
+        static FrameUnit StandFrame { get { return 0; } }
+        static FrameUnit JumpFrame { get { return 1; } }
+        static FrameUnit FallFrame { get { return 2; } }
+        static FrameUnit UpFrameOffset { get { return 3; } }
+        static FrameUnit DownFrame { get { return 6; } }
+        static FrameUnit BackFrame { get { return 7; } }
 
         // Walk Animation
-        const int NumWalkFrames = 3;
-        const int WalkFps = 15;
+        static FrameUnit NumWalkFrames { get { return 3; } }
+        static FrameUnit WalkFps { get { return 15; } }
 
         // Collision Rectangle
         Rectangle CollisionX
         {
             get
             {
-                return new Rectangle(Game1.GameUnitsToPixels(6), Game1.GameUnitsToPixels(10),
-                    Game1.GameUnitsToPixels(20), Game1.GameUnitsToPixels(12));
+                return new Rectangle(6, 10, 20, 12);
             }
         }
 
@@ -64,13 +63,12 @@ namespace CaveStory
         {
             get
             {
-                return new Rectangle(Game1.GameUnitsToPixels(10), Game1.GameUnitsToPixels(2),
-                    Game1.GameUnitsToPixels(12), Game1.GameUnitsToPixels(30));
+                return new Rectangle(10, 2, 12, 30);
             }
         }
 
-        int x;
-        int y;
+        GameUnit x;
+        GameUnit y;
         VelocityUnit velocityX;
         VelocityUnit velocityY;
         int accelerationX;
@@ -114,7 +112,7 @@ namespace CaveStory
             }
         }
 
-        public Player(ContentManager Content, int x, int y)
+        public Player(ContentManager Content, GameUnit x, GameUnit y)
         {
             sprites = new Dictionary<SpriteState, Sprite>();
             InitializeSprites(Content);
@@ -152,78 +150,86 @@ namespace CaveStory
 
         public void InitializeSprite(ContentManager Content, SpriteState spriteState)
         {
-            int sourceY = spriteState.horizontalFacing == SpriteState.HorizontalFacing.Left ?
-                CharacterFrame * Game1.TileSize : (1 + CharacterFrame) * Game1.TileSize;
+            TileUnit tileY = spriteState.horizontalFacing == SpriteState.HorizontalFacing.Left ?
+                Convert.ToUInt32(CharacterFrame) : Convert.ToUInt32(1 + CharacterFrame);
 
-            int sourceX = 0;
+            TileUnit tileX = 0;
             switch (spriteState.motionType)
             {
                 case SpriteState.MotionType.Walking:
-                    sourceX = WalkFrame * Game1.TileSize;
+                    tileX = Convert.ToUInt32(WalkFrame);
                     break;
                 case SpriteState.MotionType.Standing:
-                    sourceX = StandFrame * Game1.TileSize;
+                    tileX = Convert.ToUInt32(StandFrame);
                     break;
                 case SpriteState.MotionType.Interacting:
-                    sourceX = BackFrame * Game1.TileSize;
+                    tileX = Convert.ToUInt32(BackFrame);
                     break;
                 case SpriteState.MotionType.Jumping:
-                    sourceX = JumpFrame * Game1.TileSize;
+                    tileX = Convert.ToUInt32(JumpFrame);
                     break;
                 case SpriteState.MotionType.Falling:
-                    sourceX = FallFrame * Game1.TileSize;
+                    tileX = Convert.ToUInt32(FallFrame);
                     break;
                 case SpriteState.MotionType.LastMotionType:
                     break;
             }
-            sourceX = spriteState.verticalFacing == SpriteState.VerticalFacing.Up ?
-                sourceX + UpFrameOffset * Game1.TileSize : sourceX; 
+
+            if (spriteState.verticalFacing == SpriteState.VerticalFacing.Up)
+            {
+                tileX = tileX + Convert.ToUInt32(UpFrameOffset);
+            }
 
             if (spriteState.motionType == SpriteState.MotionType.Walking)
             {
-                sprites.Add(spriteState, new AnimatedSprite(Content, SpriteFilePath, sourceX, sourceY, Game1.TileSize, Game1.TileSize, WalkFps, NumWalkFrames));
+                sprites.Add(spriteState, new AnimatedSprite(Content, SpriteFilePath,
+                    Units.TileToPixel(tileX), Units.TileToPixel(tileY),
+                    Units.TileToPixel(1), Units.TileToPixel(1), 
+                    WalkFps, NumWalkFrames));
             }
             else
             {
                 if (spriteState.verticalFacing == SpriteState.VerticalFacing.Down &&
                     (spriteState.motionType == SpriteState.MotionType.Jumping || spriteState.motionType == SpriteState.MotionType.Falling))
                 {
-                    sourceX = DownFrame * Game1.TileSize;
+                    tileX = Convert.ToUInt32(DownFrame);
                 }
-                sprites.Add(spriteState, new Sprite(Content, SpriteFilePath, sourceX, sourceY, Game1.TileSize, Game1.TileSize));
+                sprites.Add(spriteState, new Sprite(Content, SpriteFilePath,
+                    Units.TileToPixel(tileX), Units.TileToPixel(tileY),
+                    Units.TileToPixel(1), Units.TileToPixel(1)));
             }
         }
 
-        public Rectangle LeftCollision(int delta)
+        public Rectangle LeftCollision(GameUnit delta)
         {
-            return new Rectangle(x + CollisionX.Left + delta,
-                y + CollisionX.Top,
-                CollisionX.Width / 2 - delta,
+            return new Rectangle((int)Math.Round(x) + CollisionX.Left + (int)Math.Round(delta),
+                (int)Math.Round(y) + CollisionX.Top,
+                CollisionX.Width / 2 - (int)Math.Round(delta),
                 CollisionX.Height);
         }
 
-        public Rectangle RightCollision(int delta)
+        public Rectangle RightCollision(GameUnit delta)
         {
-            return new Rectangle(x + CollisionX.Left + CollisionX.Width / 2,
-                y + CollisionX.Top,
-                CollisionX.Width / 2 + delta,
+            return new Rectangle((int)Math.Round(x) + CollisionX.Left + CollisionX.Width / 2,
+                (int)Math.Round(y) + CollisionX.Top,
+                CollisionX.Width / 2 + (int)Math.Round(delta),
                 CollisionX.Height);
         }
 
-        public Rectangle TopCollision(int delta)
+        public Rectangle TopCollision(GameUnit delta)
         {
-            return new Rectangle(x + CollisionY.Left,
-                y + CollisionY.Top + delta,
+            return new Rectangle((int)Math.Round(x) + CollisionY.Left,
+                (int)Math.Round(y) + CollisionY.Top + (int)Math.Round(delta),
                 CollisionY.Width / 2,
-                CollisionY.Height / 2 - delta);
+                CollisionY.Height / 2 - (int)Math.Round(delta));
         }
 
-        public Rectangle bottomCollision(int delta)
+        public Rectangle bottomCollision(GameUnit delta)
         {
-            return new Rectangle(x + CollisionY.Left,
-                y + CollisionY.Top + CollisionY.Height / 2,
+            return new Rectangle((int)Math.Round(x) + CollisionY.Left,
+                (int)Math.Round(y) + CollisionY.Top + CollisionY.Height / 2,
                 CollisionY.Width,
-                CollisionY.Height / 2 + delta);
+                CollisionY.Height / 2 + (int)Math.Round(delta));
         }
 
         public void Update(GameTime gameTime, Map map)
@@ -261,15 +267,15 @@ namespace CaveStory
                     (float)Math.Min(0.0f, velocityX + Friction * gameTime.ElapsedGameTime.TotalMilliseconds);
             }
 
-            int delta = (int)Math.Round(velocityX * gameTime.ElapsedGameTime.TotalMilliseconds);
+            GameUnit delta = (float)Math.Round(velocityX * gameTime.ElapsedGameTime.TotalMilliseconds);
             
-            if (delta > 0)
+            if (delta > 0.0f)
             {
                 CollisionInfo info = GetWallCollisionInfo(map, RightCollision(delta));
 
                 if (info.collided)
                 {
-                    x = info.col * Game1.TileSize - CollisionX.Right;
+                    x = Units.TileToGame(info.col) - CollisionX.Right;
                     velocityX = 0;
                 }
                 else
@@ -281,7 +287,7 @@ namespace CaveStory
 
                 if (info.collided)
                 {
-                    x = info.col * Game1.TileSize + CollisionX.Right;
+                    x = Units.TileToGame(info.col) + CollisionX.Right;
                 }
             }
             else
@@ -290,7 +296,7 @@ namespace CaveStory
 
                 if (info.collided)
                 {
-                    x = info.col * Game1.TileSize + CollisionX.Right;
+                    x = Units.TileToGame(info.col) + CollisionX.Right;
                     velocityX = 0;
                 }
                 else
@@ -302,7 +308,7 @@ namespace CaveStory
 
                 if (info.collided)
                 {
-                    x = info.col * Game1.TileSize - CollisionX.Right;
+                    x = Units.TileToGame(info.col) - CollisionX.Right;
                 }
             }
         }
@@ -313,7 +319,7 @@ namespace CaveStory
                 JumpGravity : Gravity;
             velocityY = (float)Math.Min(velocityY + gravity * gameTime.ElapsedGameTime.TotalMilliseconds, MaxSpeedY);
 
-            int delta = (int)Math.Round(velocityY * gameTime.ElapsedGameTime.TotalMilliseconds);
+            GameUnit delta = (float)Math.Round(velocityY * gameTime.ElapsedGameTime.TotalMilliseconds);
 
             if (delta > 0)
             {
@@ -321,7 +327,7 @@ namespace CaveStory
 
                 if (info.collided)
                 {
-                    y = info.row * Game1.TileSize - CollisionY.Bottom;
+                    y = Units.TileToGame(info.row) - CollisionY.Bottom;
                     velocityY = 0;
                     OnGround = true;
                 }
@@ -335,7 +341,7 @@ namespace CaveStory
 
                 if (info.collided)
                 {
-                    y = info.row * Game1.TileSize + CollisionY.Height;
+                    y = Units.TileToGame(info.row) + CollisionY.Height;
                 }
             }
             else
@@ -344,7 +350,7 @@ namespace CaveStory
 
                 if (info.collided)
                 {
-                    y = info.row * Game1.TileSize + CollisionY.Height;
+                    y = Units.TileToGame(info.row) + CollisionY.Height;
                     velocityY = 0;
                 }
                 else
@@ -357,7 +363,7 @@ namespace CaveStory
 
                 if (info.collided)
                 {
-                    y = info.row * Game1.TileSize - CollisionY.Bottom;
+                    y = Units.TileToGame(info.row) - CollisionY.Bottom;
                     OnGround = true;
                 }
             }

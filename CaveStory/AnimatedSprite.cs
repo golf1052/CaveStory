@@ -11,15 +11,15 @@ namespace CaveStory
     public class AnimatedSprite : Sprite
     {
         TimeSpan frameTime;
-        int numberOfFrames;
-        int currentFrame;
+        FrameUnit numberOfFrames;
+        FrameUnit currentFrame;
         TimeSpan elapsedTime; // Elapsed time sinced the last frame change
 
         public AnimatedSprite(ContentManager Content,
             string fileName,
-            int sourceX, int sourceY,
-            int width, int height,
-            int fps, int numberOfFrames) : base(Content, fileName, sourceX, sourceY, width, height)
+            PixelUnit sourceX, PixelUnit sourceY,
+            PixelUnit width, PixelUnit height,
+            int fps, FrameUnit numberOfFrames) : base(Content, fileName, sourceX, sourceY, width, height)
         {
             frameTime = TimeSpan.FromMilliseconds(1000 / fps);
             this.numberOfFrames = numberOfFrames;
@@ -36,11 +36,11 @@ namespace CaveStory
                 elapsedTime = TimeSpan.Zero;
                 if (currentFrame < numberOfFrames)
                 {
-                    sourceRect.X += Game1.TileSize;
+                    sourceRect.X += sourceRect.Width;
                 }
                 else
                 {
-                    sourceRect.X -= Game1.TileSize * (numberOfFrames - 1);
+                    sourceRect.X -= sourceRect.Width * (numberOfFrames - 1);
                     currentFrame = 0;
                 }
             }
