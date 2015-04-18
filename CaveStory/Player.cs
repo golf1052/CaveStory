@@ -267,7 +267,7 @@ namespace CaveStory
                     (float)Math.Min(0.0f, velocityX + Friction * gameTime.ElapsedGameTime.TotalMilliseconds);
             }
 
-            GameUnit delta = (float)Math.Round(velocityX * gameTime.ElapsedGameTime.TotalMilliseconds);
+            GameUnit delta = velocityX * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
             
             if (delta > 0.0f)
             {
@@ -319,7 +319,7 @@ namespace CaveStory
                 JumpGravity : Gravity;
             velocityY = (float)Math.Min(velocityY + gravity * gameTime.ElapsedGameTime.TotalMilliseconds, MaxSpeedY);
 
-            GameUnit delta = (float)Math.Round(velocityY * gameTime.ElapsedGameTime.TotalMilliseconds);
+            GameUnit delta = velocityY * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
             if (delta > 0)
             {

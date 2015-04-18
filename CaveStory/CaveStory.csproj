@@ -51,10 +51,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccelerationUnit.cs" />
+    <Compile Include="AngularVelocityUnit.cs" />
     <Compile Include="AnimatedSprite.cs" />
     <Compile Include="Backdrop.cs" />
     <Compile Include="CollisionInfo.cs" />
     <Compile Include="CollisionTile.cs" />
+    <Compile Include="DegreesUnit.cs" />
     <Compile Include="FirstCaveBat.cs" />
     <Compile Include="FixedBackdrop.cs" />
     <Compile Include="FPSUnit.cs" />
