@@ -48,7 +48,7 @@ namespace CaveStory
 
         // Walk Animation
         static FrameUnit NumWalkFrames { get { return 3; } }
-        static FrameUnit WalkFps { get { return 15; } }
+        static int WalkFps { get { return 15; } }
 
         // Collision Rectangle
         Rectangle CollisionX

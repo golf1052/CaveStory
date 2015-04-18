@@ -55,6 +55,7 @@
     <Compile Include="Backdrop.cs" />
     <Compile Include="CollisionInfo.cs" />
     <Compile Include="CollisionTile.cs" />
+    <Compile Include="FirstCaveBat.cs" />
     <Compile Include="FixedBackdrop.cs" />
     <Compile Include="FPSUnit.cs" />
     <Compile Include="FrameUnit.cs" />

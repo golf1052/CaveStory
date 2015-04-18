@@ -17,6 +17,7 @@ namespace CaveStory
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Player player;
+        FirstCaveBat bat;
         Map map;
         Input input;
 
@@ -44,6 +45,7 @@ namespace CaveStory
             spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
 
             player = new Player(Content, Units.TileToGame(ScreenWidth / 2), Units.TileToGame(ScreenHeight / 2));
+            bat = new FirstCaveBat(Content, Units.TileToGame(5), Units.TileToGame(ScreenHeight / 2));
             map = Map.CreateTestMap(Content);
             base.LoadContent();
         }
@@ -124,6 +126,7 @@ namespace CaveStory
             }
 
             player.Update(gameTime, map);
+            bat.Update(gameTime);
             map.Update(gameTime);
 
             input.EndFrame();
@@ -133,6 +136,7 @@ namespace CaveStory
         public void Draw()
         {
             map.DrawBackground(spriteBatch);
+            bat.Draw(spriteBatch);
             player.Draw(spriteBatch);
             map.Draw(spriteBatch);
         }
