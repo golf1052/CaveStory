@@ -126,7 +126,7 @@ namespace CaveStory
             }
 
             player.Update(gameTime, map);
-            bat.Update(gameTime);
+            bat.Update(gameTime, player.CenterX);
             map.Update(gameTime);
 
             input.EndFrame();

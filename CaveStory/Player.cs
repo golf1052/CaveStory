@@ -68,6 +68,13 @@ namespace CaveStory
         }
 
         GameUnit x;
+        public GameUnit CenterX
+        {
+            get
+            {
+                return x + Units.TileToGame(1) / 2.0f;
+            }
+        }
         GameUnit y;
         VelocityUnit velocityX;
         VelocityUnit velocityY;
