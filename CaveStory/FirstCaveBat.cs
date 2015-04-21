@@ -55,11 +55,24 @@ namespace CaveStory
 
         Dictionary<BatSpriteState, Sprite> sprites;
 
+        GameUnit centerY;
+
+        public Rectangle DamageRectangle
+        {
+            get
+            {
+                return new Rectangle((int)Math.Round(x + Units.TileToGame(1) / 2.0f),
+                    (int)Math.Round(y + Units.TileToGame(1) / 2.0f),
+                    0, 0);
+            }
+        }
+
         public FirstCaveBat(ContentManager Content, GameUnit x, GameUnit y)
         {
             sprites = new Dictionary<BatSpriteState, Sprite>();
             this.x = x;
             this.y = y;
+            centerY = y;
             flightAngle = 0.0f;
             facing = Facing.Right;
             InitializeSprites(Content);
@@ -88,13 +101,13 @@ namespace CaveStory
                 (float)gameTime.ElapsedGameTime.TotalMilliseconds;
             facing = x + Units.TileToGame(1) / 2.0f > playerX ?
                 Facing.Left : Facing.Right;
+            y = centerY + Units.TileToGame(5) / 2.0f * (float)Math.Sin(MathHelper.ToRadians(flightAngle));
             sprites[SpriteState].Update(gameTime);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            GameUnit modifiedY = y + Units.TileToGame(5) / 2.0f * (float)Math.Sin(MathHelper.ToRadians(flightAngle));
-            sprites[SpriteState].Draw(spriteBatch, x, modifiedY);
+            sprites[SpriteState].Draw(spriteBatch, x, y);
         }
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -45,7 +46,7 @@ namespace CaveStory
             spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
 
             player = new Player(Content, Units.TileToGame(ScreenWidth / 2), Units.TileToGame(ScreenHeight / 2));
-            bat = new FirstCaveBat(Content, Units.TileToGame(5), Units.TileToGame(ScreenHeight / 2));
+            bat = new FirstCaveBat(Content, Units.TileToGame(7), Units.TileToGame(ScreenHeight / 2 + 1));
             map = Map.CreateTestMap(Content);
             base.LoadContent();
         }
@@ -127,7 +128,11 @@ namespace CaveStory
 
             player.Update(gameTime, map);
             bat.Update(gameTime, player.CenterX);
-            map.Update(gameTime);
+            
+            if (bat.DamageRectangle.Intersects(player.DamageRectangle))
+            {
+                Debug.WriteLine("Do damage to Quote!");
+            }
 
             input.EndFrame();
             base.Update(gameTime);

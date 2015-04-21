@@ -119,6 +119,17 @@ namespace CaveStory
             }
         }
 
+        public Rectangle DamageRectangle
+        {
+            get
+            {
+                return new Rectangle((int)Math.Round(x) + CollisionX.Left,
+                    (int)Math.Round(y) + CollisionY.Top,
+                    CollisionX.Width,
+                    CollisionY.Height);
+            }
+        }
+
         public Player(ContentManager Content, GameUnit x, GameUnit y)
         {
             sprites = new Dictionary<SpriteState, Sprite>();
