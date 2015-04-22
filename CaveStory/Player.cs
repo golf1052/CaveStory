@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -27,6 +28,7 @@ namespace CaveStory
         // Jump Motion
         // pixels / millisecond
         static VelocityUnit JumpSpeed { get { return 0.25f; } }
+        static VelocityUnit ShortJumpSpeed { get { return JumpSpeed / 1.5f; } }
         // (pixels / millisecond) / millisecond
         static AccelerationUnit AirAcceleration { get { return 0.0003125f; } }
         // (pixels / millisecond) / millisecond
@@ -67,6 +69,22 @@ namespace CaveStory
             }
         }
 
+        TimeSpan InvincibleFlashTime
+        {
+            get
+            {
+                return TimeSpan.FromMilliseconds(50);
+            }
+        }
+
+        TimeSpan InvincibleTime
+        {
+            get
+            {
+                return TimeSpan.FromMilliseconds(3000);
+            }
+        }
+
         GameUnit x;
         public GameUnit CenterX
         {
@@ -95,6 +113,8 @@ namespace CaveStory
         }
         private bool jumpActive;
         bool interacting;
+        bool invincible;
+        TimeSpan invincibleTime;
 
         Dictionary<SpriteState, Sprite> sprites;
 
@@ -144,6 +164,8 @@ namespace CaveStory
             onGround = false;
             jumpActive = false;
             interacting = false;
+            invincible = false;
+            invincibleTime = TimeSpan.Zero;
         }
 
         public void InitializeSprites(ContentManager Content)
@@ -253,6 +275,12 @@ namespace CaveStory
         public void Update(GameTime gameTime, Map map)
         {
             sprites[SpriteState].Update(gameTime);
+
+            if (invincible)
+            {
+                invincibleTime += gameTime.ElapsedGameTime;
+                invincible = invincibleTime < InvincibleTime;
+            }
 
             UpdateX(gameTime, map);
             UpdateY(gameTime, map);
@@ -444,6 +472,10 @@ namespace CaveStory
 
         public void Draw(SpriteBatch spriteBatch)
         {
+            if (invincible && invincibleTime.Ticks / InvincibleFlashTime.Ticks % 2 == 0)
+            {
+                return;
+            }
             sprites[SpriteState].Draw(spriteBatch, x, y);
         }
 
@@ -453,7 +485,6 @@ namespace CaveStory
             jumpActive = true;
             if (OnGround)
             {
-                
                 velocityY = -JumpSpeed;
             }
         }
@@ -461,6 +492,17 @@ namespace CaveStory
         public void StopJump()
         {
             jumpActive = false;
+        }
+
+        public void TakeDamage()
+        {
+            if (invincible)
+            {
+                return;
+            }
+            velocityY = Math.Min(velocityY, -ShortJumpSpeed);
+            invincible = true;
+            invincibleTime = TimeSpan.Zero;
         }
     }
 }
