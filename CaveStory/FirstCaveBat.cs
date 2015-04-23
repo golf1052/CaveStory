@@ -53,6 +53,14 @@ namespace CaveStory
             }
         }
 
+        static GameUnit FlightAmplitude
+        {
+            get
+            {
+                return 5 * Units.HalfTile;
+            }
+        }
+
         Dictionary<BatSpriteState, Sprite> sprites;
 
         GameUnit centerY;
@@ -61,8 +69,8 @@ namespace CaveStory
         {
             get
             {
-                return new Rectangle((int)Math.Round(x + Units.TileToGame(1) / 2.0f),
-                    (int)Math.Round(y + Units.TileToGame(1) / 2.0f),
+                return new Rectangle((int)Math.Round(x + Units.HalfTile),
+                    (int)Math.Round(y + Units.HalfTile),
                     0, 0);
             }
         }
@@ -99,9 +107,9 @@ namespace CaveStory
         {
             flightAngle += AngularVelocity *
                 (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-            facing = x + Units.TileToGame(1) / 2.0f > playerX ?
+            facing = x + Units.HalfTile > playerX ?
                 Facing.Left : Facing.Right;
-            y = centerY + Units.TileToGame(5) / 2.0f * (float)Math.Sin(MathHelper.ToRadians(flightAngle));
+            y = centerY + FlightAmplitude * (float)Math.Sin(MathHelper.ToRadians(flightAngle));
             sprites[SpriteState].Update(gameTime);
         }
 

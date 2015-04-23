@@ -34,5 +34,13 @@ namespace CaveStory
         {
             return GameToPixel(TileToGame(tile));
         }
+
+        public static GameUnit HalfTile
+        {
+            get
+            {
+                return TileToGame(1) / 2.0f;
+            }
+        }
     }
 }

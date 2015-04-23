@@ -143,6 +143,7 @@ namespace CaveStory
             bat.Draw(spriteBatch);
             player.Draw(spriteBatch);
             map.Draw(spriteBatch);
+            player.DrawHud(spriteBatch);
         }
 
         protected override void Draw(GameTime gameTime)

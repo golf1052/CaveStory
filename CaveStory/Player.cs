@@ -90,7 +90,7 @@ namespace CaveStory
         {
             get
             {
-                return x + Units.TileToGame(1) / 2.0f;
+                return x + Units.HalfTile;
             }
         }
         GameUnit y;
@@ -116,7 +116,26 @@ namespace CaveStory
         bool invincible;
         TimeSpan invincibleTime;
 
+        // HUD constants
+        static GameUnit HealthBarX { get { return Units.TileToGame(1); } }
+        static GameUnit HealthBarY { get { return Units.TileToGame(2); } }
+        static GameUnit HealthBarSourceX { get { return 0; } }
+        static GameUnit HealthBarSourceY { get { return 5 * Units.HalfTile; } }
+        static TileUnit HealthBarSourceWidth { get { return 4; } }
+        static GameUnit HealthBarSourceHeight { get { return Units.HalfTile; } }
+
+        static GameUnit HealthFillX { get { return 5 * Units.HalfTile; } }
+        static GameUnit HealthFillY { get { return Units.TileToGame(2); } }
+
+        static GameUnit HealthFillSourceX { get { return 0; } }
+        static GameUnit HealthFillSourceY { get { return 3 * Units.HalfTile; } }
+        static GameUnit HealthFillSourceHeight { get { return Units.HalfTile; } }
+
         Dictionary<SpriteState, Sprite> sprites;
+
+        Sprite healthBarSprite;
+        Sprite healthFillSprite;
+        Sprite three;
 
         public SpriteState SpriteState
         {
@@ -170,6 +189,18 @@ namespace CaveStory
 
         public void InitializeSprites(ContentManager Content)
         {
+            healthBarSprite = new Sprite(Content, "TextBox",
+                Units.GameToPixel(HealthBarSourceX), Units.GameToPixel(HealthBarSourceY),
+                Units.TileToPixel(HealthBarSourceWidth), Units.GameToPixel(HealthBarSourceHeight));
+
+            healthFillSprite = new Sprite(Content, "TextBox",
+                Units.GameToPixel(HealthFillSourceX), Units.GameToPixel(HealthFillSourceY),
+                Units.GameToPixel(5 * Units.HalfTile - 2), Units.GameToPixel(HealthFillSourceHeight));
+
+            three = new Sprite(Content, "TextBox",
+                Units.GameToPixel(3 * Units.HalfTile), Units.GameToPixel(7 * Units.HalfTile),
+                Units.GameToPixel(Units.HalfTile), Units.GameToPixel(Units.HalfTile));
+
             for (SpriteState.MotionType motionType = SpriteState.MotionType.FirstMotionType;
                 motionType < SpriteState.MotionType.LastMotionType;
                 ++motionType)
@@ -472,11 +503,20 @@ namespace CaveStory
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            if (invincible && invincibleTime.Ticks / InvincibleFlashTime.Ticks % 2 == 0)
+            if (SpriteIsVisible())
             {
-                return;
+                sprites[SpriteState].Draw(spriteBatch, x, y);
             }
-            sprites[SpriteState].Draw(spriteBatch, x, y);
+        }
+
+        public void DrawHud(SpriteBatch spriteBatch)
+        {
+            if (SpriteIsVisible())
+            {
+                healthBarSprite.Draw(spriteBatch, HealthBarX, HealthBarY);
+                healthFillSprite.Draw(spriteBatch, HealthFillX, HealthFillY);
+                three.Draw(spriteBatch, Units.TileToGame(2), Units.TileToGame(2));
+            }
         }
 
         public void StartJump()
@@ -503,6 +543,11 @@ namespace CaveStory
             velocityY = Math.Min(velocityY, -ShortJumpSpeed);
             invincible = true;
             invincibleTime = TimeSpan.Zero;
+        }
+
+        bool SpriteIsVisible()
+        {
+            return !(invincible && invincibleTime.Ticks / InvincibleFlashTime.Ticks % 2 == 0);
         }
     }
 }
