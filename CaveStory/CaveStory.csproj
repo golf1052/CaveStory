@@ -66,6 +66,7 @@
     <Compile Include="Input.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="MSUnit.cs" />
+    <Compile Include="NumberSprite.cs" />
     <Compile Include="PixelUnit.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />

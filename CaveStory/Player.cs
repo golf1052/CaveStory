@@ -135,7 +135,7 @@ namespace CaveStory
 
         Sprite healthBarSprite;
         Sprite healthFillSprite;
-        Sprite three;
+        NumberSprite healthNumberSprite;
 
         public SpriteState SpriteState
         {
@@ -197,9 +197,7 @@ namespace CaveStory
                 Units.GameToPixel(HealthFillSourceX), Units.GameToPixel(HealthFillSourceY),
                 Units.GameToPixel(5 * Units.HalfTile - 2), Units.GameToPixel(HealthFillSourceHeight));
 
-            three = new Sprite(Content, "TextBox",
-                Units.GameToPixel(3 * Units.HalfTile), Units.GameToPixel(7 * Units.HalfTile),
-                Units.GameToPixel(Units.HalfTile), Units.GameToPixel(Units.HalfTile));
+            healthNumberSprite = new NumberSprite(Content, 12);
 
             for (SpriteState.MotionType motionType = SpriteState.MotionType.FirstMotionType;
                 motionType < SpriteState.MotionType.LastMotionType;
@@ -515,7 +513,7 @@ namespace CaveStory
             {
                 healthBarSprite.Draw(spriteBatch, HealthBarX, HealthBarY);
                 healthFillSprite.Draw(spriteBatch, HealthFillX, HealthFillY);
-                three.Draw(spriteBatch, Units.TileToGame(2), Units.TileToGame(2));
+                healthNumberSprite.Draw(spriteBatch, Units.TileToGame(2), Units.TileToGame(2));
             }
         }
 
