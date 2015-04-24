@@ -53,46 +53,16 @@ namespace CaveStory
         static int WalkFps { get { return 15; } }
 
         // Collision Rectangle
-        Rectangle CollisionX
-        {
-            get
-            {
-                return new Rectangle(6, 10, 20, 12);
-            }
-        }
+        Rectangle CollisionX { get { return new Rectangle(6, 10, 20, 12); } }
 
-        Rectangle CollisionY
-        {
-            get
-            {
-                return new Rectangle(10, 2, 12, 30);
-            }
-        }
+        Rectangle CollisionY { get { return new Rectangle(10, 2, 12, 30); } }
 
-        TimeSpan InvincibleFlashTime
-        {
-            get
-            {
-                return TimeSpan.FromMilliseconds(50);
-            }
-        }
+        TimeSpan InvincibleFlashTime { get { return TimeSpan.FromMilliseconds(50); } }
 
-        TimeSpan InvincibleTime
-        {
-            get
-            {
-                return TimeSpan.FromMilliseconds(3000);
-            }
-        }
+        TimeSpan InvincibleTime { get { return TimeSpan.FromMilliseconds(3000); } }
 
         GameUnit x;
-        public GameUnit CenterX
-        {
-            get
-            {
-                return x + Units.HalfTile;
-            }
-        }
+        public GameUnit CenterX { get { return x + Units.HalfTile; } }
         GameUnit y;
         VelocityUnit velocityX;
         VelocityUnit velocityY;
@@ -130,6 +100,10 @@ namespace CaveStory
         static GameUnit HealthFillSourceX { get { return 0; } }
         static GameUnit HealthFillSourceY { get { return 3 * Units.HalfTile; } }
         static GameUnit HealthFillSourceHeight { get { return Units.HalfTile; } }
+
+        static GameUnit HealthNumberX { get { return Units.TileToGame(3) / 2; } }
+        static GameUnit HealthNumberY { get { return Units.TileToGame(2); } }
+        const int HealthNumberNumDigits = 2;
 
         Dictionary<SpriteState, Sprite> sprites;
 
@@ -197,7 +171,7 @@ namespace CaveStory
                 Units.GameToPixel(HealthFillSourceX), Units.GameToPixel(HealthFillSourceY),
                 Units.GameToPixel(5 * Units.HalfTile - 2), Units.GameToPixel(HealthFillSourceHeight));
 
-            healthNumberSprite = new NumberSprite(Content, 12);
+            healthNumberSprite = new NumberSprite(Content, 52, HealthNumberNumDigits);
 
             for (SpriteState.MotionType motionType = SpriteState.MotionType.FirstMotionType;
                 motionType < SpriteState.MotionType.LastMotionType;
@@ -513,7 +487,7 @@ namespace CaveStory
             {
                 healthBarSprite.Draw(spriteBatch, HealthBarX, HealthBarY);
                 healthFillSprite.Draw(spriteBatch, HealthFillX, HealthFillY);
-                healthNumberSprite.Draw(spriteBatch, Units.TileToGame(2), Units.TileToGame(2));
+                healthNumberSprite.Draw(spriteBatch, HealthNumberX, HealthNumberY);
             }
         }
 
