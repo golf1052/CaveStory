@@ -50,7 +50,7 @@ namespace CaveStory
             health.damageFillSprite = new VaryingWidthSprite(Content, SpritePath,
                 Units.GameToPixel(HealthDamageSourceX), Units.GameToPixel(HealthDamageSourceY),
                 Units.GameToPixel(0), Units.GameToPixel(HealthDamageSourceHeight));
-            health.healthNumberSprite = new NumberSprite(Content, 0, HealthNumberNumDigits);
+            health.healthNumberSprite = NumberSprite.HudNumber(Content, 0, HealthNumberNumDigits);
         }
 
         public void Update(GameTime gameTime)

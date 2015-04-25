@@ -9,52 +9,108 @@ namespace CaveStory
 {
     public class NumberSprite
     {
+        public enum ColorType
+        {
+            Red,
+            White
+        }
+
+        public enum OperatorType
+        {
+            Plus,
+            Minus,
+            None
+        }
         const string SpritePath = "TextBox";
-        static GameUnit SourceY { get { return 7 * Units.HalfTile; } }
+        static GameUnit SourceWhiteY { get { return 7 * Units.HalfTile; } }
+        static GameUnit SourceRedY { get { return 8 * Units.HalfTile; } }
+
+        static GameUnit PlusSourceX { get { return 4 * Units.HalfTile; } }
+        static GameUnit MinusSourceX { get { return 5 * Units.HalfTile; } }
+        static GameUnit OpSourceY { get { return 6 * Units.HalfTile; } }
+        
         static GameUnit SourceWidth { get { return Units.HalfTile; } }
         static GameUnit SourceHeight { get { return Units.HalfTile; } }
 
-        List<Sprite> reverseDigits;
+        List<Sprite> reversedSprites;
         GameUnit padding;
+
+        public GameUnit Width { get { return Units.HalfTile * reversedSprites.Count; } }
+        public GameUnit Height { get { return Units.HalfTile; } }
 
         ContentManager Content;
         public int number;
         int numDigits;
+        ColorType color;
+        OperatorType op;
+
+        public static NumberSprite HudNumber(ContentManager Content, int number, int numDigits = 0)
+        {
+            return new NumberSprite(Content, number, numDigits, ColorType.White, OperatorType.None);
+        }
+
+        public static NumberSprite DamageNumber(ContentManager Content, int number)
+        {
+            return new NumberSprite(Content, number, 0, ColorType.Red, OperatorType.Minus);
+        }
+
+        public static NumberSprite ExperienceNumber(ContentManager Content, int number)
+        {
+            return new NumberSprite(Content, number, 0, ColorType.White, OperatorType.Plus);
+        }
 
         // if numDigits = 0, don't care how much space it takes up
-        public NumberSprite(ContentManager Content, int number, int numDigits = 0)
+        private NumberSprite(ContentManager Content, int number, int numDigits, ColorType color, OperatorType op)
         {
             this.Content = Content;
             this.number = number;
             this.numDigits = numDigits;
+            this.color = color;
+            this.op = op;
         }
 
         void LoadNumber()
         {
-            reverseDigits = new List<Sprite>();
+            reversedSprites = new List<Sprite>();
+            GameUnit sourceY = color == ColorType.Red ? SourceRedY : SourceWhiteY;
             padding = 0;
             int digitCount = 0;
             do
             {
                 int digit = number % 10;
-                reverseDigits.Add(new Sprite(Content, SpritePath,
-                Units.GameToPixel(digit * Units.HalfTile), Units.GameToPixel(SourceY),
-                Units.GameToPixel(SourceWidth), Units.GameToPixel(SourceHeight)));
+                reversedSprites.Add(new Sprite(Content, SpritePath,
+                    Units.GameToPixel(digit * Units.HalfTile), Units.GameToPixel(sourceY),
+                    Units.GameToPixel(SourceWidth), Units.GameToPixel(SourceHeight)));
                 number /= 10;
                 digitCount++;
             }
             while (number != 0);
 
             padding = numDigits == 0 ? 0 : Units.HalfTile * (numDigits - digitCount);
+            switch (op)
+            {
+                case OperatorType.Plus:
+                    reversedSprites.Add(new Sprite(Content, SpritePath,
+                        Units.GameToPixel(PlusSourceX), Units.GameToPixel(OpSourceY),
+                        Units.GameToPixel(SourceWidth), Units.GameToPixel(SourceHeight)));
+                    break;
+                case OperatorType.Minus:
+                    reversedSprites.Add(new Sprite(Content, SpritePath,
+                        Units.GameToPixel(MinusSourceX), Units.GameToPixel(OpSourceY),
+                        Units.GameToPixel(SourceWidth), Units.GameToPixel(SourceHeight)));
+                    break;
+                case OperatorType.None:
+                    break;
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch, GameUnit x, GameUnit y)
         {
             LoadNumber();
-            for (int i = 0; i < reverseDigits.Count; i++)
+            for (int i = 0; i < reversedSprites.Count; i++)
             {
-                GameUnit offset = Units.HalfTile * (reverseDigits.Count - 1 - i);
-                reverseDigits[i].Draw(spriteBatch, x + offset + padding, y);
+                GameUnit offset = Units.HalfTile * (reversedSprites.Count - 1 - i);
+                reversedSprites[i].Draw(spriteBatch, x + offset + padding, y);
             }
         }
     }
