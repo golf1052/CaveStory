@@ -17,8 +17,19 @@ namespace CaveStory
         List<Sprite> reverseDigits;
         GameUnit padding;
 
+        ContentManager Content;
+        public int number;
+        int numDigits;
+
         // if numDigits = 0, don't care how much space it takes up
         public NumberSprite(ContentManager Content, int number, int numDigits = 0)
+        {
+            this.Content = Content;
+            this.number = number;
+            this.numDigits = numDigits;
+        }
+
+        void LoadNumber()
         {
             reverseDigits = new List<Sprite>();
             padding = 0;
@@ -39,6 +50,7 @@ namespace CaveStory
 
         public void Draw(SpriteBatch spriteBatch, GameUnit x, GameUnit y)
         {
+            LoadNumber();
             for (int i = 0; i < reverseDigits.Count; i++)
             {
                 GameUnit offset = Units.HalfTile * (reverseDigits.Count - 1 - i);

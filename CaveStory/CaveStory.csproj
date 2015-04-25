@@ -63,18 +63,22 @@
     <Compile Include="FrameUnit.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameUnit.cs" />
+    <Compile Include="Health.cs" />
+    <Compile Include="HPUnit.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="MSUnit.cs" />
     <Compile Include="NumberSprite.cs" />
     <Compile Include="PixelUnit.cs" />
     <Compile Include="Player.cs" />
+    <Compile Include="PlayerHealth.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Sprite.cs" />
     <Compile Include="SpriteState.cs" />
     <Compile Include="Tile.cs" />
     <Compile Include="TileUnit.cs" />
     <Compile Include="Units.cs" />
+    <Compile Include="VaryingWidthSprite.cs" />
     <Compile Include="VelocityUnit.cs" />
   </ItemGroup>
   <ItemGroup>

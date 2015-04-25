@@ -82,34 +82,12 @@ namespace CaveStory
             }
         }
         private bool jumpActive;
+        PlayerHealth playerHealth;
         bool interacting;
         bool invincible;
         TimeSpan invincibleTime;
 
-        // HUD constants
-        static GameUnit HealthBarX { get { return Units.TileToGame(1); } }
-        static GameUnit HealthBarY { get { return Units.TileToGame(2); } }
-        static GameUnit HealthBarSourceX { get { return 0; } }
-        static GameUnit HealthBarSourceY { get { return 5 * Units.HalfTile; } }
-        static TileUnit HealthBarSourceWidth { get { return 4; } }
-        static GameUnit HealthBarSourceHeight { get { return Units.HalfTile; } }
-
-        static GameUnit HealthFillX { get { return 5 * Units.HalfTile; } }
-        static GameUnit HealthFillY { get { return Units.TileToGame(2); } }
-
-        static GameUnit HealthFillSourceX { get { return 0; } }
-        static GameUnit HealthFillSourceY { get { return 3 * Units.HalfTile; } }
-        static GameUnit HealthFillSourceHeight { get { return Units.HalfTile; } }
-
-        static GameUnit HealthNumberX { get { return Units.TileToGame(3) / 2; } }
-        static GameUnit HealthNumberY { get { return Units.TileToGame(2); } }
-        const int HealthNumberNumDigits = 2;
-
         Dictionary<SpriteState, Sprite> sprites;
-
-        Sprite healthBarSprite;
-        Sprite healthFillSprite;
-        NumberSprite healthNumberSprite;
 
         public SpriteState SpriteState
         {
@@ -156,6 +134,7 @@ namespace CaveStory
             verticalFacing = SpriteState.VerticalFacing.Horizontal;
             onGround = false;
             jumpActive = false;
+            playerHealth = new PlayerHealth(Content);
             interacting = false;
             invincible = false;
             invincibleTime = TimeSpan.Zero;
@@ -163,15 +142,7 @@ namespace CaveStory
 
         public void InitializeSprites(ContentManager Content)
         {
-            healthBarSprite = new Sprite(Content, "TextBox",
-                Units.GameToPixel(HealthBarSourceX), Units.GameToPixel(HealthBarSourceY),
-                Units.TileToPixel(HealthBarSourceWidth), Units.GameToPixel(HealthBarSourceHeight));
-
-            healthFillSprite = new Sprite(Content, "TextBox",
-                Units.GameToPixel(HealthFillSourceX), Units.GameToPixel(HealthFillSourceY),
-                Units.GameToPixel(5 * Units.HalfTile - 2), Units.GameToPixel(HealthFillSourceHeight));
-
-            healthNumberSprite = new NumberSprite(Content, 52, HealthNumberNumDigits);
+            //healthNumberSprite = new NumberSprite(Content, 52, HealthNumberNumDigits);
 
             for (SpriteState.MotionType motionType = SpriteState.MotionType.FirstMotionType;
                 motionType < SpriteState.MotionType.LastMotionType;
@@ -284,6 +255,8 @@ namespace CaveStory
                 invincibleTime += gameTime.ElapsedGameTime;
                 invincible = invincibleTime < InvincibleTime;
             }
+
+            playerHealth.Update(gameTime);
 
             UpdateX(gameTime, map);
             UpdateY(gameTime, map);
@@ -485,9 +458,7 @@ namespace CaveStory
         {
             if (SpriteIsVisible())
             {
-                healthBarSprite.Draw(spriteBatch, HealthBarX, HealthBarY);
-                healthFillSprite.Draw(spriteBatch, HealthFillX, HealthFillY);
-                healthNumberSprite.Draw(spriteBatch, HealthNumberX, HealthNumberY);
+                playerHealth.Draw(spriteBatch);
             }
         }
 
@@ -512,6 +483,7 @@ namespace CaveStory
             {
                 return;
             }
+            playerHealth.health.TakeDamage(2);
             velocityY = Math.Min(velocityY, -ShortJumpSpeed);
             invincible = true;
             invincibleTime = TimeSpan.Zero;
