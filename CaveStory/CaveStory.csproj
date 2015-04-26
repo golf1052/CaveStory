@@ -71,6 +71,7 @@
     <Compile Include="SpriteState.cs" />
     <Compile Include="Tile.cs" />
     <Compile Include="TileUnit.cs" />
+    <Compile Include="Timer.cs" />
     <Compile Include="Units.cs" />
     <Compile Include="VaryingWidthSprite.cs" />
     <Compile Include="VelocityUnit.cs" />

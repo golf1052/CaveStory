@@ -10,10 +10,9 @@ namespace CaveStory
 {
     public class AnimatedSprite : Sprite
     {
-        TimeSpan frameTime;
         FrameUnit numberOfFrames;
         FrameUnit currentFrame;
-        TimeSpan elapsedTime; // Elapsed time sinced the last frame change
+        Timer frameTimer;
 
         public AnimatedSprite(ContentManager Content,
             string fileName,
@@ -21,19 +20,17 @@ namespace CaveStory
             PixelUnit width, PixelUnit height,
             int fps, FrameUnit numberOfFrames) : base(Content, fileName, sourceX, sourceY, width, height)
         {
-            frameTime = TimeSpan.FromMilliseconds(1000 / fps);
+            frameTimer = new Timer(TimeSpan.FromMilliseconds(1000 / fps));
             this.numberOfFrames = numberOfFrames;
             currentFrame = 0;
-            elapsedTime = TimeSpan.Zero;
         }
 
         public override void Update(GameTime gameTime)
         {
-            elapsedTime += gameTime.ElapsedGameTime;
-            if (elapsedTime > frameTime)
+            if (frameTimer.Expired)
             {
                 currentFrame++;
-                elapsedTime = TimeSpan.Zero;
+                frameTimer.Reset();
                 if (currentFrame < numberOfFrames)
                 {
                     sourceRect.X += sourceRect.Width;

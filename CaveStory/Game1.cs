@@ -5,14 +5,17 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace CaveStory
 {
     public class Game1 : Game
     {
+        public static ObjectIDGenerator objectIdGen;
         public static TileUnit ScreenWidth { get { return 20; } }
         public static TileUnit ScreenHeight { get { return 15; } }
+        public static HashSet<Timer> Timers;
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -30,12 +33,14 @@ namespace CaveStory
             Window.Position = new Point(screen.Bounds.X, screen.Bounds.Y);
             graphics.PreferredBackBufferWidth = Units.TileToPixel(ScreenWidth);
             graphics.PreferredBackBufferHeight = Units.TileToPixel(ScreenHeight);
-            graphics.IsFullScreen = false;
+            graphics.IsFullScreen = true;
         }
 
         protected override void Initialize()
         {
+            objectIdGen = new ObjectIDGenerator();
             input = new Input();
+            Timers = new HashSet<Timer>();
 
             base.Initialize();
         }
@@ -125,6 +130,7 @@ namespace CaveStory
                 player.StopJump();
             }
 
+            Timer.UpdateAll(gameTime);
             player.Update(gameTime, map);
             bat.Update(gameTime, player.CenterX);
             

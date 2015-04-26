@@ -18,12 +18,12 @@ namespace CaveStory
         public HPUnit maxHealth;
         public HPUnit currentHealth;
         public HPUnit damage;
-        public TimeSpan damageTime;
+        public Timer damageTimer;
 
         public Health(ContentManager Content)
         {
             damage = 0;
-            damageTime = TimeSpan.Zero;
+            damageTimer = new Timer(PlayerHealth.DamageDelay);
             maxHealth = 6;
             currentHealth = 6;
         }
@@ -36,7 +36,7 @@ namespace CaveStory
         public bool TakeDamage(HPUnit damage)
         {
             this.damage = damage;
-            damageTime = TimeSpan.Zero;
+            damageTimer.Reset();
             healthFillSprite.Width = Units.GameToPixel(FillOffset(currentHealth - damage));
             damageFillSprite.Width = Units.GameToPixel(FillOffset(damage));
             return false;

@@ -84,8 +84,7 @@ namespace CaveStory
         private bool jumpActive;
         PlayerHealth playerHealth;
         bool interacting;
-        bool invincible;
-        TimeSpan invincibleTime;
+        Timer invincibleTimer;
 
         Dictionary<SpriteState, Sprite> sprites;
 
@@ -136,8 +135,7 @@ namespace CaveStory
             jumpActive = false;
             playerHealth = new PlayerHealth(Content);
             interacting = false;
-            invincible = false;
-            invincibleTime = TimeSpan.Zero;
+            invincibleTimer = new Timer(InvincibleTime);
         }
 
         public void InitializeSprites(ContentManager Content)
@@ -249,12 +247,6 @@ namespace CaveStory
         public void Update(GameTime gameTime, Map map)
         {
             sprites[SpriteState].Update(gameTime);
-
-            if (invincible)
-            {
-                invincibleTime += gameTime.ElapsedGameTime;
-                invincible = invincibleTime < InvincibleTime;
-            }
 
             playerHealth.Update(gameTime);
 
@@ -479,19 +471,18 @@ namespace CaveStory
 
         public void TakeDamage()
         {
-            if (invincible)
+            if (invincibleTimer.Active)
             {
                 return;
             }
             playerHealth.health.TakeDamage(2);
             velocityY = Math.Min(velocityY, -ShortJumpSpeed);
-            invincible = true;
-            invincibleTime = TimeSpan.Zero;
+            invincibleTimer.Reset();
         }
 
         bool SpriteIsVisible()
         {
-            return !(invincible && invincibleTime.Ticks / InvincibleFlashTime.Ticks % 2 == 0);
+            return !(invincibleTimer.Active && invincibleTimer.CurrentTime.Ticks / InvincibleFlashTime.Ticks % 2 == 0);
         }
     }
 }

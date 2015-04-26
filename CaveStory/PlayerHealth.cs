@@ -33,7 +33,7 @@ namespace CaveStory
         static GameUnit HealthNumberY { get { return Units.TileToGame(2); } }
         const int HealthNumberNumDigits = 2;
         const string SpritePath = "TextBox";
-        static TimeSpan DamageDelay { get { return TimeSpan.FromMilliseconds(1500); } }
+        public static TimeSpan DamageDelay { get { return TimeSpan.FromMilliseconds(1500); } }
         public Health health;
 
         public PlayerHealth(ContentManager Content)
@@ -55,14 +55,10 @@ namespace CaveStory
 
         public void Update(GameTime gameTime)
         {
-            if (health.damage > 0)
+            if (health.damage > 0 && health.damageTimer.Expired)
             {
-                health.damageTime += gameTime.ElapsedGameTime;
-                if (health.damageTime > DamageDelay)
-                {
-                    health.currentHealth -= health.damage;
-                    health.damage = 0;
-                }
+                health.currentHealth -= health.damage;
+                health.damage = 0;
             }
         }
 
