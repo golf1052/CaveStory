@@ -31,12 +31,13 @@ namespace CaveStory
         
         static GameUnit SourceWidth { get { return Units.HalfTile; } }
         static GameUnit SourceHeight { get { return Units.HalfTile; } }
+        const int Radix = 10;
 
-        List<Sprite> reversedSprites;
+        List<Sprite> reversedGlyphs;
         GameUnit padding;
 
-        public GameUnit Width { get { return Units.HalfTile * reversedSprites.Count; } }
-        public GameUnit Height { get { return Units.HalfTile; } }
+        private GameUnit Width { get { return Units.HalfTile * reversedGlyphs.Count; } }
+        private GameUnit Height { get { return Units.HalfTile; } }
 
         ContentManager Content;
         public int number;
@@ -69,19 +70,19 @@ namespace CaveStory
             this.op = op;
         }
 
-        void LoadNumber()
+        public void LoadNumber()
         {
-            reversedSprites = new List<Sprite>();
+            reversedGlyphs = new List<Sprite>();
             GameUnit sourceY = color == ColorType.Red ? SourceRedY : SourceWhiteY;
             padding = 0;
             int digitCount = 0;
             do
             {
-                int digit = number % 10;
-                reversedSprites.Add(new Sprite(Content, SpritePath,
+                int digit = number % Radix;
+                reversedGlyphs.Add(new Sprite(Content, SpritePath,
                     Units.GameToPixel(digit * Units.HalfTile), Units.GameToPixel(sourceY),
                     Units.GameToPixel(SourceWidth), Units.GameToPixel(SourceHeight)));
-                number /= 10;
+                number /= Radix;
                 digitCount++;
             }
             while (number != 0);
@@ -90,12 +91,12 @@ namespace CaveStory
             switch (op)
             {
                 case OperatorType.Plus:
-                    reversedSprites.Add(new Sprite(Content, SpritePath,
+                    reversedGlyphs.Add(new Sprite(Content, SpritePath,
                         Units.GameToPixel(PlusSourceX), Units.GameToPixel(OpSourceY),
                         Units.GameToPixel(SourceWidth), Units.GameToPixel(SourceHeight)));
                     break;
                 case OperatorType.Minus:
-                    reversedSprites.Add(new Sprite(Content, SpritePath,
+                    reversedGlyphs.Add(new Sprite(Content, SpritePath,
                         Units.GameToPixel(MinusSourceX), Units.GameToPixel(OpSourceY),
                         Units.GameToPixel(SourceWidth), Units.GameToPixel(SourceHeight)));
                     break;
@@ -106,12 +107,16 @@ namespace CaveStory
 
         public void Draw(SpriteBatch spriteBatch, GameUnit x, GameUnit y)
         {
-            LoadNumber();
-            for (int i = 0; i < reversedSprites.Count; i++)
+            for (int i = 0; i < reversedGlyphs.Count; i++)
             {
-                GameUnit offset = Units.HalfTile * (reversedSprites.Count - 1 - i);
-                reversedSprites[i].Draw(spriteBatch, x + offset + padding, y);
+                GameUnit offset = Units.HalfTile * (reversedGlyphs.Count - 1 - i);
+                reversedGlyphs[i].Draw(spriteBatch, x + offset + padding, y);
             }
+        }
+
+        public void DrawCentered(SpriteBatch spriteBatch, GameUnit x, GameUnit y)
+        {
+            Draw(spriteBatch, x - Width / 2, y - Height / 2);
         }
     }
 }

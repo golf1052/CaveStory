@@ -9,16 +9,16 @@ namespace CaveStory
 {
     public class Timer
     {
+        static HashSet<Timer> timers = new HashSet<Timer>();
         private TimeSpan currentTime;
 
         // Assumes the user knows if this is active or not
         public TimeSpan CurrentTime { get { return currentTime; } }
-        public TimeSpan expirationTime;
+        private TimeSpan expirationTime;
         public bool Active { get { return currentTime < expirationTime; } }
         public bool Expired { get { return !Active; } }
         
         private long classInstanceId;
-        //static HashSet<Timer> timers;
 
         public Timer(TimeSpan expirationTime)
         {
@@ -26,7 +26,7 @@ namespace CaveStory
             classInstanceId = Game1.objectIdGen.GetId(this, out known);
             currentTime = expirationTime;
             this.expirationTime = expirationTime;
-            Game1.Timers.Add(this);
+            Timer.timers.Add(this);
         }
 
         public void Reset()
@@ -44,27 +44,9 @@ namespace CaveStory
 
         public static void UpdateAll(GameTime gameTime)
         {
-            foreach (Timer timer in Game1.Timers)
+            foreach (Timer timer in Timer.timers)
             {
                 timer.Update(gameTime);
-            }
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj == null)
-            {
-                return false;
-            }
-            else
-            {
-                Timer objTimer = obj as Timer;
-                if (objTimer == null)
-                {
-                    return false;
-                }
-                return CurrentTime == objTimer.CurrentTime && expirationTime == objTimer.expirationTime &&
-                    Active == objTimer.Active && Expired == objTimer.Expired;
             }
         }
 

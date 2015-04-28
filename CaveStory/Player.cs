@@ -63,6 +63,7 @@ namespace CaveStory
 
         GameUnit x;
         public GameUnit CenterX { get { return x + Units.HalfTile; } }
+        public GameUnit CenterY { get { return y + Units.HalfTile; } }
         GameUnit y;
         VelocityUnit velocityX;
         VelocityUnit velocityY;
@@ -85,6 +86,7 @@ namespace CaveStory
         PlayerHealth playerHealth;
         bool interacting;
         Timer invincibleTimer;
+        DamageText damageText;
 
         Dictionary<SpriteState, Sprite> sprites;
 
@@ -136,6 +138,7 @@ namespace CaveStory
             playerHealth = new PlayerHealth(Content);
             interacting = false;
             invincibleTimer = new Timer(InvincibleTime);
+            damageText = new DamageText(Content);
         }
 
         public void InitializeSprites(ContentManager Content)
@@ -249,6 +252,7 @@ namespace CaveStory
             sprites[SpriteState].Update(gameTime);
 
             playerHealth.Update(gameTime);
+            damageText.Update(gameTime);
 
             UpdateX(gameTime, map);
             UpdateY(gameTime, map);
@@ -452,6 +456,7 @@ namespace CaveStory
             {
                 playerHealth.Draw(spriteBatch);
             }
+            damageText.Draw(spriteBatch, CenterX, CenterY);
         }
 
         public void StartJump()
@@ -469,13 +474,14 @@ namespace CaveStory
             jumpActive = false;
         }
 
-        public void TakeDamage()
+        public void TakeDamage(HPUnit damage)
         {
             if (invincibleTimer.Active)
             {
                 return;
             }
-            playerHealth.health.TakeDamage(2);
+            playerHealth.health.TakeDamage(damage);
+            damageText.Damage = damage;
             velocityY = Math.Min(velocityY, -ShortJumpSpeed);
             invincibleTimer.Reset();
         }

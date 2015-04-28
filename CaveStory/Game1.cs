@@ -15,7 +15,6 @@ namespace CaveStory
         public static ObjectIDGenerator objectIdGen;
         public static TileUnit ScreenWidth { get { return 20; } }
         public static TileUnit ScreenHeight { get { return 15; } }
-        public static HashSet<Timer> Timers;
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -33,14 +32,13 @@ namespace CaveStory
             Window.Position = new Point(screen.Bounds.X, screen.Bounds.Y);
             graphics.PreferredBackBufferWidth = Units.TileToPixel(ScreenWidth);
             graphics.PreferredBackBufferHeight = Units.TileToPixel(ScreenHeight);
-            graphics.IsFullScreen = true;
+            graphics.IsFullScreen = false;
         }
 
         protected override void Initialize()
         {
             objectIdGen = new ObjectIDGenerator();
             input = new Input();
-            Timers = new HashSet<Timer>();
 
             base.Initialize();
         }
@@ -136,7 +134,7 @@ namespace CaveStory
             
             if (bat.DamageRectangle.Intersects(player.DamageRectangle))
             {
-                player.TakeDamage();
+                player.TakeDamage(bat.ContactDamage);
             }
 
             input.EndFrame();

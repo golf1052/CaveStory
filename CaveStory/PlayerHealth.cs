@@ -71,6 +71,7 @@ namespace CaveStory
                 health.damageFillSprite.Draw(spriteBatch, HealthFillX + health.FillOffset(health.currentHealth - health.damage), HealthFillY);
             }
             health.healthNumberSprite.number = health.currentHealth;
+            health.healthNumberSprite.LoadNumber();
             health.healthNumberSprite.Draw(spriteBatch, HealthNumberX, HealthNumberY);
         }
     }

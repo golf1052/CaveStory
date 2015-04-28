@@ -45,21 +45,11 @@ namespace CaveStory
         }
         Facing facing;
 
-        public BatSpriteState SpriteState
-        {
-            get
-            {
-                return new BatSpriteState(facing);
-            }
-        }
+        public BatSpriteState SpriteState { get { return new BatSpriteState(facing); } }
 
-        static GameUnit FlightAmplitude
-        {
-            get
-            {
-                return 5 * Units.HalfTile;
-            }
-        }
+        static GameUnit FlightAmplitude { get { return 5 * Units.HalfTile; } }
+
+        public HPUnit ContactDamage { get { return 1; } }
 
         Dictionary<BatSpriteState, Sprite> sprites;
 
