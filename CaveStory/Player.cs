@@ -88,6 +88,8 @@ namespace CaveStory
         Timer invincibleTimer;
         DamageText damageText;
 
+        PolarStar polarStar;
+
         Dictionary<SpriteState, Sprite> sprites;
 
         public SpriteState SpriteState
@@ -139,6 +141,7 @@ namespace CaveStory
             interacting = false;
             invincibleTimer = new Timer(InvincibleTime);
             damageText = new DamageText(Content);
+            polarStar = new PolarStar(Content);
         }
 
         public void InitializeSprites(ContentManager Content)
@@ -446,6 +449,7 @@ namespace CaveStory
         {
             if (SpriteIsVisible())
             {
+                polarStar.Draw(spriteBatch, horizontalFacing, verticalFacing, x, y);
                 sprites[SpriteState].Draw(spriteBatch, x, y);
             }
         }

@@ -67,6 +67,7 @@
     <Compile Include="PixelUnit.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="PlayerHealth.cs" />
+    <Compile Include="PolarStar.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Sprite.cs" />
     <Compile Include="SpriteState.cs" />
