@@ -9,28 +9,13 @@ namespace CaveStory
 {
     public struct PolarStarSpriteState
     {
-        public SpriteState.HorizontalFacing horizontalFacing;
-        public SpriteState.VerticalFacing verticalFacing;
+        private Tuple<SpriteState.HorizontalFacing, SpriteState.VerticalFacing> tuple;
+        public SpriteState.HorizontalFacing HorizontalFacing { get { return tuple.Item1; } }
+        public SpriteState.VerticalFacing VerticalFacing { get { return tuple.Item2; } }
 
-        public PolarStarSpriteState(SpriteState.HorizontalFacing horizontalFacing,
-            SpriteState.VerticalFacing verticalFacing)
+        public PolarStarSpriteState(Tuple<SpriteState.HorizontalFacing, SpriteState.VerticalFacing> tuple)
         {
-            this.horizontalFacing = horizontalFacing;
-            this.verticalFacing = verticalFacing;
-        }
-
-        public static bool operator < (PolarStarSpriteState a, PolarStarSpriteState b)
-        {
-            if (a.horizontalFacing != b.horizontalFacing)
-            {
-                return a.horizontalFacing < b.horizontalFacing;
-            }
-            return a.verticalFacing < b.verticalFacing;
-        }
-
-        public static bool operator > (PolarStarSpriteState a, PolarStarSpriteState b)
-        {
-            return b < a;
+            this.tuple = tuple;
         }
     }
 
@@ -66,16 +51,18 @@ namespace CaveStory
                     verticalFacing < SpriteState.VerticalFacing.LastVerticalFacing;
                     ++verticalFacing)
                 {
-                    InitializeSprite(Content, new PolarStarSpriteState(horizontalFacing, verticalFacing));
+                    InitializeSprite(Content, new PolarStarSpriteState(
+                        new Tuple<SpriteState.HorizontalFacing, SpriteState.VerticalFacing>(
+                            horizontalFacing, verticalFacing)));
                 }
             }
         }
 
         public void InitializeSprite(ContentManager Content, PolarStarSpriteState spriteState)
         {
-            TileUnit tileY = spriteState.horizontalFacing == SpriteState.HorizontalFacing.Left ?
+            TileUnit tileY = spriteState.HorizontalFacing == SpriteState.HorizontalFacing.Left ?
                 Convert.ToUInt32(LeftOffset) : Convert.ToUInt32(RightOffset);
-            switch (spriteState.verticalFacing)
+            switch (spriteState.VerticalFacing)
             {
                 case SpriteState.VerticalFacing.Horizontal:
                     tileY += HorizontalOffset;
@@ -110,7 +97,8 @@ namespace CaveStory
             {
                 y += Units.HalfTile / 2;
             }
-            sprites[new PolarStarSpriteState(horizontalFacing, verticalFacing)].Draw(spriteBatch, x, y);
+            sprites[new PolarStarSpriteState(new Tuple<SpriteState.HorizontalFacing, SpriteState.VerticalFacing>(
+                horizontalFacing, verticalFacing))].Draw(spriteBatch, x, y);
         }
     }
 }

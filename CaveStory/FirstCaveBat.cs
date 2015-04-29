@@ -10,20 +10,11 @@ namespace CaveStory
 {
     public struct BatSpriteState
     {
-        public FirstCaveBat.Facing facing;
-        public BatSpriteState(FirstCaveBat.Facing facing)
+        private Tuple<SpriteState.HorizontalFacing> tuple;
+        public SpriteState.HorizontalFacing HorizontalFacing { get { return tuple.Item1; } }
+        public BatSpriteState(Tuple<SpriteState.HorizontalFacing> tuple)
         {
-            this.facing = facing;
-        }
-
-        public static bool operator < (BatSpriteState a, BatSpriteState b)
-        {
-            return a.facing < b.facing;
-        }
-
-        public static bool operator > (BatSpriteState a, BatSpriteState b)
-        {
-            return b < a;
+            this.tuple = tuple;
         }
     }
 
@@ -36,16 +27,10 @@ namespace CaveStory
         static int FlyFps { get { return 13; } }
         DegreesUnit flightAngle;
         static AngularVelocityUnit AngularVelocity { get { return 120.0f / 1000.0f; } }
-        public enum Facing
-        {
-            FirstFacing,
-            Left = FirstFacing,
-            Right,
-            LastFacing
-        }
-        Facing facing;
+        SpriteState.HorizontalFacing facing;
 
-        public BatSpriteState SpriteState { get { return new BatSpriteState(facing); } }
+        public BatSpriteState SpriteState { get { return new BatSpriteState(
+            new Tuple<SpriteState.HorizontalFacing>(facing)); } }
 
         static GameUnit FlightAmplitude { get { return 5 * Units.HalfTile; } }
 
@@ -72,21 +57,22 @@ namespace CaveStory
             this.y = y;
             centerY = y;
             flightAngle = 0.0f;
-            facing = Facing.Right;
+            facing = CaveStory.SpriteState.HorizontalFacing.Right;
             InitializeSprites(Content);
         }
 
         public void InitializeSprites(ContentManager Content)
         {
-            for (Facing facing = Facing.FirstFacing; facing < Facing.LastFacing; facing++)
+            for (SpriteState.HorizontalFacing facing = CaveStory.SpriteState.HorizontalFacing.FirstHorizontalFacing;
+                facing < CaveStory.SpriteState.HorizontalFacing.LastHorizontalFacing; facing++)
             {
-                InitializeSprite(Content, new BatSpriteState(facing));
+                InitializeSprite(Content, new BatSpriteState(new Tuple<SpriteState.HorizontalFacing>(facing)));
             }
         }
 
         public void InitializeSprite(ContentManager Content, BatSpriteState spriteState)
         {
-            TileUnit tileY = spriteState.facing == Facing.Right ? (uint)3 : (uint)2;
+            TileUnit tileY = spriteState.HorizontalFacing == CaveStory.SpriteState.HorizontalFacing.Right ? (uint)3 : (uint)2;
             sprites[spriteState] = new AnimatedSprite(Content, "Npc\\NpcCemet",
                 Units.TileToPixel(2), Units.TileToPixel(tileY),
                 Units.TileToPixel(1), Units.TileToPixel(1),
@@ -98,7 +84,7 @@ namespace CaveStory
             flightAngle += AngularVelocity *
                 (float)gameTime.ElapsedGameTime.TotalMilliseconds;
             facing = x + Units.HalfTile > playerX ?
-                Facing.Left : Facing.Right;
+                CaveStory.SpriteState.HorizontalFacing.Left : CaveStory.SpriteState.HorizontalFacing.Right;
             y = centerY + FlightAmplitude * (float)Math.Sin(MathHelper.ToRadians(flightAngle));
             sprites[SpriteState].Update(gameTime);
         }

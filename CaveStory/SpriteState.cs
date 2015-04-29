@@ -35,39 +35,14 @@ namespace CaveStory
             LastVerticalFacing
         }
 
-        public MotionType motionType;
-        public HorizontalFacing horizontalFacing;
-        public VerticalFacing verticalFacing;
+        private Tuple<MotionType, HorizontalFacing, VerticalFacing> tuple;
+        public MotionType motionType { get { return tuple.Item1; } }
+        public HorizontalFacing horizontalFacing { get { return tuple.Item2; } }
+        public VerticalFacing verticalFacing { get { return tuple.Item3; } }
 
-        public SpriteState(MotionType motionType = MotionType.Standing,
-            HorizontalFacing horizontalFacing = HorizontalFacing.Left,
-            VerticalFacing verticalFacing = VerticalFacing.Horizontal)
+        public SpriteState(Tuple<MotionType, HorizontalFacing, VerticalFacing> tuple)
         {
-            this.motionType = motionType;
-            this.horizontalFacing = horizontalFacing;
-            this.verticalFacing = verticalFacing;
-        }
-
-        public static bool operator < (SpriteState a, SpriteState b)
-        {
-            if (a.motionType != b.motionType)
-            {
-                return a.motionType < b.motionType;
-            }
-            if (a.horizontalFacing != b.horizontalFacing)
-            {
-                return a.horizontalFacing < b.horizontalFacing;
-            }
-            if (a.verticalFacing != b.verticalFacing)
-            {
-                return a.verticalFacing < b.verticalFacing;
-            }
-            return false;
-        }
-
-        public static bool operator > (SpriteState a, SpriteState b)
-        {
-            return b < a;
+            this.tuple = tuple;
         }
     }
 }

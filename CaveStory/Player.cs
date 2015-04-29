@@ -109,7 +109,9 @@ namespace CaveStory
                 {
                     motion = velocityY < 0.0f ? SpriteState.MotionType.Jumping : SpriteState.MotionType.Falling;
                 }
-                return new SpriteState(motion, horizontalFacing, verticalFacing);
+                return new SpriteState(
+                    new Tuple<SpriteState.MotionType, SpriteState.HorizontalFacing, SpriteState.VerticalFacing>(
+                        motion, horizontalFacing, verticalFacing));
             }
         }
 
@@ -160,7 +162,9 @@ namespace CaveStory
                         verticalFacing < SpriteState.VerticalFacing.LastVerticalFacing;
                         ++verticalFacing)
                     {
-                        InitializeSprite(Content, new SpriteState(motionType, horizontalFacing, verticalFacing));
+                        InitializeSprite(Content, new SpriteState(
+                            new Tuple<SpriteState.MotionType, SpriteState.HorizontalFacing, SpriteState.VerticalFacing>(
+                                motionType, horizontalFacing, verticalFacing)));
                     }
                 }
             }
