@@ -9,11 +9,6 @@ namespace CaveStory
     {
         public float Value { get; set; }
 
-        public DegreesUnit()
-        {
-            Value = 0.0f;
-        }
-
         public DegreesUnit(float value)
         {
             Value = value;

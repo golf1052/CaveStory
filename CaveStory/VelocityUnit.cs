@@ -12,11 +12,6 @@ namespace CaveStory
     {
         public float Value { get; set; }
 
-        public VelocityUnit()
-        {
-            Value = 0.0f;
-        }
-
         public VelocityUnit(float value)
         {
             Value = value;

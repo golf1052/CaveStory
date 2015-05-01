@@ -127,7 +127,7 @@ namespace CaveStory
         VelocityUnit velocityY;
         int accelerationX;
         SpriteState.HorizontalFacing horizontalFacing;
-        SpriteState.VerticalFacing verticalFacing;
+        SpriteState.VerticalFacing intendedVerticalFacing;
         private bool onGround;
         public SpriteState.MotionType MotionType
         {
@@ -160,6 +160,14 @@ namespace CaveStory
                 onGround = value;
             }
         }
+        public SpriteState.VerticalFacing VerticalFacing
+        {
+            get
+            {
+                return OnGround && intendedVerticalFacing == SpriteState.VerticalFacing.Down ?
+                    SpriteState.VerticalFacing.Horizontal : intendedVerticalFacing;
+            }
+        }
         private bool jumpActive;
         PlayerHealth playerHealth;
         bool interacting;
@@ -178,7 +186,7 @@ namespace CaveStory
             {
                 return new SpriteState(
                     new Tuple<SpriteState.MotionType, SpriteState.HorizontalFacing, SpriteState.VerticalFacing, SpriteState.StrideType>(
-                        MotionType, horizontalFacing, verticalFacing, walkingAnimation.Stride));
+                        MotionType, horizontalFacing, VerticalFacing, walkingAnimation.Stride));
             }
         }
 
@@ -203,7 +211,7 @@ namespace CaveStory
             velocityY = 0;
             accelerationX = 0;
             horizontalFacing = SpriteState.HorizontalFacing.Left;
-            verticalFacing = SpriteState.VerticalFacing.Horizontal;
+            intendedVerticalFacing = SpriteState.VerticalFacing.Horizontal;
             walkingAnimation = new WalkingAnimation();
             onGround = false;
             jumpActive = false;
@@ -267,10 +275,19 @@ namespace CaveStory
                 case SpriteState.MotionType.LastMotionType:
                     break;
             }
-
-            if (spriteState.verticalFacing == SpriteState.VerticalFacing.Up)
+            
+            switch (spriteState.verticalFacing)
             {
-                tileX = tileX + Convert.ToUInt32(UpFrameOffset);
+                case SpriteState.VerticalFacing.Horizontal:
+                    break;
+                case SpriteState.VerticalFacing.Up:
+                    tileX += Convert.ToUInt32(UpFrameOffset);
+                    break;
+                case SpriteState.VerticalFacing.Down:
+                    tileX = Convert.ToUInt32(DownFrame);
+                    break;
+                default:
+                    break;
             }
 
             if (spriteState.motionType == SpriteState.MotionType.Walking)
@@ -294,11 +311,6 @@ namespace CaveStory
             }
             else
             {
-                if (spriteState.verticalFacing == SpriteState.VerticalFacing.Down &&
-                    (spriteState.motionType == SpriteState.MotionType.Jumping || spriteState.motionType == SpriteState.MotionType.Falling))
-                {
-                    tileX = Convert.ToUInt32(DownFrame);
-                }
                 sprites.Add(spriteState, new Sprite(Content, SpriteFilePath,
                     Units.TileToPixel(tileX), Units.TileToPixel(tileY),
                     Units.TileToPixel(1), Units.TileToPixel(1)));
@@ -524,22 +536,22 @@ namespace CaveStory
         public void LookUp()
         {
             interacting = false;
-            verticalFacing = SpriteState.VerticalFacing.Up;
+            intendedVerticalFacing = SpriteState.VerticalFacing.Up;
         }
 
         public void LookDown()
         {
-            if (verticalFacing == SpriteState.VerticalFacing.Down)
+            if (intendedVerticalFacing == SpriteState.VerticalFacing.Down)
             {
                 return;
             }
             interacting = OnGround;
-            verticalFacing = SpriteState.VerticalFacing.Down;
+            intendedVerticalFacing = SpriteState.VerticalFacing.Down;
         }
 
         public void LookHorizontal()
         {
-            verticalFacing = SpriteState.VerticalFacing.Horizontal;
+            intendedVerticalFacing = SpriteState.VerticalFacing.Horizontal;
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -548,7 +560,7 @@ namespace CaveStory
             {
                 bool gunUp = MotionType == SpriteState.MotionType.Walking &&
                     walkingAnimation.Stride != SpriteState.StrideType.StrideMiddle;
-                polarStar.Draw(spriteBatch, horizontalFacing, verticalFacing, gunUp, x, y);
+                polarStar.Draw(spriteBatch, horizontalFacing, VerticalFacing, gunUp, x, y);
                 sprites[SpriteState].Draw(spriteBatch, x, y);
             }
         }

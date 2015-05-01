@@ -12,11 +12,6 @@ namespace CaveStory
     {
         public int Value { get; set; }
 
-        public PixelUnit()
-        {
-            Value = 0;
-        }
-
         public PixelUnit(int value)
         {
             Value = value;

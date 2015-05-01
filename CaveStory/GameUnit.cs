@@ -13,11 +13,6 @@ namespace CaveStory
     {
         public float Value { get; set; }
 
-        public GameUnit()
-        {
-            Value = 0.0f;
-        }
-
         public GameUnit(float value)
         {
             Value = value;

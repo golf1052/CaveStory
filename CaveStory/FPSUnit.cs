@@ -12,11 +12,6 @@ namespace CaveStory
     {
         public uint Value { get; set; }
 
-        public FPSUnit()
-        {
-            Value = 0;
-        }
-
         public FPSUnit(uint value)
         {
             Value = value;

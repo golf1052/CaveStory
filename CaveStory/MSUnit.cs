@@ -12,11 +12,6 @@ namespace CaveStory
     {
         public uint Value { get; set; }
 
-        public MSUnit()
-        {
-            Value = 0;
-        }
-
         public MSUnit(uint value)
         {
             Value = value;

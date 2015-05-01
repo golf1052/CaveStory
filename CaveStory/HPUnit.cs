@@ -9,11 +9,6 @@ namespace CaveStory
     {
         public int Value { get; set; }
 
-        public HPUnit()
-        {
-            Value = 0;
-        }
-
         public HPUnit(int value)
         {
             Value = value;
