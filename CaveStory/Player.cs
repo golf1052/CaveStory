@@ -11,6 +11,64 @@ namespace CaveStory
 {
     public class Player
     {
+        private class WalkingAnimation
+        {
+            public SpriteState.StrideType Stride
+            {
+                get
+                {
+                    switch (currentFrame)
+                    {
+                        case 0:
+                            return SpriteState.StrideType.StrideLeft;
+                        case 1:
+                            return SpriteState.StrideType.StrideMiddle;
+                        case 2:
+                            return SpriteState.StrideType.StrideRight;
+                        default:
+                            return SpriteState.StrideType.StrideMiddle;
+                    }
+                }
+            }
+
+            Timer frameTimer;
+            int currentFrame;
+            bool forward;
+
+            public WalkingAnimation()
+            {
+                frameTimer = new Timer(TimeSpan.FromMilliseconds(1000 / WalkFps));
+                currentFrame = 0;
+                forward = true;
+            }
+
+            public void Reset()
+            {
+                forward = true;
+                currentFrame = 0;
+                frameTimer.Reset(); 
+            }
+
+            public void Update()
+            {
+                if (frameTimer.Expired)
+                {
+                    frameTimer.Reset();
+
+                    if (forward)
+                    {
+                        currentFrame++;
+                        forward = currentFrame != NumWalkFrames - 1;
+                    }
+                    else
+                    {
+                        currentFrame--;
+                        forward = currentFrame == 0;
+                    }
+                }
+            }
+        }
+
         // Walk Motion
         // (pixels / millisecond) / millisecond
         static AccelerationUnit Friction { get { return 0.00049804687f; } }
@@ -71,6 +129,26 @@ namespace CaveStory
         SpriteState.HorizontalFacing horizontalFacing;
         SpriteState.VerticalFacing verticalFacing;
         private bool onGround;
+        public SpriteState.MotionType MotionType
+        {
+            get
+            {
+                SpriteState.MotionType motion;
+                if (interacting)
+                {
+                    motion = SpriteState.MotionType.Interacting;
+                }
+                else if (OnGround)
+                {
+                    motion = accelerationX == 0 ? SpriteState.MotionType.Standing : SpriteState.MotionType.Walking;
+                }
+                else
+                {
+                    motion = velocityY < 0.0f ? SpriteState.MotionType.Jumping : SpriteState.MotionType.Falling;
+                }
+                return motion;
+            }
+        }
         bool OnGround
         {
             get
@@ -88,6 +166,8 @@ namespace CaveStory
         Timer invincibleTimer;
         DamageText damageText;
 
+        WalkingAnimation walkingAnimation;
+
         PolarStar polarStar;
 
         Dictionary<SpriteState, Sprite> sprites;
@@ -96,22 +176,9 @@ namespace CaveStory
         {
             get
             {
-                SpriteState.MotionType motion;
-                if (interacting)
-                {
-                    motion = SpriteState.MotionType.Interacting;
-                }
-                else if (OnGround)
-                {
-                    motion = accelerationX == 0 ? SpriteState.MotionType.Standing : SpriteState.MotionType.Walking;
-                }
-                else
-                {
-                    motion = velocityY < 0.0f ? SpriteState.MotionType.Jumping : SpriteState.MotionType.Falling;
-                }
                 return new SpriteState(
-                    new Tuple<SpriteState.MotionType, SpriteState.HorizontalFacing, SpriteState.VerticalFacing>(
-                        motion, horizontalFacing, verticalFacing));
+                    new Tuple<SpriteState.MotionType, SpriteState.HorizontalFacing, SpriteState.VerticalFacing, SpriteState.StrideType>(
+                        MotionType, horizontalFacing, verticalFacing, walkingAnimation.Stride));
             }
         }
 
@@ -137,6 +204,7 @@ namespace CaveStory
             accelerationX = 0;
             horizontalFacing = SpriteState.HorizontalFacing.Left;
             verticalFacing = SpriteState.VerticalFacing.Horizontal;
+            walkingAnimation = new WalkingAnimation();
             onGround = false;
             jumpActive = false;
             playerHealth = new PlayerHealth(Content);
@@ -162,9 +230,12 @@ namespace CaveStory
                         verticalFacing < SpriteState.VerticalFacing.LastVerticalFacing;
                         ++verticalFacing)
                     {
+                        for (SpriteState.StrideType strideType = SpriteState.StrideType.FirstStrideType;
+                            strideType < SpriteState.StrideType.LastStrideType;
+                            ++strideType)
                         InitializeSprite(Content, new SpriteState(
-                            new Tuple<SpriteState.MotionType, SpriteState.HorizontalFacing, SpriteState.VerticalFacing>(
-                                motionType, horizontalFacing, verticalFacing)));
+                            new Tuple<SpriteState.MotionType, SpriteState.HorizontalFacing, SpriteState.VerticalFacing, SpriteState.StrideType>(
+                                motionType, horizontalFacing, verticalFacing, strideType)));
                     }
                 }
             }
@@ -204,10 +275,22 @@ namespace CaveStory
 
             if (spriteState.motionType == SpriteState.MotionType.Walking)
             {
-                sprites.Add(spriteState, new AnimatedSprite(Content, SpriteFilePath,
+                switch (spriteState.strideType)
+                {
+                    case SpriteState.StrideType.StrideMiddle:
+                        break;
+                    case SpriteState.StrideType.StrideLeft:
+                        tileX += 1;
+                        break;
+                    case SpriteState.StrideType.StrideRight:
+                        tileX += 2;
+                        break;
+                    default:
+                        break;
+                }
+                sprites.Add(spriteState, new Sprite(Content, SpriteFilePath,
                     Units.TileToPixel(tileX), Units.TileToPixel(tileY),
-                    Units.TileToPixel(1), Units.TileToPixel(1), 
-                    WalkFps, NumWalkFrames));
+                    Units.TileToPixel(1), Units.TileToPixel(1)));
             }
             else
             {
@@ -260,6 +343,8 @@ namespace CaveStory
 
             playerHealth.Update(gameTime);
             damageText.Update(gameTime);
+
+            walkingAnimation.Update();
 
             UpdateX(gameTime, map);
             UpdateY(gameTime, map);
@@ -411,6 +496,10 @@ namespace CaveStory
 
         public void StartMovingLeft()
         {
+            if (OnGround && accelerationX == 0)
+            {
+                walkingAnimation.Reset();
+            }
             interacting = false;
             accelerationX = -1;
             horizontalFacing = SpriteState.HorizontalFacing.Left;
@@ -418,6 +507,10 @@ namespace CaveStory
 
         public void StartMovingRight()
         {
+            if (OnGround && accelerationX == 0)
+            {
+                walkingAnimation.Reset();
+            }
             interacting = false;
             accelerationX = 1;
             horizontalFacing = SpriteState.HorizontalFacing.Right;
@@ -453,7 +546,9 @@ namespace CaveStory
         {
             if (SpriteIsVisible())
             {
-                polarStar.Draw(spriteBatch, horizontalFacing, verticalFacing, x, y);
+                bool gunUp = MotionType == SpriteState.MotionType.Walking &&
+                    walkingAnimation.Stride != SpriteState.StrideType.StrideMiddle;
+                polarStar.Draw(spriteBatch, horizontalFacing, verticalFacing, gunUp, x, y);
                 sprites[SpriteState].Draw(spriteBatch, x, y);
             }
         }

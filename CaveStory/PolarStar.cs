@@ -83,6 +83,7 @@ namespace CaveStory
 
         public void Draw(SpriteBatch spriteBatch,
             SpriteState.HorizontalFacing horizontalFacing, SpriteState.VerticalFacing verticalFacing,
+            bool gunUp,
             GameUnit x, GameUnit y)
         {
             if (horizontalFacing == SpriteState.HorizontalFacing.Left)
@@ -96,6 +97,10 @@ namespace CaveStory
             else if (verticalFacing == SpriteState.VerticalFacing.Down)
             {
                 y += Units.HalfTile / 2;
+            }
+            if (gunUp)
+            {
+                y -= 2;
             }
             sprites[new PolarStarSpriteState(new Tuple<SpriteState.HorizontalFacing, SpriteState.VerticalFacing>(
                 horizontalFacing, verticalFacing))].Draw(spriteBatch, x, y);
