@@ -26,7 +26,8 @@ namespace CaveStory
         public Game1() : base()
         {
             graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";
+            Content.RootDirectory = Config.graphicsQuality == Config.GraphicsQuality.OriginalQuality ?
+                "Content/OriginalGraphics" : "Content/HighQualityGraphics";
             System.Windows.Forms.Screen screen = System.Windows.Forms.Screen.AllScreens[0];
             Window.IsBorderless = true;
             Window.Position = new Point(screen.Bounds.X, screen.Bounds.Y);

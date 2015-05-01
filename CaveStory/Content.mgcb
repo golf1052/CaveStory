@@ -13,7 +13,7 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin Content/Stage/PrtCave.pbm
+#begin Content/OriginalGraphics/Arms.pbm
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -22,9 +22,9 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:TextureFormat=Color
-/build:Content/Stage/PrtCave.pbm
+/build:Content/OriginalGraphics/Arms.pbm
 
-#begin Content/bkBlue.pbm
+#begin Content/OriginalGraphics/bkBlue.pbm
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -33,9 +33,9 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:TextureFormat=Color
-/build:Content/bkBlue.pbm
+/build:Content/OriginalGraphics/bkBlue.pbm
 
-#begin Content/MyChar.pbm
+#begin Content/OriginalGraphics/MyChar.pbm
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -44,9 +44,9 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:TextureFormat=Color
-/build:Content/MyChar.pbm
+/build:Content/OriginalGraphics/MyChar.pbm
 
-#begin Content/Npc/NpcCemet.pbm
+#begin Content/OriginalGraphics/TextBox.pbm
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -55,9 +55,9 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:TextureFormat=Color
-/build:Content/Npc/NpcCemet.pbm
+/build:Content/OriginalGraphics/TextBox.pbm
 
-#begin Content/TextBox.pbm
+#begin Content/OriginalGraphics/Npc/NpcCemet.pbm
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -66,9 +66,9 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:TextureFormat=Color
-/build:Content/TextBox.pbm
+/build:Content/OriginalGraphics/Npc/NpcCemet.pbm
 
-#begin Content/Arms.pbm
+#begin Content/OriginalGraphics/Stage/PrtCave.pbm
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -77,5 +77,5 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:TextureFormat=Color
-/build:Content/Arms.pbm
+/build:Content/OriginalGraphics/Stage/PrtCave.pbm
 

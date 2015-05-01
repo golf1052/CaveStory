@@ -17,7 +17,9 @@ namespace CaveStory
 
         public static PixelUnit GameToPixel(GameUnit game)
         {
-            return new PixelUnit((int)Math.Round(game / 2.0f));
+            return Config.graphicsQuality == Config.GraphicsQuality.OriginalQuality ?
+                new PixelUnit((int)Math.Round(game / 2.0f)) :
+                new PixelUnit((int)Math.Round(game));
         }
 
         public static TileUnit GameToTile(GameUnit game)
