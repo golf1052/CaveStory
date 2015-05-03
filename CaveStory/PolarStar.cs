@@ -19,6 +19,33 @@ namespace CaveStory
         }
     }
 
+    public class Projectile
+    {
+        Sprite sprite;
+        GameUnit x;
+        GameUnit y;
+        SpriteState.HorizontalFacing horizontalDirection;
+        SpriteState.VerticalFacing verticalDirection;
+        GameUnit offset;
+
+        public Projectile(Sprite sprite,
+            SpriteState.HorizontalFacing horizontalDirection, SpriteState.VerticalFacing verticalDirection,
+            GameUnit x, GameUnit y)
+        {
+            this.sprite = sprite;
+            this.horizontalDirection = horizontalDirection;
+            this.verticalDirection = verticalDirection;
+            this.x = x;
+            this.y = y;
+            offset = 0;
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            sprite.Draw(spriteBatch, x, y);
+        }
+    }
+
     public class PolarStar
     {
         const string SpritePath = "Arms";
@@ -54,6 +81,8 @@ namespace CaveStory
 
         Sprite horizontalProjectile;
         Sprite verticalProjectile;
+
+        Projectile projectile;
 
         public PolarStar(ContentManager Content)
         {
@@ -107,32 +136,13 @@ namespace CaveStory
                 Units.GameToPixel(GunWidth), Units.GameToPixel(GunHeight));
         }
 
-        public void Draw(SpriteBatch spriteBatch,
-            SpriteState.HorizontalFacing horizontalFacing, SpriteState.VerticalFacing verticalFacing,
-            bool gunUp,
-            GameUnit x, GameUnit y)
+        public void StartFire(GameUnit playerX, GameUnit playerY,
+            SpriteState.HorizontalFacing horizontalFacing,
+            SpriteState.VerticalFacing verticalFacing,
+            bool gunUp)
         {
-            if (horizontalFacing == SpriteState.HorizontalFacing.Left)
-            {
-                x -= Units.HalfTile;
-            }
-            if (verticalFacing == SpriteState.VerticalFacing.Up)
-            {
-                y -= Units.HalfTile / 2;
-            }
-            else if (verticalFacing == SpriteState.VerticalFacing.Down)
-            {
-                y += Units.HalfTile / 2;
-            }
-            if (gunUp)
-            {
-                y -= 2;
-            }
-            sprites[new PolarStarSpriteState(new Tuple<SpriteState.HorizontalFacing, SpriteState.VerticalFacing>(
-                horizontalFacing, verticalFacing))].Draw(spriteBatch, x, y);
-
-            GameUnit bulletX = x - Units.HalfTile;
-            GameUnit bulletY = y - Units.HalfTile;
+            GameUnit bulletX = GunX(horizontalFacing, playerX) - Units.HalfTile;
+            GameUnit bulletY = GunY(verticalFacing, gunUp, playerY) - Units.HalfTile;
             switch (verticalFacing)
             {
                 case SpriteState.VerticalFacing.Horizontal:
@@ -172,13 +182,58 @@ namespace CaveStory
                     break;
             }
 
-            if (verticalFacing == SpriteState.VerticalFacing.Horizontal)
+            projectile = new Projectile(verticalFacing == SpriteState.VerticalFacing.Horizontal ? horizontalProjectile : verticalProjectile,
+                horizontalFacing, verticalFacing, bulletX, bulletY);
+        }
+
+        public void StopFire()
+        {
+
+        }
+
+        private GameUnit GunX(SpriteState.HorizontalFacing horizontalFacing, GameUnit playerX)
+        {
+            if (horizontalFacing == SpriteState.HorizontalFacing.Left)
             {
-                horizontalProjectile.Draw(spriteBatch, bulletX, bulletY);
+                return playerX - Units.HalfTile;
             }
             else
             {
-                verticalProjectile.Draw(spriteBatch, bulletX, bulletY);
+                return playerX;
+            }
+        }
+
+        private GameUnit GunY(SpriteState.VerticalFacing verticalFacing, bool gunUp, GameUnit playerY)
+        {
+            GameUnit gunY = playerY;
+            if (verticalFacing == SpriteState.VerticalFacing.Up)
+            {
+                gunY -= Units.HalfTile / 2;
+            }
+            else if (verticalFacing == SpriteState.VerticalFacing.Down)
+            {
+                gunY += Units.HalfTile / 2;
+            }
+            if (gunUp)
+            {
+                gunY -= 2;
+            }
+            return gunY;
+        }
+
+        public void Draw(SpriteBatch spriteBatch,
+            SpriteState.HorizontalFacing horizontalFacing, SpriteState.VerticalFacing verticalFacing,
+            bool gunUp,
+            GameUnit playerX, GameUnit playerY)
+        {
+            GameUnit x = GunX(horizontalFacing, playerX);
+            GameUnit y = GunY(verticalFacing, gunUp, playerY);
+            
+            sprites[new PolarStarSpriteState(new Tuple<SpriteState.HorizontalFacing, SpriteState.VerticalFacing>(
+                horizontalFacing, verticalFacing))].Draw(spriteBatch, playerX, playerY);
+            if (projectile != null)
+            {
+                projectile.Draw(spriteBatch);
             }
         }
     }

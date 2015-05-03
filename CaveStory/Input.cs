@@ -28,7 +28,7 @@ namespace CaveStory
 
         public bool WasKeyPressed(Keys key)
         {
-            return keyboardState.IsKeyDown(key);
+            return keyboardState.IsKeyDown(key) && previousKeyboardState.IsKeyUp(key);
         }
 
         public bool WasKeyReleased(Keys key)

@@ -149,6 +149,7 @@ namespace CaveStory
                 return motion;
             }
         }
+
         bool OnGround
         {
             get
@@ -160,6 +161,16 @@ namespace CaveStory
                 onGround = value;
             }
         }
+
+        bool GunUp
+        {
+            get
+            {
+                return MotionType == SpriteState.MotionType.Walking &&
+                    walkingAnimation.Stride != SpriteState.StrideType.StrideMiddle;
+            }
+        }
+
         public SpriteState.VerticalFacing VerticalFacing
         {
             get
@@ -558,9 +569,7 @@ namespace CaveStory
         {
             if (SpriteIsVisible())
             {
-                bool gunUp = MotionType == SpriteState.MotionType.Walking &&
-                    walkingAnimation.Stride != SpriteState.StrideType.StrideMiddle;
-                polarStar.Draw(spriteBatch, horizontalFacing, VerticalFacing, gunUp, x, y);
+                polarStar.Draw(spriteBatch, horizontalFacing, VerticalFacing, GunUp, x, y);
                 sprites[SpriteState].Draw(spriteBatch, x, y);
             }
         }
@@ -587,6 +596,16 @@ namespace CaveStory
         public void StopJump()
         {
             jumpActive = false;
+        }
+
+        public void StartFire()
+        {
+            polarStar.StartFire(x, y, horizontalFacing, VerticalFacing, GunUp);
+        }
+
+        public void StopFire()
+        {
+            polarStar.StopFire();
         }
 
         public void TakeDamage(HPUnit damage)

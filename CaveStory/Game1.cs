@@ -129,6 +129,15 @@ namespace CaveStory
                 player.StopJump();
             }
 
+            if (input.WasKeyPressed(Keys.X))
+            {
+                player.StartFire();
+            }
+            else if (input.WasKeyReleased(Keys.X))
+            {
+                player.StopFire();
+            }
+
             Timer.UpdateAll(gameTime);
             player.Update(gameTime, map);
             bat.Update(gameTime, player.CenterX);
