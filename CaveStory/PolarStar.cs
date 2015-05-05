@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,9 @@ namespace CaveStory
         SpriteState.VerticalFacing verticalDirection;
         GameUnit offset;
 
+        static VelocityUnit ProjectileSpeed { get { return 0.6f; } }
+        static GameUnit ProjectileMaxOffset { get { return 7 * Units.HalfTile; } }
+
         public Projectile(Sprite sprite,
             SpriteState.HorizontalFacing horizontalDirection, SpriteState.VerticalFacing verticalDirection,
             GameUnit x, GameUnit y)
@@ -40,9 +44,43 @@ namespace CaveStory
             offset = 0;
         }
 
+        /// <summary>
+        /// Returns true if projectile is still alive
+        /// </summary>
+        /// <param name="gameTime"></param>
+        /// <returns>True if projectile is still alive</returns>
+        public bool Update(GameTime gameTime)
+        {
+            offset += (float)gameTime.ElapsedGameTime.TotalMilliseconds * ProjectileSpeed;
+            return offset < ProjectileMaxOffset;
+        }
+
         public void Draw(SpriteBatch spriteBatch)
         {
-            sprite.Draw(spriteBatch, x, y);
+            GameUnit projectileX = x;
+            GameUnit projectileY = y;
+            switch (verticalDirection)
+            {
+                case SpriteState.VerticalFacing.Horizontal:
+                    if (horizontalDirection == SpriteState.HorizontalFacing.Left)
+                    {
+                        projectileX -= offset;
+                    }
+                    else
+                    {
+                        projectileX += offset;
+                    }
+                    break;
+                case SpriteState.VerticalFacing.Up:
+                    projectileY -= offset;
+                    break;
+                case SpriteState.VerticalFacing.Down:
+                    projectileY += offset;
+                    break;
+                default:
+                    break;
+            }
+            sprite.Draw(spriteBatch, projectileX, projectileY);
         }
     }
 
@@ -82,7 +120,8 @@ namespace CaveStory
         Sprite horizontalProjectile;
         Sprite verticalProjectile;
 
-        Projectile projectile;
+        Projectile projectileA;
+        Projectile projectileB;
 
         public PolarStar(ContentManager Content)
         {
@@ -136,11 +175,33 @@ namespace CaveStory
                 Units.GameToPixel(GunWidth), Units.GameToPixel(GunHeight));
         }
 
+        public void UpdateProjectiles(GameTime gameTime)
+        {
+            if (projectileA != null)
+            {
+                if (!projectileA.Update(gameTime))
+                {
+                    projectileA = null;
+                }
+            }
+            if (projectileB != null)
+            {
+                if (!projectileB.Update(gameTime))
+                {
+                    projectileB = null;
+                }
+            }
+        }
+
         public void StartFire(GameUnit playerX, GameUnit playerY,
             SpriteState.HorizontalFacing horizontalFacing,
             SpriteState.VerticalFacing verticalFacing,
             bool gunUp)
         {
+            if (projectileA != null && projectileB != null)
+            {
+                return;
+            }
             GameUnit bulletX = GunX(horizontalFacing, playerX) - Units.HalfTile;
             GameUnit bulletY = GunY(verticalFacing, gunUp, playerY) - Units.HalfTile;
             switch (verticalFacing)
@@ -182,8 +243,16 @@ namespace CaveStory
                     break;
             }
 
-            projectile = new Projectile(verticalFacing == SpriteState.VerticalFacing.Horizontal ? horizontalProjectile : verticalProjectile,
-                horizontalFacing, verticalFacing, bulletX, bulletY);
+            if (projectileA == null)
+            {
+                projectileA = new Projectile(verticalFacing == SpriteState.VerticalFacing.Horizontal ? horizontalProjectile : verticalProjectile,
+                    horizontalFacing, verticalFacing, bulletX, bulletY);
+            }
+            else if (projectileB == null)
+            {
+                projectileB = new Projectile(verticalFacing == SpriteState.VerticalFacing.Horizontal ? horizontalProjectile : verticalProjectile,
+                    horizontalFacing, verticalFacing, bulletX, bulletY);
+            }
         }
 
         public void StopFire()
@@ -230,10 +299,14 @@ namespace CaveStory
             GameUnit y = GunY(verticalFacing, gunUp, playerY);
             
             sprites[new PolarStarSpriteState(new Tuple<SpriteState.HorizontalFacing, SpriteState.VerticalFacing>(
-                horizontalFacing, verticalFacing))].Draw(spriteBatch, playerX, playerY);
-            if (projectile != null)
+                horizontalFacing, verticalFacing))].Draw(spriteBatch, x, y);
+            if (projectileA != null)
             {
-                projectile.Draw(spriteBatch);
+                projectileA.Draw(spriteBatch);
+            }
+            if (projectileB != null)
+            {
+                projectileB.Draw(spriteBatch);
             }
         }
     }

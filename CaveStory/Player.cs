@@ -369,6 +369,8 @@ namespace CaveStory
 
             walkingAnimation.Update();
 
+            polarStar.UpdateProjectiles(gameTime);
+
             UpdateX(gameTime, map);
             UpdateY(gameTime, map);
         }
