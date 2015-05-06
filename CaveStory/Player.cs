@@ -362,14 +362,14 @@ namespace CaveStory
 
         public void Update(GameTime gameTime, Map map)
         {
-            sprites[SpriteState].Update(gameTime);
+            sprites[SpriteState].Update();
 
             playerHealth.Update(gameTime);
             damageText.Update(gameTime);
 
             walkingAnimation.Update();
 
-            polarStar.UpdateProjectiles(gameTime);
+            polarStar.UpdateProjectiles(gameTime, map);
 
             UpdateX(gameTime, map);
             UpdateY(gameTime, map);

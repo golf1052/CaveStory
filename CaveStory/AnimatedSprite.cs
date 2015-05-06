@@ -25,7 +25,7 @@ namespace CaveStory
             currentFrame = 0;
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update()
         {
             if (frameTimer.Expired)
             {

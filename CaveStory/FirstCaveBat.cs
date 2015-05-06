@@ -86,7 +86,7 @@ namespace CaveStory
             facing = x + Units.HalfTile > playerX ?
                 CaveStory.SpriteState.HorizontalFacing.Left : CaveStory.SpriteState.HorizontalFacing.Right;
             y = centerY + FlightAmplitude * (float)Math.Sin(MathHelper.ToRadians(flightAngle));
-            sprites[SpriteState].Update(gameTime);
+            sprites[SpriteState].Update();
         }
 
         public void Draw(SpriteBatch spriteBatch)

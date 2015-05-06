@@ -83,20 +83,6 @@ namespace CaveStory
             return collisionTiles;
         }
 
-        public void Update(GameTime gameTime)
-        {
-            for (int row = 0; row < tiles.Count; row++)
-            {
-                for (int col = 0; col < tiles[row].Count; col++)
-                {
-                    if (tiles[row][col].sprite != null)
-                    {
-                        tiles[row][col].sprite.Update(gameTime);
-                    }
-                }
-            }
-        }
-
         public void Draw(SpriteBatch spriteBatch)
         {
             for (TileUnit row = 0; row < tiles.Count; row++)

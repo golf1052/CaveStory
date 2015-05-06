@@ -31,6 +31,57 @@ namespace CaveStory
 
         static VelocityUnit ProjectileSpeed { get { return 0.6f; } }
         static GameUnit ProjectileMaxOffset { get { return 7 * Units.HalfTile; } }
+        static GameUnit ProjectileWidth { get { return 4; } }
+        GameUnit X
+        {
+            get
+            {
+                if (verticalDirection == SpriteState.VerticalFacing.Horizontal)
+                {
+                    if (horizontalDirection == SpriteState.HorizontalFacing.Left)
+                    {
+                        return x + -offset;
+                    }
+                    else
+                    {
+                        return x + offset;
+                    }
+                }
+                return x;
+            }
+        }
+
+        GameUnit Y
+        {
+            get
+            {
+                GameUnit projectileY = y;
+                switch (verticalDirection)
+                {
+                    case SpriteState.VerticalFacing.Up:
+                        y -= offset;
+                        break;
+                    case SpriteState.VerticalFacing.Down:
+                        y += offset;
+                        break;
+                    default:
+                        break;
+                }
+                return projectileY;
+            }
+        }
+
+        Rectangle CollisionRectangle
+        {
+            get
+            {
+                GameUnit width = verticalDirection == SpriteState.VerticalFacing.Horizontal ? Units.TileToGame(1) : ProjectileWidth;
+                GameUnit height = verticalDirection != SpriteState.VerticalFacing.Horizontal ? Units.TileToGame(1) : ProjectileWidth;
+                return new Rectangle((int)Math.Round(X + Units.HalfTile - width / 2),
+                    (int)Math.Round(Y + Units.HalfTile - height / 2),
+                    (int)Math.Round(width), (int)Math.Round(height));
+            }
+        }
 
         public Projectile(Sprite sprite,
             SpriteState.HorizontalFacing horizontalDirection, SpriteState.VerticalFacing verticalDirection,
@@ -49,38 +100,24 @@ namespace CaveStory
         /// </summary>
         /// <param name="gameTime"></param>
         /// <returns>True if projectile is still alive</returns>
-        public bool Update(GameTime gameTime)
+        public bool Update(GameTime gameTime, Map map)
         {
             offset += (float)gameTime.ElapsedGameTime.TotalMilliseconds * ProjectileSpeed;
+
+            List<CollisionTile> collidingTiles = map.GetCollidingTiles(CollisionRectangle);
+            for (int i = 0; i < collidingTiles.Count; i++)
+            {
+                if (collidingTiles[i].tileType == Tile.TileType.WallTile)
+                {
+                    return false;
+                }
+            }
             return offset < ProjectileMaxOffset;
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            GameUnit projectileX = x;
-            GameUnit projectileY = y;
-            switch (verticalDirection)
-            {
-                case SpriteState.VerticalFacing.Horizontal:
-                    if (horizontalDirection == SpriteState.HorizontalFacing.Left)
-                    {
-                        projectileX -= offset;
-                    }
-                    else
-                    {
-                        projectileX += offset;
-                    }
-                    break;
-                case SpriteState.VerticalFacing.Up:
-                    projectileY -= offset;
-                    break;
-                case SpriteState.VerticalFacing.Down:
-                    projectileY += offset;
-                    break;
-                default:
-                    break;
-            }
-            sprite.Draw(spriteBatch, projectileX, projectileY);
+            sprite.Draw(spriteBatch, X, Y);
         }
     }
 
@@ -175,18 +212,18 @@ namespace CaveStory
                 Units.GameToPixel(GunWidth), Units.GameToPixel(GunHeight));
         }
 
-        public void UpdateProjectiles(GameTime gameTime)
+        public void UpdateProjectiles(GameTime gameTime, Map map)
         {
             if (projectileA != null)
             {
-                if (!projectileA.Update(gameTime))
+                if (!projectileA.Update(gameTime, map))
                 {
                     projectileA = null;
                 }
             }
             if (projectileB != null)
             {
-                if (!projectileB.Update(gameTime))
+                if (!projectileB.Update(gameTime, map))
                 {
                     projectileB = null;
                 }

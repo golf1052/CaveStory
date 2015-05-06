@@ -24,7 +24,7 @@ namespace CaveStory
             sourceRect = new Rectangle(sourceX, sourceY, width, height);
         }
 
-        public virtual void Update(GameTime gameTime)
+        public virtual void Update()
         {
 
         }
