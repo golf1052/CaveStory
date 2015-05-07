@@ -141,7 +141,17 @@ namespace CaveStory
             Timer.UpdateAll(gameTime);
             player.Update(gameTime, map);
             bat.Update(gameTime, player.CenterX);
-            
+
+            List<IProjectile> projectiles = player.Projectiles;
+            for (int i = 0; i < projectiles.Count; i++)
+            {
+                if (bat.CollisionRectangle.Intersects(projectiles[i].CollisionRectangle))
+                {
+                    bat.TakeDamage(projectiles[i].ContactDamage);
+                    projectiles[i].CollideWithEnemy();
+                }
+            }
+
             if (bat.DamageRectangle.Intersects(player.DamageRectangle))
             {
                 player.TakeDamage(bat.ContactDamage);

@@ -20,7 +20,7 @@ namespace CaveStory
         }
     }
 
-    public class Projectile
+    public class Projectile : IProjectile
     {
         Sprite sprite;
         GameUnit x;
@@ -28,6 +28,7 @@ namespace CaveStory
         SpriteState.HorizontalFacing horizontalDirection;
         SpriteState.VerticalFacing verticalDirection;
         GameUnit offset;
+        bool alive;
 
         static VelocityUnit ProjectileSpeed { get { return 0.6f; } }
         static GameUnit ProjectileMaxOffset { get { return 7 * Units.HalfTile; } }
@@ -59,10 +60,10 @@ namespace CaveStory
                 switch (verticalDirection)
                 {
                     case SpriteState.VerticalFacing.Up:
-                        y -= offset;
+                        projectileY -= offset;
                         break;
                     case SpriteState.VerticalFacing.Down:
-                        y += offset;
+                        projectileY += offset;
                         break;
                     default:
                         break;
@@ -71,7 +72,7 @@ namespace CaveStory
             }
         }
 
-        Rectangle CollisionRectangle
+        public Rectangle CollisionRectangle
         {
             get
             {
@@ -80,6 +81,14 @@ namespace CaveStory
                 return new Rectangle((int)Math.Round(X + Units.HalfTile - width / 2),
                     (int)Math.Round(Y + Units.HalfTile - height / 2),
                     (int)Math.Round(width), (int)Math.Round(height));
+            }
+        }
+
+        public HPUnit ContactDamage
+        {
+            get
+            {
+                return 1;
             }
         }
 
@@ -93,6 +102,12 @@ namespace CaveStory
             this.x = x;
             this.y = y;
             offset = 0;
+            alive = true;
+        }
+
+        public void CollideWithEnemy()
+        {
+            alive = false;
         }
 
         /// <summary>
@@ -112,7 +127,7 @@ namespace CaveStory
                     return false;
                 }
             }
-            return offset < ProjectileMaxOffset;
+            return alive && offset < ProjectileMaxOffset;
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -159,6 +174,23 @@ namespace CaveStory
 
         Projectile projectileA;
         Projectile projectileB;
+
+        public List<IProjectile> Projectiles
+        {
+            get
+            {
+                List<IProjectile> projectiles = new List<IProjectile>();
+                if (projectileA != null)
+                {
+                    projectiles.Add(projectileA);
+                }
+                if (projectileB != null)
+                {
+                    projectiles.Add(projectileB);
+                }
+                return projectiles;
+            }
+        }
 
         public PolarStar(ContentManager Content)
         {

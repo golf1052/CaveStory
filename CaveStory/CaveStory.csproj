@@ -62,6 +62,7 @@
     <Compile Include="Health.cs" />
     <Compile Include="HPUnit.cs" />
     <Compile Include="Input.cs" />
+    <Compile Include="IProjectile.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="MSUnit.cs" />
     <Compile Include="NumberSprite.cs" />

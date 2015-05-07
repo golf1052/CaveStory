@@ -50,6 +50,14 @@ namespace CaveStory
             }
         }
 
+        public Rectangle CollisionRectangle
+        {
+            get
+            {
+                return new Rectangle((int)Math.Round(x), (int)Math.Round(y), (int)Units.TileToGame(1), (int)Units.TileToGame(1));
+            }
+        }
+
         public FirstCaveBat(ContentManager Content, GameUnit x, GameUnit y)
         {
             sprites = new Dictionary<BatSpriteState, Sprite>();
@@ -87,6 +95,11 @@ namespace CaveStory
                 CaveStory.SpriteState.HorizontalFacing.Left : CaveStory.SpriteState.HorizontalFacing.Right;
             y = centerY + FlightAmplitude * (float)Math.Sin(MathHelper.ToRadians(flightAngle));
             sprites[SpriteState].Update();
+        }
+
+        public void TakeDamage(HPUnit damage)
+        {
+            System.Diagnostics.Debug.WriteLine("{0}! Collision occurred!", damage.Value);
         }
 
         public void Draw(SpriteBatch spriteBatch)

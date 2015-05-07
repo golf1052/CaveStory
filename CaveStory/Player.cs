@@ -212,6 +212,14 @@ namespace CaveStory
             }
         }
 
+        public List<IProjectile> Projectiles
+        {
+            get
+            {
+                return polarStar.Projectiles;
+            }
+        }
+
         public Player(ContentManager Content, GameUnit x, GameUnit y)
         {
             sprites = new Dictionary<SpriteState, Sprite>();
