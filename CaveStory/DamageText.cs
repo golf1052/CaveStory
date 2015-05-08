@@ -15,14 +15,19 @@ namespace CaveStory
 
         ContentManager Content;
         GameUnit offsetY;
+        bool shouldRise;
 
         private HPUnit damage;
         public HPUnit Damage
         {
             set
             {
-                damage = value;
-                offsetY = 0;
+                shouldRise = damage == 0;
+                damage += value;
+                if (shouldRise)
+                {
+                    offsetY = 0;
+                }
                 timer.Reset();
             }
         }
@@ -32,6 +37,7 @@ namespace CaveStory
         public DamageText(ContentManager Content)
         {
             this.Content = Content;
+            shouldRise = true;
             timer = new Timer(DamageTime);
             offsetY = 0;
             damage = 0;
@@ -41,9 +47,12 @@ namespace CaveStory
         {
             if (timer.Expired)
             {
-                return;
+                damage = 0;
             }
-            offsetY = (float)Math.Max(-Units.TileToGame(1), offsetY + Velocity * gameTime.ElapsedGameTime.TotalMilliseconds);
+            else if (shouldRise)
+            {
+                offsetY = (float)Math.Max(-Units.TileToGame(1), offsetY + Velocity * gameTime.ElapsedGameTime.TotalMilliseconds);
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch, GameUnit centerX, GameUnit centerY)

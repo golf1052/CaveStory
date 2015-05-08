@@ -37,8 +37,12 @@ namespace CaveStory
         public HPUnit ContactDamage { get { return 1; } }
 
         Dictionary<BatSpriteState, Sprite> sprites;
+        DamageText damageText;
 
-        GameUnit centerY;
+        GameUnit flightCenterY;
+
+        GameUnit CenterX { get { return x + Units.HalfTile; } }
+        GameUnit CenterY { get { return y + Units.HalfTile; } }
 
         public Rectangle DamageRectangle
         {
@@ -63,9 +67,10 @@ namespace CaveStory
             sprites = new Dictionary<BatSpriteState, Sprite>();
             this.x = x;
             this.y = y;
-            centerY = y;
+            flightCenterY = y;
             flightAngle = 0.0f;
             facing = CaveStory.SpriteState.HorizontalFacing.Right;
+            damageText = new DamageText(Content);
             InitializeSprites(Content);
         }
 
@@ -91,20 +96,22 @@ namespace CaveStory
         {
             flightAngle += AngularVelocity *
                 (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            damageText.Update(gameTime);
             facing = x + Units.HalfTile > playerX ?
                 CaveStory.SpriteState.HorizontalFacing.Left : CaveStory.SpriteState.HorizontalFacing.Right;
-            y = centerY + FlightAmplitude * (float)Math.Sin(MathHelper.ToRadians(flightAngle));
+            y = flightCenterY + FlightAmplitude * (float)Math.Sin(MathHelper.ToRadians(flightAngle));
             sprites[SpriteState].Update();
         }
 
         public void TakeDamage(HPUnit damage)
         {
-            System.Diagnostics.Debug.WriteLine("{0}! Collision occurred!", damage.Value);
+            damageText.Damage = damage;
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             sprites[SpriteState].Draw(spriteBatch, x, y);
+            damageText.Draw(spriteBatch, CenterX, CenterY);
         }
     }
 }
