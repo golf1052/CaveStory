@@ -97,6 +97,7 @@ namespace CaveStory
             flightAngle += AngularVelocity *
                 (float)gameTime.ElapsedGameTime.TotalMilliseconds;
             damageText.Update(gameTime);
+            damageText.SetPosition(CenterX, CenterY);
             facing = x + Units.HalfTile > playerX ?
                 CaveStory.SpriteState.HorizontalFacing.Left : CaveStory.SpriteState.HorizontalFacing.Right;
             y = flightCenterY + FlightAmplitude * (float)Math.Sin(MathHelper.ToRadians(flightAngle));
@@ -111,7 +112,7 @@ namespace CaveStory
         public void Draw(SpriteBatch spriteBatch)
         {
             sprites[SpriteState].Draw(spriteBatch, x, y);
-            damageText.Draw(spriteBatch, CenterX, CenterY);
+            damageText.Draw(spriteBatch);
         }
     }
 }

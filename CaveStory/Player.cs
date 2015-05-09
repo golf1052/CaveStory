@@ -374,6 +374,7 @@ namespace CaveStory
 
             playerHealth.Update(gameTime);
             damageText.Update(gameTime);
+            damageText.SetPosition(CenterX, CenterY);
 
             walkingAnimation.Update();
 
@@ -590,7 +591,7 @@ namespace CaveStory
             {
                 playerHealth.Draw(spriteBatch);
             }
-            damageText.Draw(spriteBatch, CenterX, CenterY);
+            damageText.Draw(spriteBatch);
         }
 
         public void StartJump()

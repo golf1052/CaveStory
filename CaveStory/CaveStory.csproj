@@ -51,7 +51,9 @@
     <Compile Include="CollisionInfo.cs" />
     <Compile Include="CollisionTile.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="Damageable.cs" />
     <Compile Include="DamageText.cs" />
+    <Compile Include="DamageTexts.cs" />
     <Compile Include="DegreesUnit.cs" />
     <Compile Include="FirstCaveBat.cs" />
     <Compile Include="FixedBackdrop.cs" />

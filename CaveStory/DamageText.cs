@@ -16,6 +16,8 @@ namespace CaveStory
         ContentManager Content;
         GameUnit offsetY;
         bool shouldRise;
+        GameUnit centerX;
+        GameUnit centerY;
 
         private HPUnit damage;
         public HPUnit Damage
@@ -41,6 +43,8 @@ namespace CaveStory
             timer = new Timer(DamageTime);
             offsetY = 0;
             damage = 0;
+            x = 0;
+            y = 0;
         }
 
         public void Update(GameTime gameTime)
@@ -55,7 +59,13 @@ namespace CaveStory
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch, GameUnit centerX, GameUnit centerY)
+        public void SetPosition(GameUnit centerX, GameUnit centerY)
+        {
+            this.centerX = centerX;
+            this.centerY = centerY;
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
         {
             if (timer.Expired)
             {
