@@ -9,7 +9,7 @@ using System.Text;
 
 namespace CaveStory
 {
-    public class Player
+    public class Player : Damageable
     {
         private class WalkingAnimation
         {
@@ -184,6 +184,7 @@ namespace CaveStory
         bool interacting;
         Timer invincibleTimer;
         DamageText damageText;
+        public DamageText DamageText { get { return damageText; } }
 
         WalkingAnimation walkingAnimation;
 
@@ -373,8 +374,6 @@ namespace CaveStory
             sprites[SpriteState].Update();
 
             playerHealth.Update(gameTime);
-            damageText.Update(gameTime);
-            damageText.SetPosition(CenterX, CenterY);
 
             walkingAnimation.Update();
 
@@ -591,7 +590,6 @@ namespace CaveStory
             {
                 playerHealth.Draw(spriteBatch);
             }
-            damageText.Draw(spriteBatch);
         }
 
         public void StartJump()

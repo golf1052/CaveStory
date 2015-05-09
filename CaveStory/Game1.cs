@@ -22,6 +22,7 @@ namespace CaveStory
         FirstCaveBat bat;
         Map map;
         Input input;
+        DamageTexts damageTexts;
 
         public Game1() : base()
         {
@@ -40,6 +41,7 @@ namespace CaveStory
         {
             objectIdGen = new ObjectIDGenerator();
             input = new Input();
+            damageTexts = new DamageTexts();
 
             base.Initialize();
         }
@@ -49,6 +51,7 @@ namespace CaveStory
             spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
 
             player = new Player(Content, Units.TileToGame(ScreenWidth / 2), Units.TileToGame(ScreenHeight / 2));
+            damageTexts.AddDamageable(player);
             bat = new FirstCaveBat(Content, Units.TileToGame(7), Units.TileToGame(ScreenHeight / 2 + 1));
             map = Map.CreateTestMap(Content);
             base.LoadContent();
@@ -139,6 +142,7 @@ namespace CaveStory
             }
 
             Timer.UpdateAll(gameTime);
+            damageTexts.Update(gameTime);
             player.Update(gameTime, map);
             bat.Update(gameTime, player.CenterX);
 
@@ -167,6 +171,7 @@ namespace CaveStory
             bat.Draw(spriteBatch);
             player.Draw(spriteBatch);
             map.Draw(spriteBatch);
+            damageTexts.Draw(spriteBatch);
             player.DrawHud(spriteBatch);
         }
 

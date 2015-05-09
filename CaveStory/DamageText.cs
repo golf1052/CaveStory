@@ -43,8 +43,8 @@ namespace CaveStory
             timer = new Timer(DamageTime);
             offsetY = 0;
             damage = 0;
-            x = 0;
-            y = 0;
+            centerX = 0;
+            centerY = 0;
         }
 
         public void Update(GameTime gameTime)

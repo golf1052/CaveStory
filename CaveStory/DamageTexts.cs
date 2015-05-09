@@ -16,10 +16,20 @@ namespace CaveStory
             damageTextDict = new Dictionary<DamageText, Damageable>();
         }
 
+        public void AddDamageable(Damageable damageable)
+        {
+            damageTextDict[damageable.DamageText] = damageable;
+        }
+
         public void Update(GameTime gameTime)
         {
             foreach (KeyValuePair<DamageText, Damageable> pair in damageTextDict)
             {
+                if (pair.Value != null)
+                {
+                    Damageable damageable = pair.Value;
+                    pair.Key.SetPosition(damageable.CenterX, damageable.CenterY);
+                }
                 pair.Key.Update(gameTime);
             }
         }
