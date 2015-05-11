@@ -9,7 +9,7 @@ namespace CaveStory
 {
     public class DamageTexts
     {
-        Dictionary<DamageText, Damageable> damageTextDict;
+        public Dictionary<DamageText, Damageable> damageTextDict;
 
         public DamageTexts()
         {
@@ -23,14 +23,22 @@ namespace CaveStory
 
         public void Update(GameTime gameTime)
         {
-            foreach (KeyValuePair<DamageText, Damageable> pair in damageTextDict)
+            for (int i = 0; i < damageTextDict.Count;)
             {
-                if (pair.Value != null)
+                if (damageTextDict.ElementAt(i).Value != null)
                 {
-                    Damageable damageable = pair.Value;
-                    pair.Key.SetPosition(damageable.CenterX, damageable.CenterY);
+                    Damageable damageable = damageTextDict.ElementAt(i).Value;
+                    damageTextDict.ElementAt(i).Key.SetPosition(damageable.CenterX, damageable.CenterY);
                 }
-                pair.Key.Update(gameTime);
+                if (damageTextDict.ElementAt(i).Key.Update(gameTime) ||
+                    damageTextDict.ElementAt(i).Value != null)
+                {
+                    i++;
+                }
+                else
+                {
+                    damageTextDict.Remove(damageTextDict.ElementAt(i++).Key);
+                }
             }
         }
 

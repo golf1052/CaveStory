@@ -18,9 +18,8 @@ namespace CaveStory
         }
     }
 
-    public class FirstCaveBat
+    public class FirstCaveBat : Damageable
     {
-        Sprite sprite;
         public GameUnit x;
         public GameUnit y;
         static FrameUnit NumFlyFrames { get { return 3; } }
@@ -38,11 +37,14 @@ namespace CaveStory
 
         Dictionary<BatSpriteState, Sprite> sprites;
         DamageText damageText;
+        public DamageText DamageText { get { return damageText; } }
 
         GameUnit flightCenterY;
 
-        GameUnit CenterX { get { return x + Units.HalfTile; } }
-        GameUnit CenterY { get { return y + Units.HalfTile; } }
+        bool alive;
+
+        public GameUnit CenterX { get { return x + Units.HalfTile; } }
+        public GameUnit CenterY { get { return y + Units.HalfTile; } }
 
         public Rectangle DamageRectangle
         {
@@ -58,7 +60,8 @@ namespace CaveStory
         {
             get
             {
-                return new Rectangle((int)Math.Round(x), (int)Math.Round(y), (int)Units.TileToGame(1), (int)Units.TileToGame(1));
+                return new Rectangle((int)Math.Round(x), (int)Math.Round(y),
+                    (int)Units.TileToGame(1), (int)Units.TileToGame(1));
             }
         }
 
@@ -68,6 +71,7 @@ namespace CaveStory
             this.x = x;
             this.y = y;
             flightCenterY = y;
+            alive = true;
             flightAngle = 0.0f;
             facing = CaveStory.SpriteState.HorizontalFacing.Right;
             damageText = new DamageText(Content);
@@ -92,27 +96,26 @@ namespace CaveStory
                 FlyFps, NumFlyFrames);
         }
 
-        public void Update(GameTime gameTime, GameUnit playerX)
+        public bool Update(GameTime gameTime, GameUnit playerX)
         {
             flightAngle += AngularVelocity *
                 (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-            damageText.Update(gameTime);
-            damageText.SetPosition(CenterX, CenterY);
             facing = x + Units.HalfTile > playerX ?
                 CaveStory.SpriteState.HorizontalFacing.Left : CaveStory.SpriteState.HorizontalFacing.Right;
             y = flightCenterY + FlightAmplitude * (float)Math.Sin(MathHelper.ToRadians(flightAngle));
             sprites[SpriteState].Update();
+            return alive;
         }
 
         public void TakeDamage(HPUnit damage)
         {
             damageText.Damage = damage;
+            alive = false;
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             sprites[SpriteState].Draw(spriteBatch, x, y);
-            damageText.Draw(spriteBatch);
         }
     }
 }

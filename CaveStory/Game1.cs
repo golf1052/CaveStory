@@ -53,6 +53,7 @@ namespace CaveStory
             player = new Player(Content, Units.TileToGame(ScreenWidth / 2), Units.TileToGame(ScreenHeight / 2));
             damageTexts.AddDamageable(player);
             bat = new FirstCaveBat(Content, Units.TileToGame(7), Units.TileToGame(ScreenHeight / 2 + 1));
+            damageTexts.AddDamageable(bat);
             map = Map.CreateTestMap(Content);
             base.LoadContent();
         }
@@ -144,19 +145,27 @@ namespace CaveStory
             Timer.UpdateAll(gameTime);
             damageTexts.Update(gameTime);
             player.Update(gameTime, map);
-            bat.Update(gameTime, player.CenterX);
+
+            if (bat != null)
+            {
+                if (!bat.Update(gameTime, player.CenterX))
+                {
+                    damageTexts.damageTextDict[bat.DamageText] = null;
+                    bat = null;
+                }
+            }
 
             List<IProjectile> projectiles = player.Projectiles;
             for (int i = 0; i < projectiles.Count; i++)
             {
-                if (bat.CollisionRectangle.Intersects(projectiles[i].CollisionRectangle))
+                if (bat != null && bat.CollisionRectangle.Intersects(projectiles[i].CollisionRectangle))
                 {
                     bat.TakeDamage(projectiles[i].ContactDamage);
                     projectiles[i].CollideWithEnemy();
                 }
             }
 
-            if (bat.DamageRectangle.Intersects(player.DamageRectangle))
+            if (bat != null && bat.DamageRectangle.Intersects(player.DamageRectangle))
             {
                 player.TakeDamage(bat.ContactDamage);
             }
@@ -168,7 +177,10 @@ namespace CaveStory
         public void Draw()
         {
             map.DrawBackground(spriteBatch);
-            bat.Draw(spriteBatch);
+            if (bat != null)
+            {
+                bat.Draw(spriteBatch);
+            }
             player.Draw(spriteBatch);
             map.Draw(spriteBatch);
             damageTexts.Draw(spriteBatch);

@@ -47,7 +47,7 @@ namespace CaveStory
             centerY = 0;
         }
 
-        public void Update(GameTime gameTime)
+        public bool Update(GameTime gameTime)
         {
             if (timer.Expired)
             {
@@ -57,6 +57,7 @@ namespace CaveStory
             {
                 offsetY = (float)Math.Max(-Units.TileToGame(1), offsetY + Velocity * gameTime.ElapsedGameTime.TotalMilliseconds);
             }
+            return !timer.Expired;
         }
 
         public void SetPosition(GameUnit centerX, GameUnit centerY)
