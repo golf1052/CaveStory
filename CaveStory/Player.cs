@@ -113,7 +113,12 @@ namespace CaveStory
         // Collision Rectangle
         Rectangle CollisionX { get { return new Rectangle(6, 10, 20, 12); } }
 
-        Rectangle CollisionY { get { return new Rectangle(10, 2, 12, 30); } }
+        GameUnit CollisionYTop { get { return 2; } }
+        GameUnit CollisionYHeight { get { return 30; } }
+        GameUnit CollisionTopWidth { get { return 18; } }
+        GameUnit CollisionBottomWidth { get { return 10; } }
+        GameUnit CollisionTopLeft { get { return (Units.TileToGame(1) - CollisionTopWidth) / 2; } }
+        GameUnit CollisionBottomLeft { get { return (Units.TileToGame(1) - CollisionBottomWidth) / 2; } }
 
         TimeSpan InvincibleFlashTime { get { return TimeSpan.FromMilliseconds(50); } }
 
@@ -207,9 +212,9 @@ namespace CaveStory
             get
             {
                 return new Rectangle((int)Math.Round(x) + CollisionX.Left,
-                    (int)Math.Round(y) + CollisionY.Top,
+                    (int)Math.Round(y + CollisionYTop),
                     CollisionX.Width,
-                    CollisionY.Height);
+                    (int)Math.Round(CollisionYHeight));
             }
         }
 
@@ -355,18 +360,18 @@ namespace CaveStory
 
         public Rectangle TopCollision(GameUnit delta)
         {
-            return new Rectangle((int)Math.Round(x) + CollisionY.Left,
-                (int)Math.Round(y) + CollisionY.Top + (int)Math.Round(delta),
-                CollisionY.Width / 2,
-                CollisionY.Height / 2 - (int)Math.Round(delta));
+            return new Rectangle((int)Math.Round(x + CollisionTopLeft),
+                (int)Math.Round(y + CollisionYTop + delta),
+                (int)Math.Round(CollisionTopWidth),
+                (int)Math.Round(CollisionYHeight / 2 - delta));
         }
 
         public Rectangle bottomCollision(GameUnit delta)
         {
-            return new Rectangle((int)Math.Round(x) + CollisionY.Left,
-                (int)Math.Round(y) + CollisionY.Top + CollisionY.Height / 2,
-                CollisionY.Width,
-                CollisionY.Height / 2 + (int)Math.Round(delta));
+            return new Rectangle((int)Math.Round(x + CollisionBottomLeft),
+                (int)Math.Round(y + CollisionYTop + CollisionYHeight / 2),
+                (int)Math.Round(CollisionBottomWidth),
+                (int)Math.Round(CollisionYHeight / 2 + delta));
         }
 
         public void Update(GameTime gameTime, Map map)
@@ -470,7 +475,7 @@ namespace CaveStory
 
                 if (info.collided)
                 {
-                    y = Units.TileToGame(info.row) - CollisionY.Bottom;
+                    y = Units.TileToGame(info.row) - (CollisionYTop + CollisionYHeight);
                     velocityY = 0;
                     OnGround = true;
                 }
@@ -484,7 +489,7 @@ namespace CaveStory
 
                 if (info.collided)
                 {
-                    y = Units.TileToGame(info.row) + CollisionY.Height;
+                    y = Units.TileToGame(info.row) + CollisionYHeight;
                 }
             }
             else
@@ -493,7 +498,7 @@ namespace CaveStory
 
                 if (info.collided)
                 {
-                    y = Units.TileToGame(info.row) + CollisionY.Height;
+                    y = Units.TileToGame(info.row) + CollisionYHeight;
                     velocityY = 0;
                 }
                 else
@@ -506,7 +511,7 @@ namespace CaveStory
 
                 if (info.collided)
                 {
-                    y = Units.TileToGame(info.row) - CollisionY.Bottom;
+                    y = Units.TileToGame(info.row) - (CollisionYTop + CollisionYHeight);
                     OnGround = true;
                 }
             }
