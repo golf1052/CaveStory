@@ -61,6 +61,7 @@
     <Compile Include="FrameUnit.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameUnit.cs" />
+    <Compile Include="HeadBumpParticle.cs" />
     <Compile Include="Health.cs" />
     <Compile Include="HPUnit.cs" />
     <Compile Include="Input.cs" />
