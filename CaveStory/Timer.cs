@@ -20,11 +20,11 @@ namespace CaveStory
         
         private long classInstanceId;
 
-        public Timer(TimeSpan expirationTime)
+        public Timer(TimeSpan expirationTime, bool startActive = false)
         {
             bool known;
             classInstanceId = Game1.objectIdGen.GetId(this, out known);
-            currentTime = expirationTime;
+            currentTime = startActive ? TimeSpan.Zero : expirationTime;
             this.expirationTime = expirationTime;
             Timer.timers.Add(this);
         }

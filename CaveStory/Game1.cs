@@ -15,6 +15,7 @@ namespace CaveStory
         public static ObjectIDGenerator objectIdGen;
         public static TileUnit ScreenWidth { get { return 20; } }
         public static TileUnit ScreenHeight { get { return 15; } }
+        public static Random Random { get; private set; }
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -43,6 +44,7 @@ namespace CaveStory
             objectIdGen = new ObjectIDGenerator();
             input = new Input();
             damageTexts = new DamageTexts();
+            Random = new Random();
 
             base.Initialize();
         }
@@ -186,6 +188,7 @@ namespace CaveStory
             }
             player.Draw(spriteBatch);
             map.Draw(spriteBatch);
+            particle.Draw(spriteBatch);
             damageTexts.Draw(spriteBatch);
             player.DrawHud(spriteBatch);
         }
@@ -194,8 +197,7 @@ namespace CaveStory
         {
             GraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin();
-            //Draw();
-            particle.Draw(spriteBatch);
+            Draw();
             spriteBatch.End();
             base.Draw(gameTime);
         }
