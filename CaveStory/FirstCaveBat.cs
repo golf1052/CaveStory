@@ -18,7 +18,7 @@ namespace CaveStory
         }
     }
 
-    public class FirstCaveBat : Damageable
+    public class FirstCaveBat : IDamageable
     {
         public GameUnit x;
         public GameUnit y;

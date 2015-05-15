@@ -9,7 +9,7 @@ using System.Text;
 
 namespace CaveStory
 {
-    public class Player : Damageable
+    public class Player : IDamageable
     {
         private class WalkingAnimation
         {
@@ -374,7 +374,7 @@ namespace CaveStory
                 (int)Math.Round(CollisionYHeight / 2 + delta));
         }
 
-        public void Update(GameTime gameTime, Map map)
+        public void Update(GameTime gameTime, Map map, ParticleTools particleTools)
         {
             sprites[SpriteState].Update();
 
@@ -385,7 +385,7 @@ namespace CaveStory
             polarStar.UpdateProjectiles(gameTime, map);
 
             UpdateX(gameTime, map);
-            UpdateY(gameTime, map);
+            UpdateY(gameTime, map, particleTools);
         }
 
         public void UpdateX(GameTime gameTime, Map map)
@@ -461,7 +461,7 @@ namespace CaveStory
             }
         }
 
-        public void UpdateY(GameTime gameTime, Map map)
+        public void UpdateY(GameTime gameTime, Map map, ParticleTools particleTools)
         {
             AccelerationUnit gravity = jumpActive && velocityY < 0 ?
                 JumpGravity : Gravity;
@@ -490,6 +490,7 @@ namespace CaveStory
                 if (info.collided)
                 {
                     y = Units.TileToGame(info.row) + CollisionYHeight;
+                    particleTools.System.AddNewParticle(new HeadBumpParticle(particleTools.Content, CenterX, y + CollisionYTop));
                 }
             }
             else
@@ -499,6 +500,7 @@ namespace CaveStory
                 if (info.collided)
                 {
                     y = Units.TileToGame(info.row) + CollisionYHeight;
+                    particleTools.System.AddNewParticle(new HeadBumpParticle(particleTools.Content, CenterX, y + CollisionYTop));
                     velocityY = 0;
                 }
                 else

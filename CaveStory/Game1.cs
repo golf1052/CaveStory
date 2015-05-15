@@ -24,7 +24,8 @@ namespace CaveStory
         Map map;
         Input input;
         DamageTexts damageTexts;
-        HeadBumpParticle particle;
+        ParticleSystem particleSystem;
+        ParticleTools particleTools;
 
         public Game1() : base()
         {
@@ -58,7 +59,8 @@ namespace CaveStory
             bat = new FirstCaveBat(Content, Units.TileToGame(7), Units.TileToGame(ScreenHeight / 2 + 1));
             damageTexts.AddDamageable(bat);
             map = Map.CreateTestMap(Content);
-            particle = new HeadBumpParticle(Content, Units.TileToGame(ScreenWidth) / 2, Units.TileToGame(ScreenHeight) / 2);
+            particleSystem = new ParticleSystem();
+            particleTools = new ParticleTools(particleSystem, Content);
             base.LoadContent();
         }
 
@@ -148,8 +150,8 @@ namespace CaveStory
 
             Timer.UpdateAll(gameTime);
             damageTexts.Update(gameTime);
-            particle.Update(gameTime);
-            player.Update(gameTime, map);
+            particleSystem.Update(gameTime);
+            player.Update(gameTime, map, particleTools);
 
             if (bat != null)
             {
@@ -188,7 +190,7 @@ namespace CaveStory
             }
             player.Draw(spriteBatch);
             map.Draw(spriteBatch);
-            particle.Draw(spriteBatch);
+            particleSystem.Draw(spriteBatch);
             damageTexts.Draw(spriteBatch);
             player.DrawHud(spriteBatch);
         }

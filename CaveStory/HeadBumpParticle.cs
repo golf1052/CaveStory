@@ -8,7 +8,7 @@ using System.Text;
 
 namespace CaveStory
 {
-    public class HeadBumpParticle
+    public class HeadBumpParticle : IParticle
     {
         Sprite sprite;
         GameUnit centerX;

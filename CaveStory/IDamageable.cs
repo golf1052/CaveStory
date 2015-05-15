@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CaveStory
 {
-    public interface Damageable
+    public interface IDamageable
     {
         GameUnit CenterX { get; }
         GameUnit CenterY { get; }
