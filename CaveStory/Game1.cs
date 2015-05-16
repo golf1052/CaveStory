@@ -60,7 +60,7 @@ namespace CaveStory
             damageTexts.AddDamageable(bat);
             map = Map.CreateTestMap(Content);
             particleSystem = new ParticleSystem();
-            particleSystem.AddNewParticle(new ProjectileStarParticle(Content, Units.TileToGame(ScreenWidth / 2), Units.TileToGame(ScreenHeight / 2)));
+            particleSystem.AddNewParticle(ProjectileWallParticle.Create(Content, Units.TileToGame(ScreenWidth / 2), Units.TileToGame(ScreenHeight / 2)));
             particleTools = new ParticleTools(particleSystem, Content);
             base.LoadContent();
         }

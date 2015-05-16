@@ -64,6 +64,7 @@
     <Compile Include="HeadBumpParticle.cs" />
     <Compile Include="Health.cs" />
     <Compile Include="HPUnit.cs" />
+    <Compile Include="ImmobileSingleLoopParticle.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="IParticle.cs" />
     <Compile Include="IProjectile.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="PolarVector.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectileStarParticle.cs" />
+    <Compile Include="ProjectileWallParticle.cs" />
     <Compile Include="Sprite.cs" />
     <Compile Include="SpriteState.cs" />
     <Compile Include="Tile.cs" />
