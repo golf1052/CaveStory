@@ -23,7 +23,7 @@ namespace CaveStory
         public GameUnit x;
         public GameUnit y;
         static FrameUnit NumFlyFrames { get { return 3; } }
-        static int FlyFps { get { return 13; } }
+        const int FlyFps = 13;
         DegreesUnit flightAngle;
         static AngularVelocityUnit AngularVelocity { get { return 120.0f / 1000.0f; } }
         SpriteState.HorizontalFacing facing;

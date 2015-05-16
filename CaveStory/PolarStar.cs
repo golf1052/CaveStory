@@ -94,7 +94,7 @@ namespace CaveStory
 
         public Projectile(Sprite sprite,
             SpriteState.HorizontalFacing horizontalDirection, SpriteState.VerticalFacing verticalDirection,
-            GameUnit x, GameUnit y)
+            GameUnit x, GameUnit y, ParticleTools particleTools)
         {
             this.sprite = sprite;
             this.horizontalDirection = horizontalDirection;
@@ -103,6 +103,7 @@ namespace CaveStory
             this.y = y;
             offset = 0;
             alive = true;
+            particleTools.System.AddNewParticle(new ProjectileStarParticle(particleTools.Content, x, y));
         }
 
         public void CollideWithEnemy()
@@ -115,7 +116,7 @@ namespace CaveStory
         /// </summary>
         /// <param name="gameTime"></param>
         /// <returns>True if projectile is still alive</returns>
-        public bool Update(GameTime gameTime, Map map)
+        public bool Update(GameTime gameTime, Map map, ParticleTools particleTools)
         {
             offset += (float)gameTime.ElapsedGameTime.TotalMilliseconds * ProjectileSpeed;
 
@@ -127,7 +128,19 @@ namespace CaveStory
                     return false;
                 }
             }
-            return alive && offset < ProjectileMaxOffset;
+            if (!alive)
+            {
+                return false;
+            }
+            else if (offset >= ProjectileMaxOffset)
+            {
+                particleTools.System.AddNewParticle(new ProjectileStarParticle(particleTools.Content, X, Y));
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -244,18 +257,18 @@ namespace CaveStory
                 Units.GameToPixel(GunWidth), Units.GameToPixel(GunHeight));
         }
 
-        public void UpdateProjectiles(GameTime gameTime, Map map)
+        public void UpdateProjectiles(GameTime gameTime, Map map, ParticleTools particleTools)
         {
             if (projectileA != null)
             {
-                if (!projectileA.Update(gameTime, map))
+                if (!projectileA.Update(gameTime, map, particleTools))
                 {
                     projectileA = null;
                 }
             }
             if (projectileB != null)
             {
-                if (!projectileB.Update(gameTime, map))
+                if (!projectileB.Update(gameTime, map, particleTools))
                 {
                     projectileB = null;
                 }
@@ -265,7 +278,7 @@ namespace CaveStory
         public void StartFire(GameUnit playerX, GameUnit playerY,
             SpriteState.HorizontalFacing horizontalFacing,
             SpriteState.VerticalFacing verticalFacing,
-            bool gunUp)
+            bool gunUp, ParticleTools particleTools)
         {
             if (projectileA != null && projectileB != null)
             {
@@ -315,12 +328,12 @@ namespace CaveStory
             if (projectileA == null)
             {
                 projectileA = new Projectile(verticalFacing == SpriteState.VerticalFacing.Horizontal ? horizontalProjectile : verticalProjectile,
-                    horizontalFacing, verticalFacing, bulletX, bulletY);
+                    horizontalFacing, verticalFacing, bulletX, bulletY, particleTools);
             }
             else if (projectileB == null)
             {
                 projectileB = new Projectile(verticalFacing == SpriteState.VerticalFacing.Horizontal ? horizontalProjectile : verticalProjectile,
-                    horizontalFacing, verticalFacing, bulletX, bulletY);
+                    horizontalFacing, verticalFacing, bulletX, bulletY, particleTools);
             }
         }
 

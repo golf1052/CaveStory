@@ -382,7 +382,7 @@ namespace CaveStory
 
             walkingAnimation.Update();
 
-            polarStar.UpdateProjectiles(gameTime, map);
+            polarStar.UpdateProjectiles(gameTime, map, particleTools);
 
             UpdateX(gameTime, map);
             UpdateY(gameTime, map, particleTools);
@@ -614,9 +614,9 @@ namespace CaveStory
             jumpActive = false;
         }
 
-        public void StartFire()
+        public void StartFire(ParticleTools particleTools)
         {
-            polarStar.StartFire(x, y, horizontalFacing, VerticalFacing, GunUp);
+            polarStar.StartFire(x, y, horizontalFacing, VerticalFacing, GunUp, particleTools);
         }
 
         public void StopFire()

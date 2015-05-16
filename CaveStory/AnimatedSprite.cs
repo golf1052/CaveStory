@@ -14,6 +14,9 @@ namespace CaveStory
         FrameUnit currentFrame;
         Timer frameTimer;
 
+        private int numCompletedLoops;
+        public int NumCompletedLoops { get { return numCompletedLoops;  } }
+
         public AnimatedSprite(ContentManager Content,
             string fileName,
             PixelUnit sourceX, PixelUnit sourceY,
@@ -23,6 +26,7 @@ namespace CaveStory
             frameTimer = new Timer(TimeSpan.FromMilliseconds(1000 / fps));
             this.numberOfFrames = numberOfFrames;
             currentFrame = 0;
+            numCompletedLoops = 0;
         }
 
         public override void Update()
@@ -39,6 +43,7 @@ namespace CaveStory
                 {
                     sourceRect.X -= sourceRect.Width * (numberOfFrames - 1);
                     currentFrame = 0;
+                    numCompletedLoops++;
                 }
             }
         }
