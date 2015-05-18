@@ -125,6 +125,39 @@ namespace CaveStory
             {
                 if (collidingTiles[i].tileType == Tile.TileType.WallTile)
                 {
+                    Rectangle tileRectangle = new Rectangle((int)Math.Round(Units.TileToGame(collidingTiles[i].col)),
+                        (int)Math.Round(Units.TileToGame(collidingTiles[i].row)),
+                        (int)Units.TileToGame(1), (int)Units.TileToGame(1));
+                    GameUnit particleX;
+                    GameUnit particleY;
+                    if (verticalDirection == SpriteState.VerticalFacing.Horizontal)
+                    {
+                        if (horizontalDirection == SpriteState.HorizontalFacing.Left)
+                        {
+                            particleX = tileRectangle.Right;
+                        }
+                        else
+                        {
+                            particleX = tileRectangle.Left;
+                        }
+                        particleX -= Units.HalfTile;
+                        particleY = Y;
+                    }
+                    else
+                    {
+                        if (verticalDirection == SpriteState.VerticalFacing.Up)
+                        {
+                            particleY = tileRectangle.Bottom;
+                        }
+                        else
+                        {
+                            particleY = tileRectangle.Top;
+                        }
+                        particleY -= Units.HalfTile;
+                        particleX = X;
+                    }
+                    particleTools.System.AddNewParticle(ProjectileWallParticle.Create(particleTools.Content,
+                        particleX, particleY));
                     return false;
                 }
             }
