@@ -157,6 +157,9 @@ namespace CaveStory
             {
                 if (!bat.Update(gameTime, player.CenterX))
                 {
+                    particleSystem.AddNewParticle(new DeathCloudParticle(Content,
+                        bat.CenterX, bat.CenterY,
+                        0.12f, -45.0f));
                     damageTexts.damageTextDict[bat.DamageText] = null;
                     bat = null;
                 }
