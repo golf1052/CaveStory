@@ -17,6 +17,7 @@ namespace CaveStory
         static TileUnit SourceHeight { get { return 1; } }
         const int Fps = 18;
         static FrameUnit NumFrames { get { return 7; } }
+        static VelocityUnit BaseVelocity { get { return 0.12f; } }
 
         GameUnit centerX;
         GameUnit centerY;
@@ -36,6 +37,18 @@ namespace CaveStory
                 Units.TileToPixel(SourceX), Units.TileToPixel(SourceY),
                 Units.TileToPixel(SourceWidth), Units.TileToPixel(SourceHeight),
                 Fps, NumFrames);
+        }
+
+        public static void CreateRandomDeathCloud(ParticleTools particleTools,
+            GameUnit centerX, GameUnit centerY,
+            int numParticles)
+        {
+            for (int i = 0; i < numParticles; i++)
+            {
+                particleTools.EntitySystem.AddNewParticle(new DeathCloudParticle(particleTools.Content,
+                    centerX, centerY,
+                    Game1.Random.Next(0, 3) * BaseVelocity, Game1.Random.Next(0, 360)));
+            }
         }
 
         public bool Update(GameTime gameTime)

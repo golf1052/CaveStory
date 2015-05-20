@@ -24,7 +24,8 @@ namespace CaveStory
         Map map;
         Input input;
         DamageTexts damageTexts;
-        ParticleSystem particleSystem;
+        ParticleSystem frontParticleSystem;
+        ParticleSystem entityParticleSystem;
         ParticleTools particleTools;
 
         public Game1() : base()
@@ -59,8 +60,9 @@ namespace CaveStory
             bat = new FirstCaveBat(Content, Units.TileToGame(7), Units.TileToGame(ScreenHeight / 2 + 1));
             damageTexts.AddDamageable(bat);
             map = Map.CreateTestMap(Content);
-            particleSystem = new ParticleSystem();
-            particleTools = new ParticleTools(particleSystem, Content);
+            frontParticleSystem = new ParticleSystem();
+            entityParticleSystem = new ParticleSystem();
+            particleTools = new ParticleTools(frontParticleSystem, entityParticleSystem, Content);
             base.LoadContent();
         }
 
@@ -150,16 +152,17 @@ namespace CaveStory
 
             Timer.UpdateAll(gameTime);
             damageTexts.Update(gameTime);
-            particleSystem.Update(gameTime);
+            frontParticleSystem.Update(gameTime);
+            entityParticleSystem.Update(gameTime);
             player.Update(gameTime, map, particleTools);
 
             if (bat != null)
             {
                 if (!bat.Update(gameTime, player.CenterX))
                 {
-                    particleSystem.AddNewParticle(new DeathCloudParticle(Content,
+                    DeathCloudParticle.CreateRandomDeathCloud(particleTools,
                         bat.CenterX, bat.CenterY,
-                        0.12f, -45.0f));
+                        3);
                     damageTexts.damageTextDict[bat.DamageText] = null;
                     bat = null;
                 }
@@ -191,9 +194,10 @@ namespace CaveStory
             {
                 bat.Draw(spriteBatch);
             }
+            entityParticleSystem.Draw(spriteBatch);
             player.Draw(spriteBatch);
             map.Draw(spriteBatch);
-            particleSystem.Draw(spriteBatch);
+            frontParticleSystem.Draw(spriteBatch);
             damageTexts.Draw(spriteBatch);
             player.DrawHud(spriteBatch);
         }

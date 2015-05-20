@@ -10,14 +10,17 @@ namespace CaveStory
 {
     public struct ParticleTools
     {
-        private readonly ParticleSystem system;
-        public ParticleSystem System { get { return system; } }
+        private readonly ParticleSystem frontSystem;
+        private readonly ParticleSystem entitySystem;
+        public ParticleSystem FrontSystem { get { return frontSystem; } }
+        public ParticleSystem EntitySystem { get { return entitySystem; } }
         private readonly ContentManager content;
         public ContentManager Content { get { return content; } }
 
-        public ParticleTools(ParticleSystem system, ContentManager Content)
+        public ParticleTools(ParticleSystem frontSystem, ParticleSystem entitySystem, ContentManager Content)
         {
-            this.system = system;
+            this.frontSystem = frontSystem;
+            this.entitySystem = entitySystem;
             this.content = Content;
         }
     }

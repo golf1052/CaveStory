@@ -490,7 +490,7 @@ namespace CaveStory
                 if (info.collided)
                 {
                     y = Units.TileToGame(info.row) + CollisionYHeight;
-                    particleTools.System.AddNewParticle(new HeadBumpParticle(particleTools.Content, CenterX, y + CollisionYTop));
+                    particleTools.FrontSystem.AddNewParticle(new HeadBumpParticle(particleTools.Content, CenterX, y + CollisionYTop));
                 }
             }
             else
@@ -500,7 +500,7 @@ namespace CaveStory
                 if (info.collided)
                 {
                     y = Units.TileToGame(info.row) + CollisionYHeight;
-                    particleTools.System.AddNewParticle(new HeadBumpParticle(particleTools.Content, CenterX, y + CollisionYTop));
+                    particleTools.FrontSystem.AddNewParticle(new HeadBumpParticle(particleTools.Content, CenterX, y + CollisionYTop));
                     velocityY = 0;
                 }
                 else

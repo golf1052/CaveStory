@@ -103,7 +103,7 @@ namespace CaveStory
             this.y = y;
             offset = 0;
             alive = true;
-            particleTools.System.AddNewParticle(ProjectileStarParticle.Create(particleTools.Content, x, y));
+            particleTools.FrontSystem.AddNewParticle(ProjectileStarParticle.Create(particleTools.Content, x, y));
         }
 
         public void CollideWithEnemy()
@@ -156,7 +156,7 @@ namespace CaveStory
                         particleY -= Units.HalfTile;
                         particleX = X;
                     }
-                    particleTools.System.AddNewParticle(ProjectileWallParticle.Create(particleTools.Content,
+                    particleTools.FrontSystem.AddNewParticle(ProjectileWallParticle.Create(particleTools.Content,
                         particleX, particleY));
                     return false;
                 }
@@ -167,7 +167,7 @@ namespace CaveStory
             }
             else if (offset >= ProjectileMaxOffset)
             {
-                particleTools.System.AddNewParticle(ProjectileStarParticle.Create(particleTools.Content, X, Y));
+                particleTools.FrontSystem.AddNewParticle(ProjectileStarParticle.Create(particleTools.Content, X, Y));
                 return false;
             }
             else
