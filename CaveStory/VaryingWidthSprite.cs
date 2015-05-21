@@ -8,11 +8,19 @@ namespace CaveStory
 {
     public class VaryingWidthSprite : Sprite
     {
-        public PixelUnit Width { set { sourceRect.Width = value; } }
+        private PixelUnit maxWidth;
+
         public VaryingWidthSprite(ContentManager Content, string fileName,
             PixelUnit sourceX, PixelUnit sourceY,
-            PixelUnit initialWidth, PixelUnit initialHeight) : base(Content, fileName, sourceX, sourceY, initialWidth, initialHeight)
+            PixelUnit maxWidth, PixelUnit initialWidth,
+            PixelUnit initialHeight) : base(Content, fileName, sourceX, sourceY, initialWidth, initialHeight)
         {
+            this.maxWidth = maxWidth;
+        }
+
+        public void SetPercentageWidth(float percentage)
+        {
+            sourceRect.Width = (int)(percentage * maxWidth);
         }
     }
 }

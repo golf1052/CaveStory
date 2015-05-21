@@ -37,14 +37,9 @@ namespace CaveStory
         {
             this.damage = damage;
             damageTimer.Reset();
-            healthFillSprite.Width = Units.GameToPixel(FillOffset(currentHealth - damage));
-            damageFillSprite.Width = Units.GameToPixel(FillOffset(damage));
+            healthFillSprite.SetPercentageWidth((float)(currentHealth - damage) / (float)maxHealth);
+            damageFillSprite.SetPercentageWidth((float)currentHealth / (float)maxHealth);
             return false;
-        }
-
-        public GameUnit FillOffset(HPUnit health)
-        {
-            return PlayerHealth.MaxFillWidth * health / maxHealth;
         }
 
         public void Draw(SpriteBatch spriteBatch)

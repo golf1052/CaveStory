@@ -45,11 +45,13 @@ namespace CaveStory
 
             health.healthFillSprite = new VaryingWidthSprite(Content, SpritePath,
                 Units.GameToPixel(HealthFillSourceX), Units.GameToPixel(HealthFillSourceY),
-                Units.GameToPixel(MaxFillWidth), Units.GameToPixel(HealthFillSourceHeight));
+                Units.GameToPixel(MaxFillWidth), Units.GameToPixel(MaxFillWidth),
+                Units.GameToPixel(HealthFillSourceHeight));
 
             health.damageFillSprite = new VaryingWidthSprite(Content, SpritePath,
                 Units.GameToPixel(HealthDamageSourceX), Units.GameToPixel(HealthDamageSourceY),
-                Units.GameToPixel(0), Units.GameToPixel(HealthDamageSourceHeight));
+                Units.GameToPixel(MaxFillWidth), Units.GameToPixel(0),
+                Units.GameToPixel(HealthDamageSourceHeight));
             health.healthNumberSprite = NumberSprite.HudNumber(Content, 0, HealthNumberNumDigits);
         }
 
@@ -65,11 +67,11 @@ namespace CaveStory
         public void Draw(SpriteBatch spriteBatch)
         {
             health.healthBarSprite.Draw(spriteBatch, HealthBarX, HealthBarY);
-            health.healthFillSprite.Draw(spriteBatch, HealthFillX, HealthFillY);
             if (health.damage > 0)
             {
-                health.damageFillSprite.Draw(spriteBatch, HealthFillX + health.FillOffset(health.currentHealth - health.damage), HealthFillY);
+                health.damageFillSprite.Draw(spriteBatch, HealthFillX, HealthFillY);
             }
+            health.healthFillSprite.Draw(spriteBatch, HealthFillX, HealthFillY);
             health.healthNumberSprite.number = health.currentHealth;
             health.healthNumberSprite.LoadNumber();
             health.healthNumberSprite.Draw(spriteBatch, HealthNumberX, HealthNumberY);

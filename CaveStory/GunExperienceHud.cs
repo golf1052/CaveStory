@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -24,10 +25,17 @@ namespace CaveStory
         static GameUnit ExperienceBarSourceWidth { get { return 5 * Units.HalfTile; } }
         static GameUnit ExperienceBarSourceHeight { get { return Units.HalfTile; } }
 
+        static GameUnit FlashSourceX { get { return 5 * Units.HalfTile; } }
+        static TileUnit FlashSourceY { get { return 5; } }
+        static TimeSpan FlashTime { get { return TimeSpan.FromMilliseconds(800); } }
+        static TimeSpan FlashPeriod { get { return TimeSpan.FromMilliseconds(40); } }
+
         const string SpriteName = "TextBox";
 
         Sprite experienceBarSprite;
         Sprite levelSprite;
+        Sprite flashSprite;
+        Timer flashTimer;
 
         NumberSprite number;
 
@@ -39,7 +47,16 @@ namespace CaveStory
             levelSprite = new Sprite(Content, SpriteName,
                 Units.TileToPixel(LevelSourceX), Units.GameToPixel(LevelSourceY),
                 Units.TileToPixel(LevelSourceWidth), Units.GameToPixel(LevelSourceHeight));
+            flashSprite = new Sprite(Content, SpriteName,
+                Units.GameToPixel(FlashSourceX), Units.TileToPixel(FlashSourceY),
+                Units.GameToPixel(ExperienceBarSourceWidth), Units.GameToPixel(ExperienceBarSourceHeight));
+            flashTimer = new Timer(FlashTime);
             number = NumberSprite.HudNumber(Content, 0, 2);
+        }
+
+        public void ActivateFlash()
+        {
+            flashTimer.Reset();
         }
 
         public void Draw(SpriteBatch spriteBatch, GunLevelUnit gunLevel)
@@ -52,6 +69,10 @@ namespace CaveStory
             number.Draw(spriteBatch, LevelNumberDrawX, DrawY);
             experienceBarSprite.Draw(spriteBatch,
                 ExperienceBarDrawX, DrawY);
+            if (flashTimer.Active && flashTimer.CurrentTime.Ticks / FlashPeriod.Ticks % 2 == 0)
+            {
+                flashSprite.Draw(spriteBatch, ExperienceBarDrawX, DrawY);
+            }
         }
     }
 }

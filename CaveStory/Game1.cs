@@ -147,6 +147,7 @@ namespace CaveStory
             if (input.WasKeyPressed(Keys.X))
             {
                 player.StartFire(particleTools);
+                hud.ActivateFlash();
             }
             else if (input.WasKeyReleased(Keys.X))
             {
