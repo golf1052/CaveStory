@@ -52,6 +52,8 @@
     <Compile Include="CollisionTile.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="DeathCloudParticle.cs" />
+    <Compile Include="GunExperienceHud.cs" />
+    <Compile Include="GunLevelUnit.cs" />
     <Compile Include="IDamageable.cs" />
     <Compile Include="DamageText.cs" />
     <Compile Include="DamageTexts.cs" />

@@ -28,6 +28,8 @@ namespace CaveStory
         ParticleSystem entityParticleSystem;
         ParticleTools particleTools;
 
+        GunExperienceHud hud;
+
         public Game1() : base()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -63,6 +65,7 @@ namespace CaveStory
             frontParticleSystem = new ParticleSystem();
             entityParticleSystem = new ParticleSystem();
             particleTools = new ParticleTools(frontParticleSystem, entityParticleSystem, Content);
+            hud = new GunExperienceHud(Content);
             base.LoadContent();
         }
 
@@ -200,6 +203,7 @@ namespace CaveStory
             frontParticleSystem.Draw(spriteBatch);
             damageTexts.Draw(spriteBatch);
             player.DrawHud(spriteBatch);
+            hud.Draw(spriteBatch, 1);
         }
 
         protected override void Draw(GameTime gameTime)
