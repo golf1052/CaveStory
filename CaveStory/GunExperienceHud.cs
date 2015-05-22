@@ -30,11 +30,19 @@ namespace CaveStory
         static TimeSpan FlashTime { get { return TimeSpan.FromMilliseconds(800); } }
         static TimeSpan FlashPeriod { get { return TimeSpan.FromMilliseconds(40); } }
 
+        static TileUnit FillSourceX { get { return 0; } }
+        static TileUnit FillSourceY { get { return 5; } }
+        
+        static GameUnit MaxSourceX { get { return 5 * Units.HalfTile; } }
+        static GameUnit MaxSourceY { get { return 9 * Units.HalfTile; } }
+
         const string SpriteName = "TextBox";
 
         Sprite experienceBarSprite;
         Sprite levelSprite;
         Sprite flashSprite;
+        VaryingWidthSprite fillSprite;
+        Sprite maxSprite;
         Timer flashTimer;
 
         NumberSprite number;
@@ -50,6 +58,13 @@ namespace CaveStory
             flashSprite = new Sprite(Content, SpriteName,
                 Units.GameToPixel(FlashSourceX), Units.TileToPixel(FlashSourceY),
                 Units.GameToPixel(ExperienceBarSourceWidth), Units.GameToPixel(ExperienceBarSourceHeight));
+            fillSprite = new VaryingWidthSprite(Content, SpriteName,
+                Units.TileToPixel(FillSourceX), Units.TileToPixel(FillSourceY),
+                Units.GameToPixel(ExperienceBarSourceWidth), 0,
+                Units.GameToPixel(ExperienceBarSourceHeight));
+            maxSprite = new Sprite(Content, SpriteName,
+                Units.GameToPixel(MaxSourceX), Units.GameToPixel(MaxSourceY),
+                Units.GameToPixel(ExperienceBarSourceWidth), Units.GameToPixel(ExperienceBarSourceHeight));
             flashTimer = new Timer(FlashTime);
             number = NumberSprite.HudNumber(Content, 0, 2);
         }
@@ -59,7 +74,8 @@ namespace CaveStory
             flashTimer.Reset();
         }
 
-        public void Draw(SpriteBatch spriteBatch, GunLevelUnit gunLevel)
+        public void Draw(SpriteBatch spriteBatch, GunLevelUnit gunLevel,
+            GunExperienceUnit currentExperience, GunExperienceUnit levelExpereince)
         {
             levelSprite.Draw(spriteBatch,
                 Units.TileToGame(LevelDrawX),
@@ -69,6 +85,17 @@ namespace CaveStory
             number.Draw(spriteBatch, LevelNumberDrawX, DrawY);
             experienceBarSprite.Draw(spriteBatch,
                 ExperienceBarDrawX, DrawY);
+
+            if (currentExperience < levelExpereince)
+            {
+                fillSprite.SetPercentageWidth((float)currentExperience / (float)levelExpereince);
+                fillSprite.Draw(spriteBatch, ExperienceBarDrawX, DrawY);
+            }
+            else
+            {
+                maxSprite.Draw(spriteBatch, ExperienceBarDrawX, DrawY);
+            }
+
             if (flashTimer.Active && flashTimer.CurrentTime.Ticks / FlashPeriod.Ticks % 2 == 0)
             {
                 flashSprite.Draw(spriteBatch, ExperienceBarDrawX, DrawY);
