@@ -124,12 +124,11 @@ namespace CaveStory
 
         TimeSpan InvincibleTime { get { return TimeSpan.FromMilliseconds(3000); } }
 
-        GameUnit x;
-        public GameUnit CenterX { get { return x + Units.HalfTile; } }
-        public GameUnit CenterY { get { return y + Units.HalfTile; } }
-        GameUnit y;
-        VelocityUnit velocityX;
-        VelocityUnit velocityY;
+        public GameUnit CenterX { get { return kinematicsX.position + Units.HalfTile; } }
+        public GameUnit CenterY { get { return kinematicsY.position + Units.HalfTile; } }
+
+        Kinematics kinematicsX;
+        Kinematics kinematicsY;
         int accelerationX;
         SpriteState.HorizontalFacing horizontalFacing;
         SpriteState.VerticalFacing intendedVerticalFacing;
@@ -149,7 +148,7 @@ namespace CaveStory
                 }
                 else
                 {
-                    motion = velocityY < 0.0f ? SpriteState.MotionType.Jumping : SpriteState.MotionType.Falling;
+                    motion = kinematicsY.velocity < 0.0f ? SpriteState.MotionType.Jumping : SpriteState.MotionType.Falling;
                 }
                 return motion;
             }
@@ -212,8 +211,8 @@ namespace CaveStory
         {
             get
             {
-                return new Rectangle((int)Math.Round(x) + CollisionX.Left,
-                    (int)Math.Round(y + CollisionYTop),
+                return new Rectangle((int)Math.Round(kinematicsX.position) + CollisionX.Left,
+                    (int)Math.Round(kinematicsY.position + CollisionYTop),
                     CollisionX.Width,
                     (int)Math.Round(CollisionYHeight));
             }
@@ -231,10 +230,8 @@ namespace CaveStory
         {
             sprites = new Dictionary<SpriteState, Sprite>();
             InitializeSprites(Content);
-            this.x = x;
-            this.y = y;
-            velocityX = 0;
-            velocityY = 0;
+            kinematicsX = new Kinematics(x, 0);
+            kinematicsY = new Kinematics(y, 0);
             accelerationX = 0;
             horizontalFacing = SpriteState.HorizontalFacing.Left;
             intendedVerticalFacing = SpriteState.VerticalFacing.Horizontal;
@@ -346,32 +343,32 @@ namespace CaveStory
 
         public Rectangle LeftCollision(GameUnit delta)
         {
-            return new Rectangle((int)Math.Round(x) + CollisionX.Left + (int)Math.Round(delta),
-                (int)Math.Round(y) + CollisionX.Top,
+            return new Rectangle((int)Math.Round(kinematicsX.position) + CollisionX.Left + (int)Math.Round(delta),
+                (int)Math.Round(kinematicsY.position) + CollisionX.Top,
                 CollisionX.Width / 2 - (int)Math.Round(delta),
                 CollisionX.Height);
         }
 
         public Rectangle RightCollision(GameUnit delta)
         {
-            return new Rectangle((int)Math.Round(x) + CollisionX.Left + CollisionX.Width / 2,
-                (int)Math.Round(y) + CollisionX.Top,
+            return new Rectangle((int)Math.Round(kinematicsX.position) + CollisionX.Left + CollisionX.Width / 2,
+                (int)Math.Round(kinematicsY.position) + CollisionX.Top,
                 CollisionX.Width / 2 + (int)Math.Round(delta),
                 CollisionX.Height);
         }
 
         public Rectangle TopCollision(GameUnit delta)
         {
-            return new Rectangle((int)Math.Round(x + CollisionTopLeft),
-                (int)Math.Round(y + CollisionYTop + delta),
+            return new Rectangle((int)Math.Round(kinematicsX.position + CollisionTopLeft),
+                (int)Math.Round(kinematicsY.position + CollisionYTop + delta),
                 (int)Math.Round(CollisionTopWidth),
                 (int)Math.Round(CollisionYHeight / 2 - delta));
         }
 
         public Rectangle bottomCollision(GameUnit delta)
         {
-            return new Rectangle((int)Math.Round(x + CollisionBottomLeft),
-                (int)Math.Round(y + CollisionYTop + CollisionYHeight / 2),
+            return new Rectangle((int)Math.Round(kinematicsX.position + CollisionBottomLeft),
+                (int)Math.Round(kinematicsY.position + CollisionYTop + CollisionYHeight / 2),
                 (int)Math.Round(CollisionBottomWidth),
                 (int)Math.Round(CollisionYHeight / 2 + delta));
         }
@@ -401,23 +398,23 @@ namespace CaveStory
             {
                 accX = OnGround ? WalkingAcceleration : AirAcceleration;
             }
-            velocityX += accX * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            kinematicsX.velocity += accX * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
             if (accelerationX < 0)
             {
-                velocityX = Math.Max(velocityX, -MaxSpeedX);
+                kinematicsX.velocity = Math.Max(kinematicsX.velocity, -MaxSpeedX);
             }
             else if (accelerationX > 0)
             {
-                velocityX = Math.Min(velocityX, MaxSpeedX);
+                kinematicsX.velocity = Math.Min(kinematicsX.velocity, MaxSpeedX);
             }
             else if (OnGround)
             {
-                velocityX = velocityX > 0.0f ?
-                    (float)Math.Max(0.0f, velocityX - Friction * gameTime.ElapsedGameTime.TotalMilliseconds) :
-                    (float)Math.Min(0.0f, velocityX + Friction * gameTime.ElapsedGameTime.TotalMilliseconds);
+                kinematicsX.velocity = kinematicsX.velocity > 0.0f ?
+                    (float)Math.Max(0.0f, kinematicsX.velocity - Friction * gameTime.ElapsedGameTime.TotalMilliseconds) :
+                    (float)Math.Min(0.0f, kinematicsX.velocity + Friction * gameTime.ElapsedGameTime.TotalMilliseconds);
             }
 
-            GameUnit delta = velocityX * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            GameUnit delta = kinematicsX.velocity * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
             
             if (delta > 0.0f)
             {
@@ -425,19 +422,19 @@ namespace CaveStory
 
                 if (info.collided)
                 {
-                    x = Units.TileToGame(info.col) - CollisionX.Right;
-                    velocityX = 0;
+                    kinematicsX.position = Units.TileToGame(info.col) - CollisionX.Right;
+                    kinematicsX.velocity = 0;
                 }
                 else
                 {
-                    x += delta;
+                    kinematicsX.position += delta;
                 }
 
                 info = GetWallCollisionInfo(map, LeftCollision(0));
 
                 if (info.collided)
                 {
-                    x = Units.TileToGame(info.col) + CollisionX.Right;
+                    kinematicsX.position = Units.TileToGame(info.col) + CollisionX.Right;
                 }
             }
             else
@@ -446,30 +443,30 @@ namespace CaveStory
 
                 if (info.collided)
                 {
-                    x = Units.TileToGame(info.col) + CollisionX.Right;
-                    velocityX = 0;
+                    kinematicsX.position = Units.TileToGame(info.col) + CollisionX.Right;
+                    kinematicsX.velocity = 0;
                 }
                 else
                 {
-                    x += delta;
+                    kinematicsX.position += delta;
                 }
 
                 info = GetWallCollisionInfo(map, RightCollision(0));
 
                 if (info.collided)
                 {
-                    x = Units.TileToGame(info.col) - CollisionX.Right;
+                    kinematicsX.position = Units.TileToGame(info.col) - CollisionX.Right;
                 }
             }
         }
 
         public void UpdateY(GameTime gameTime, Map map, ParticleTools particleTools)
         {
-            AccelerationUnit gravity = jumpActive && velocityY < 0 ?
+            AccelerationUnit gravity = jumpActive && kinematicsY.velocity < 0 ?
                 JumpGravity : Gravity;
-            velocityY = (float)Math.Min(velocityY + gravity * gameTime.ElapsedGameTime.TotalMilliseconds, MaxSpeedY);
+            kinematicsY.velocity = (float)Math.Min(kinematicsY.velocity + gravity * gameTime.ElapsedGameTime.TotalMilliseconds, MaxSpeedY);
 
-            GameUnit delta = velocityY * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            GameUnit delta = kinematicsY.velocity * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
             if (delta > 0)
             {
@@ -477,13 +474,13 @@ namespace CaveStory
 
                 if (info.collided)
                 {
-                    y = Units.TileToGame(info.row) - (CollisionYTop + CollisionYHeight);
-                    velocityY = 0;
+                    kinematicsY.position = Units.TileToGame(info.row) - (CollisionYTop + CollisionYHeight);
+                    kinematicsY.velocity = 0;
                     OnGround = true;
                 }
                 else
                 {
-                    y += delta;
+                    kinematicsY.position += delta;
                     OnGround = false;
                 }
 
@@ -491,8 +488,8 @@ namespace CaveStory
 
                 if (info.collided)
                 {
-                    y = Units.TileToGame(info.row) + CollisionYHeight;
-                    particleTools.FrontSystem.AddNewParticle(new HeadBumpParticle(particleTools.Content, CenterX, y + CollisionYTop));
+                    kinematicsY.position = Units.TileToGame(info.row) + CollisionYHeight;
+                    particleTools.FrontSystem.AddNewParticle(new HeadBumpParticle(particleTools.Content, CenterX, kinematicsY.position + CollisionYTop));
                 }
             }
             else
@@ -501,13 +498,13 @@ namespace CaveStory
 
                 if (info.collided)
                 {
-                    y = Units.TileToGame(info.row) + CollisionYHeight;
-                    particleTools.FrontSystem.AddNewParticle(new HeadBumpParticle(particleTools.Content, CenterX, y + CollisionYTop));
-                    velocityY = 0;
+                    kinematicsY.position = Units.TileToGame(info.row) + CollisionYHeight;
+                    particleTools.FrontSystem.AddNewParticle(new HeadBumpParticle(particleTools.Content, CenterX, kinematicsY.position + CollisionYTop));
+                    kinematicsY.velocity = 0;
                 }
                 else
                 {
-                    y += delta;
+                    kinematicsY.position += delta;
                     OnGround = false;
                 }
 
@@ -515,7 +512,7 @@ namespace CaveStory
 
                 if (info.collided)
                 {
-                    y = Units.TileToGame(info.row) - (CollisionYTop + CollisionYHeight);
+                    kinematicsY.position = Units.TileToGame(info.row) - (CollisionYTop + CollisionYHeight);
                     OnGround = true;
                 }
             }
@@ -588,8 +585,8 @@ namespace CaveStory
         {
             if (SpriteIsVisible())
             {
-                polarStar.Draw(spriteBatch, horizontalFacing, VerticalFacing, GunUp, x, y);
-                sprites[SpriteState].Draw(spriteBatch, x, y);
+                polarStar.Draw(spriteBatch, horizontalFacing, VerticalFacing, GunUp, kinematicsX.position, kinematicsY.position);
+                sprites[SpriteState].Draw(spriteBatch, kinematicsX.position, kinematicsY.position);
             }
         }
 
@@ -608,7 +605,7 @@ namespace CaveStory
             jumpActive = true;
             if (OnGround)
             {
-                velocityY = -JumpSpeed;
+                kinematicsY.velocity = -JumpSpeed;
             }
         }
 
@@ -619,7 +616,7 @@ namespace CaveStory
 
         public void StartFire(ParticleTools particleTools)
         {
-            polarStar.StartFire(x, y, horizontalFacing, VerticalFacing, GunUp, particleTools);
+            polarStar.StartFire(kinematicsX.position, kinematicsY.position, horizontalFacing, VerticalFacing, GunUp, particleTools);
         }
 
         public void StopFire()
@@ -635,7 +632,7 @@ namespace CaveStory
             }
             playerHealth.health.TakeDamage(damage);
             damageText.Damage = damage;
-            velocityY = Math.Min(velocityY, -ShortJumpSpeed);
+            kinematicsY.velocity = Math.Min(kinematicsY.velocity, -ShortJumpSpeed);
             invincibleTimer.Reset();
         }
 

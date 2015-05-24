@@ -72,6 +72,7 @@
     <Compile Include="Input.cs" />
     <Compile Include="IParticle.cs" />
     <Compile Include="IProjectile.cs" />
+    <Compile Include="Kinematics.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="MSUnit.cs" />
     <Compile Include="NumberSprite.cs" />
