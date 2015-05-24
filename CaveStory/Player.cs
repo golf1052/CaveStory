@@ -193,6 +193,7 @@ namespace CaveStory
 
         WalkingAnimation walkingAnimation;
 
+        GunExperienceHud gunExperienceHud;
         PolarStar polarStar;
 
         Dictionary<SpriteState, Sprite> sprites;
@@ -244,6 +245,7 @@ namespace CaveStory
             interacting = false;
             invincibleTimer = new Timer(InvincibleTime);
             damageText = new DamageText(Content);
+            gunExperienceHud = new GunExperienceHud(Content);
             polarStar = new PolarStar(Content);
         }
 
@@ -596,6 +598,7 @@ namespace CaveStory
             if (SpriteIsVisible())
             {
                 playerHealth.Draw(spriteBatch);
+                polarStar.DrawHud(spriteBatch, gunExperienceHud);
             }
         }
 

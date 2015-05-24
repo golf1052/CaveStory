@@ -27,12 +27,24 @@ namespace CaveStory
         GameUnit y;
         SpriteState.HorizontalFacing horizontalDirection;
         SpriteState.VerticalFacing verticalDirection;
+        GunLevelUnit gunLevel;
         GameUnit offset;
         bool alive;
 
         static VelocityUnit ProjectileSpeed { get { return 0.6f; } }
-        static GameUnit ProjectileMaxOffset { get { return 7 * Units.HalfTile; } }
-        static GameUnit ProjectileWidth { get { return 4; } }
+        static GameUnit[] ProjectileMaxOffsets
+        {
+            get
+            {
+                return new GameUnit[] {
+                    7 * Units.HalfTile,
+                    Units.TileToGame(5),
+                    Units.TileToGame(7) };
+            }
+        }
+        static GameUnit[] ProjectileWidths { get { return new GameUnit[] { 4, 8, 16 }; } }
+        static HPUnit[] Damages { get { return new HPUnit[] { 1, 2, 4 }; } }
+
         GameUnit X
         {
             get
@@ -76,8 +88,8 @@ namespace CaveStory
         {
             get
             {
-                GameUnit width = verticalDirection == SpriteState.VerticalFacing.Horizontal ? Units.TileToGame(1) : ProjectileWidth;
-                GameUnit height = verticalDirection != SpriteState.VerticalFacing.Horizontal ? Units.TileToGame(1) : ProjectileWidth;
+                GameUnit width = verticalDirection == SpriteState.VerticalFacing.Horizontal ? Units.TileToGame(1) : ProjectileWidths[gunLevel - 1];
+                GameUnit height = verticalDirection != SpriteState.VerticalFacing.Horizontal ? Units.TileToGame(1) : ProjectileWidths[gunLevel - 1];
                 return new Rectangle((int)Math.Round(X + Units.HalfTile - width / 2),
                     (int)Math.Round(Y + Units.HalfTile - height / 2),
                     (int)Math.Round(width), (int)Math.Round(height));
@@ -88,19 +100,21 @@ namespace CaveStory
         {
             get
             {
-                return 1;
+                return Damages[gunLevel - 1];
             }
         }
 
         public Projectile(Sprite sprite,
             SpriteState.HorizontalFacing horizontalDirection, SpriteState.VerticalFacing verticalDirection,
-            GameUnit x, GameUnit y, ParticleTools particleTools)
+            GameUnit x, GameUnit y,
+            GunLevelUnit gunLevel, ParticleTools particleTools)
         {
             this.sprite = sprite;
             this.horizontalDirection = horizontalDirection;
             this.verticalDirection = verticalDirection;
             this.x = x;
             this.y = y;
+            this.gunLevel = gunLevel;
             offset = 0;
             alive = true;
             particleTools.FrontSystem.AddNewParticle(ProjectileStarParticle.Create(particleTools.Content, x, y));
@@ -165,7 +179,7 @@ namespace CaveStory
             {
                 return false;
             }
-            else if (offset >= ProjectileMaxOffset)
+            else if (offset >= ProjectileMaxOffsets[gunLevel - 1])
             {
                 particleTools.FrontSystem.AddNewParticle(ProjectileStarParticle.Create(particleTools.Content, X, Y));
                 return false;
@@ -209,14 +223,15 @@ namespace CaveStory
         static GameUnit NozzleDownLeftX { get { return 29; } }
         static GameUnit NozzleDownRightX { get { return 19; } }
 
-        static TileUnit ProjectileSourceY { get { return 2; } }
-        static TileUnit HorizontalProjectileSourceX { get { return 8; } }
-        static TileUnit VerticalProjectileSourceX { get { return 9; } }
+        static TileUnit[] ProjectileSourceYs { get { return new TileUnit[] { 2, 2, 3 }; } }
+        static TileUnit[] HorizontalProjectileSourceXs { get { return new TileUnit[] { 8, 10, 8 }; } }
+
+        GunLevelUnit currentLevel;
 
         Dictionary<PolarStarSpriteState, Sprite> sprites;
 
-        Sprite horizontalProjectile;
-        Sprite verticalProjectile;
+        Sprite[] horizontalProjectiles;
+        Sprite[] verticalProjectiles;
 
         Projectile projectileA;
         Projectile projectileB;
@@ -241,17 +256,24 @@ namespace CaveStory
         public PolarStar(ContentManager Content)
         {
             sprites = new Dictionary<PolarStarSpriteState, Sprite>();
+            currentLevel = 3;
+            horizontalProjectiles = new Sprite[Units.MaxGunLevel];
+            verticalProjectiles = new Sprite[Units.MaxGunLevel];
             InitializeSprites(Content);
         }
 
         public void InitializeSprites(ContentManager Content)
         {
-            horizontalProjectile = new Sprite(Content, "Bullet",
-                Units.TileToPixel(HorizontalProjectileSourceX), Units.TileToPixel(ProjectileSourceY),
-                Units.TileToPixel(1), Units.TileToPixel(1));
-            verticalProjectile = new Sprite(Content, "Bullet",
-                Units.TileToPixel(VerticalProjectileSourceX), Units.TileToPixel(ProjectileSourceY),
-                Units.TileToPixel(1), Units.TileToPixel(1));
+            for (GunLevelUnit gunLevel = 0; gunLevel < Units.MaxGunLevel; gunLevel++)
+            {
+                horizontalProjectiles[gunLevel] = new Sprite(Content, "Bullet",
+                    Units.TileToPixel(HorizontalProjectileSourceXs[gunLevel]), Units.TileToPixel(ProjectileSourceYs[gunLevel]),
+                    Units.TileToPixel(1), Units.TileToPixel(1));
+                verticalProjectiles[gunLevel] = new Sprite(Content, "Bullet",
+                    Units.TileToPixel(HorizontalProjectileSourceXs[gunLevel] + 1), Units.TileToPixel(ProjectileSourceYs[gunLevel]),
+                    Units.TileToPixel(1), Units.TileToPixel(1));
+            }
+            
             for (SpriteState.HorizontalFacing horizontalFacing = SpriteState.HorizontalFacing.FirstHorizontalFacing;
                     horizontalFacing < SpriteState.HorizontalFacing.LastHorizontalFacing;
                     ++horizontalFacing)
@@ -360,13 +382,17 @@ namespace CaveStory
 
             if (projectileA == null)
             {
-                projectileA = new Projectile(verticalFacing == SpriteState.VerticalFacing.Horizontal ? horizontalProjectile : verticalProjectile,
-                    horizontalFacing, verticalFacing, bulletX, bulletY, particleTools);
+                projectileA = new Projectile(verticalFacing == SpriteState.VerticalFacing.Horizontal ?
+                    horizontalProjectiles[currentLevel - 1] :
+                    verticalProjectiles[currentLevel - 1],
+                    horizontalFacing, verticalFacing, bulletX, bulletY, currentLevel, particleTools);
             }
             else if (projectileB == null)
             {
-                projectileB = new Projectile(verticalFacing == SpriteState.VerticalFacing.Horizontal ? horizontalProjectile : verticalProjectile,
-                    horizontalFacing, verticalFacing, bulletX, bulletY, particleTools);
+                projectileB = new Projectile(verticalFacing == SpriteState.VerticalFacing.Horizontal ?
+                    horizontalProjectiles[currentLevel - 1] :
+                    verticalProjectiles[currentLevel - 1],
+                    horizontalFacing, verticalFacing, bulletX, bulletY, currentLevel, particleTools);
             }
         }
 
@@ -423,6 +449,11 @@ namespace CaveStory
             {
                 projectileB.Draw(spriteBatch);
             }
+        }
+
+        public void DrawHud(SpriteBatch spriteBatch, GunExperienceHud hud)
+        {
+            hud.Draw(spriteBatch, currentLevel, 2, 10);
         }
     }
 }

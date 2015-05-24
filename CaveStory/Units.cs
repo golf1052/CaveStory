@@ -44,5 +44,13 @@ namespace CaveStory
                 return TileToGame(1) / 2.0f;
             }
         }
+
+        public static GunLevelUnit MaxGunLevel
+        {
+            get
+            {
+                return 3;
+            }
+        }
     }
 }
