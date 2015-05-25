@@ -49,6 +49,7 @@
     <Compile Include="AnimatedSprite.cs" />
     <Compile Include="Backdrop.cs" />
     <Compile Include="CollisionInfo.cs" />
+    <Compile Include="CollisionRectangle.cs" />
     <Compile Include="CollisionTile.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="DeathCloudParticle.cs" />
