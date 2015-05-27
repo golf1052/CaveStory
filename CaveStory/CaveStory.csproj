@@ -75,6 +75,7 @@
     <Compile Include="IProjectile.cs" />
     <Compile Include="Kinematics.cs" />
     <Compile Include="Map.cs" />
+    <Compile Include="MapCollidable.cs" />
     <Compile Include="MSUnit.cs" />
     <Compile Include="NumberSprite.cs" />
     <Compile Include="ParticleSystem.cs" />

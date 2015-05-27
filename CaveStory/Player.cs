@@ -126,6 +126,7 @@ namespace CaveStory
         public GameUnit CenterX { get { return kinematicsX.position + Units.HalfTile; } }
         public GameUnit CenterY { get { return kinematicsY.position + Units.HalfTile; } }
 
+        ParticleTools particleTools;
         Kinematics kinematicsX;
         Kinematics kinematicsY;
         int accelerationX;
@@ -225,10 +226,11 @@ namespace CaveStory
             }
         }
 
-        public Player(ContentManager Content, GameUnit x, GameUnit y)
+        public Player(ContentManager Content, ParticleTools particleTools, GameUnit x, GameUnit y)
         {
             sprites = new Dictionary<SpriteState, Sprite>();
             InitializeSprites(Content);
+            this.particleTools = particleTools;
             kinematicsX = new Kinematics(x, 0);
             kinematicsY = new Kinematics(y, 0);
             accelerationX = 0;
@@ -346,7 +348,7 @@ namespace CaveStory
             }
         }
 
-        public void Update(GameTime gameTime, Map map, ParticleTools particleTools)
+        public void Update(GameTime gameTime, Map map)
         {
             sprites[SpriteState].Update();
 
@@ -357,7 +359,7 @@ namespace CaveStory
             polarStar.UpdateProjectiles(gameTime, map, particleTools);
 
             UpdateX(gameTime, map);
-            UpdateY(gameTime, map, particleTools);
+            UpdateY(gameTime, map);
         }
 
         public void UpdateX(GameTime gameTime, Map map)
@@ -396,11 +398,12 @@ namespace CaveStory
                 if (info.collided)
                 {
                     kinematicsX.position = Units.TileToGame(info.col) - collisionRectangle.BoundingBox.Right;
-                    kinematicsX.velocity = 0;
+                    OnCollision(MapCollidable.SideType.RightSide, true);
                 }
                 else
                 {
                     kinematicsX.position += delta;
+                    OnDelta(MapCollidable.SideType.RightSide);
                 }
 
                 info = GetWallCollisionInfo(map, collisionRectangle.LeftCollision(kinematicsX.position, kinematicsY.position, 0));
@@ -408,6 +411,7 @@ namespace CaveStory
                 if (info.collided)
                 {
                     kinematicsX.position = Units.TileToGame(info.col + 1) - collisionRectangle.BoundingBox.Left;
+                    OnCollision(MapCollidable.SideType.LeftSide, false);
                 }
             }
             else
@@ -417,11 +421,12 @@ namespace CaveStory
                 if (info.collided)
                 {
                     kinematicsX.position = Units.TileToGame(info.col + 1) - collisionRectangle.BoundingBox.Left;
-                    kinematicsX.velocity = 0;
+                    OnCollision(MapCollidable.SideType.LeftSide, true);
                 }
                 else
                 {
                     kinematicsX.position += delta;
+                    OnDelta(MapCollidable.SideType.LeftSide);
                 }
 
                 info = GetWallCollisionInfo(map, collisionRectangle.RightCollision(kinematicsX.position, kinematicsY.position, 0));
@@ -429,11 +434,12 @@ namespace CaveStory
                 if (info.collided)
                 {
                     kinematicsX.position = Units.TileToGame(info.col) - collisionRectangle.BoundingBox.Right;
+                    OnCollision(MapCollidable.SideType.RightSide, false);
                 }
             }
         }
 
-        public void UpdateY(GameTime gameTime, Map map, ParticleTools particleTools)
+        public void UpdateY(GameTime gameTime, Map map)
         {
             AccelerationUnit gravity = jumpActive && kinematicsY.velocity < 0 ?
                 JumpGravity : Gravity;
@@ -448,13 +454,12 @@ namespace CaveStory
                 if (info.collided)
                 {
                     kinematicsY.position = Units.TileToGame(info.row) - collisionRectangle.BoundingBox.Bottom;
-                    kinematicsY.velocity = 0;
-                    OnGround = true;
+                    OnCollision(MapCollidable.SideType.BottomSide, true);
                 }
                 else
                 {
                     kinematicsY.position += delta;
-                    OnGround = false;
+                    OnDelta(MapCollidable.SideType.BottomSide);
                 }
 
                 info = GetWallCollisionInfo(map, collisionRectangle.TopCollision(kinematicsX.position, kinematicsY.position, 0));
@@ -462,7 +467,7 @@ namespace CaveStory
                 if (info.collided)
                 {
                     kinematicsY.position = Units.TileToGame(info.row + 1) - collisionRectangle.BoundingBox.Top;
-                    particleTools.FrontSystem.AddNewParticle(new HeadBumpParticle(particleTools.Content, CenterX, kinematicsY.position + collisionRectangle.BoundingBox.Top));
+                    OnCollision(MapCollidable.SideType.TopSide, false);
                 }
             }
             else
@@ -472,13 +477,12 @@ namespace CaveStory
                 if (info.collided)
                 {
                     kinematicsY.position = Units.TileToGame(info.row + 1) - collisionRectangle.BoundingBox.Top;
-                    particleTools.FrontSystem.AddNewParticle(new HeadBumpParticle(particleTools.Content, CenterX, kinematicsY.position + collisionRectangle.BoundingBox.Top));
-                    kinematicsY.velocity = 0;
+                    OnCollision(MapCollidable.SideType.TopSide, true);
                 }
                 else
                 {
                     kinematicsY.position += delta;
-                    OnGround = false;
+                    OnDelta(MapCollidable.SideType.TopSide);
                 }
 
                 info = GetWallCollisionInfo(map, collisionRectangle.BottomCollision(kinematicsX.position, kinematicsY.position, 0));
@@ -486,8 +490,58 @@ namespace CaveStory
                 if (info.collided)
                 {
                     kinematicsY.position = Units.TileToGame(info.row) - collisionRectangle.BoundingBox.Bottom;
-                    OnGround = true;
+                    OnCollision(MapCollidable.SideType.BottomSide, false);
                 }
+            }
+        }
+
+        protected void OnCollision(MapCollidable.SideType side, bool isDeltaDirection)
+        {
+            switch (side)
+            {
+                case MapCollidable.SideType.TopSide:
+                    if (isDeltaDirection)
+                    {
+                        kinematicsY.velocity = 0;
+                    }
+                    particleTools.FrontSystem.AddNewParticle(new HeadBumpParticle(particleTools.Content, CenterX, kinematicsY.position + collisionRectangle.BoundingBox.Top));
+                    break;
+                case MapCollidable.SideType.BottomSide:
+                    onGround = true;
+                    if (isDeltaDirection)
+                    {
+                        kinematicsY.velocity = 0;
+                    }
+                    break;
+                case MapCollidable.SideType.LeftSide:
+                    if (isDeltaDirection)
+                    {
+                        kinematicsX.velocity = 0;
+                    }
+                    break;
+                case MapCollidable.SideType.RightSide:
+                    if (isDeltaDirection)
+                    {
+                        kinematicsX.velocity = 0;
+                    }
+                    break;
+            }
+        }
+
+        protected void OnDelta(MapCollidable.SideType side)
+        {
+            switch (side)
+            {
+                case MapCollidable.SideType.TopSide:
+                    onGround = false;
+                    break;
+                case MapCollidable.SideType.BottomSide:
+                    onGround = true;
+                    break;
+                case MapCollidable.SideType.LeftSide:
+                    break;
+                case MapCollidable.SideType.RightSide:
+                    break;
             }
         }
 
@@ -587,7 +641,7 @@ namespace CaveStory
             jumpActive = false;
         }
 
-        public void StartFire(ParticleTools particleTools)
+        public void StartFire()
         {
             polarStar.StartFire(kinematicsX.position, kinematicsY.position, horizontalFacing, VerticalFacing, GunUp, particleTools);
         }

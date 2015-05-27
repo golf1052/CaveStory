@@ -55,14 +55,14 @@ namespace CaveStory
         {
             spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
 
-            player = new Player(Content, Units.TileToGame(ScreenWidth / 2), Units.TileToGame(ScreenHeight / 2));
+            frontParticleSystem = new ParticleSystem();
+            entityParticleSystem = new ParticleSystem();
+            particleTools = new ParticleTools(frontParticleSystem, entityParticleSystem, Content);
+            player = new Player(Content, particleTools, Units.TileToGame(ScreenWidth / 2), Units.TileToGame(ScreenHeight / 2));
             damageTexts.AddDamageable(player);
             bat = new FirstCaveBat(Content, Units.TileToGame(7), Units.TileToGame(ScreenHeight / 2 + 1));
             damageTexts.AddDamageable(bat);
             map = Map.CreateTestMap(Content);
-            frontParticleSystem = new ParticleSystem();
-            entityParticleSystem = new ParticleSystem();
-            particleTools = new ParticleTools(frontParticleSystem, entityParticleSystem, Content);
             base.LoadContent();
         }
 
@@ -143,7 +143,7 @@ namespace CaveStory
 
             if (input.WasKeyPressed(Keys.X))
             {
-                player.StartFire(particleTools);
+                player.StartFire();
             }
             else if (input.WasKeyReleased(Keys.X))
             {
@@ -154,7 +154,7 @@ namespace CaveStory
             damageTexts.Update(gameTime);
             frontParticleSystem.Update(gameTime);
             entityParticleSystem.Update(gameTime);
-            player.Update(gameTime, map, particleTools);
+            player.Update(gameTime, map);
 
             if (bat != null)
             {
