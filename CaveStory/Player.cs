@@ -9,7 +9,7 @@ using System.Text;
 
 namespace CaveStory
 {
-    public class Player : IDamageable
+    public class Player : MapCollidable, IDamageable
     {
         private class WalkingAnimation
         {
@@ -389,54 +389,7 @@ namespace CaveStory
                     (float)Math.Min(0.0f, kinematicsX.velocity + Friction * gameTime.ElapsedGameTime.TotalMilliseconds);
             }
 
-            GameUnit delta = kinematicsX.velocity * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-            
-            if (delta > 0.0f)
-            {
-                CollisionInfo info = GetWallCollisionInfo(map, collisionRectangle.RightCollision(kinematicsX.position, kinematicsY.position, delta));
-
-                if (info.collided)
-                {
-                    kinematicsX.position = Units.TileToGame(info.col) - collisionRectangle.BoundingBox.Right;
-                    OnCollision(MapCollidable.SideType.RightSide, true);
-                }
-                else
-                {
-                    kinematicsX.position += delta;
-                    OnDelta(MapCollidable.SideType.RightSide);
-                }
-
-                info = GetWallCollisionInfo(map, collisionRectangle.LeftCollision(kinematicsX.position, kinematicsY.position, 0));
-
-                if (info.collided)
-                {
-                    kinematicsX.position = Units.TileToGame(info.col + 1) - collisionRectangle.BoundingBox.Left;
-                    OnCollision(MapCollidable.SideType.LeftSide, false);
-                }
-            }
-            else
-            {
-                CollisionInfo info = GetWallCollisionInfo(map, collisionRectangle.LeftCollision(kinematicsX.position, kinematicsY.position, delta));
-
-                if (info.collided)
-                {
-                    kinematicsX.position = Units.TileToGame(info.col + 1) - collisionRectangle.BoundingBox.Left;
-                    OnCollision(MapCollidable.SideType.LeftSide, true);
-                }
-                else
-                {
-                    kinematicsX.position += delta;
-                    OnDelta(MapCollidable.SideType.LeftSide);
-                }
-
-                info = GetWallCollisionInfo(map, collisionRectangle.RightCollision(kinematicsX.position, kinematicsY.position, 0));
-
-                if (info.collided)
-                {
-                    kinematicsX.position = Units.TileToGame(info.col) - collisionRectangle.BoundingBox.Right;
-                    OnCollision(MapCollidable.SideType.RightSide, false);
-                }
-            }
+            UpdateX(collisionRectangle, kinematicsX, kinematicsY, gameTime, map);
         }
 
         public void UpdateY(GameTime gameTime, Map map)
@@ -445,57 +398,10 @@ namespace CaveStory
                 JumpGravity : Gravity;
             kinematicsY.velocity = (float)Math.Min(kinematicsY.velocity + gravity * gameTime.ElapsedGameTime.TotalMilliseconds, MaxSpeedY);
 
-            GameUnit delta = kinematicsY.velocity * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-            if (delta > 0)
-            {
-                CollisionInfo info = GetWallCollisionInfo(map, collisionRectangle.BottomCollision(kinematicsX.position, kinematicsY.position, delta));
-
-                if (info.collided)
-                {
-                    kinematicsY.position = Units.TileToGame(info.row) - collisionRectangle.BoundingBox.Bottom;
-                    OnCollision(MapCollidable.SideType.BottomSide, true);
-                }
-                else
-                {
-                    kinematicsY.position += delta;
-                    OnDelta(MapCollidable.SideType.BottomSide);
-                }
-
-                info = GetWallCollisionInfo(map, collisionRectangle.TopCollision(kinematicsX.position, kinematicsY.position, 0));
-
-                if (info.collided)
-                {
-                    kinematicsY.position = Units.TileToGame(info.row + 1) - collisionRectangle.BoundingBox.Top;
-                    OnCollision(MapCollidable.SideType.TopSide, false);
-                }
-            }
-            else
-            {
-                CollisionInfo info = GetWallCollisionInfo(map, collisionRectangle.TopCollision(kinematicsX.position, kinematicsY.position, delta));
-
-                if (info.collided)
-                {
-                    kinematicsY.position = Units.TileToGame(info.row + 1) - collisionRectangle.BoundingBox.Top;
-                    OnCollision(MapCollidable.SideType.TopSide, true);
-                }
-                else
-                {
-                    kinematicsY.position += delta;
-                    OnDelta(MapCollidable.SideType.TopSide);
-                }
-
-                info = GetWallCollisionInfo(map, collisionRectangle.BottomCollision(kinematicsX.position, kinematicsY.position, 0));
-
-                if (info.collided)
-                {
-                    kinematicsY.position = Units.TileToGame(info.row) - collisionRectangle.BoundingBox.Bottom;
-                    OnCollision(MapCollidable.SideType.BottomSide, false);
-                }
-            }
+            UpdateY(collisionRectangle, kinematicsX, kinematicsY, gameTime, map);
         }
 
-        protected void OnCollision(MapCollidable.SideType side, bool isDeltaDirection)
+        protected override void OnCollision(MapCollidable.SideType side, bool isDeltaDirection)
         {
             switch (side)
             {
@@ -528,7 +434,7 @@ namespace CaveStory
             }
         }
 
-        protected void OnDelta(MapCollidable.SideType side)
+        protected override void OnDelta(MapCollidable.SideType side)
         {
             switch (side)
             {
@@ -543,21 +449,6 @@ namespace CaveStory
                 case MapCollidable.SideType.RightSide:
                     break;
             }
-        }
-
-        CollisionInfo GetWallCollisionInfo(Map map, Rectangle rectangle)
-        {
-            CollisionInfo info = new CollisionInfo(false, 0, 0);
-            List<CollisionTile> tiles = map.GetCollidingTiles(rectangle);
-            for (int i = 0; i < tiles.Count; i++)
-            {
-                if (tiles[i].tileType == Tile.TileType.WallTile)
-                {
-                    info = new CollisionInfo(true, tiles[i].row, tiles[i].col);
-                    break;
-                }
-            }
-            return info;
         }
 
         public void StartMovingLeft()
