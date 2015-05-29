@@ -76,6 +76,7 @@
     <Compile Include="ImmobileSingleLoopParticle.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="IParticle.cs" />
+    <Compile Include="IPickup.cs" />
     <Compile Include="IProjectile.cs" />
     <Compile Include="Kinematics.cs" />
     <Compile Include="Map.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="MSUnit.cs" />
     <Compile Include="NumberSprite.cs" />
     <Compile Include="ParticleSystem.cs" />
+    <Compile Include="Pickups.cs" />
     <Compile Include="PixelUnit.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="PlayerHealth.cs" />

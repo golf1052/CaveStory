@@ -560,6 +560,11 @@ namespace CaveStory
             invincibleTimer.Reset();
         }
 
+        public void CollectPickup(IPickup pickup)
+        {
+
+        }
+
         bool SpriteIsVisible()
         {
             return !(invincibleTimer.Active && invincibleTimer.CurrentTime.Ticks / InvincibleFlashTime.Ticks % 2 == 0);
