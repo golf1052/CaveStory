@@ -402,7 +402,6 @@ namespace CaveStory
         public void UpdateY(GameTime gameTime, Map map)
         {
             IAccelerator accelerator = jumpActive && kinematicsY.velocity < 0 ? JumpGravityAccelerator : ConstantAccelerator.Gravity;
-            accelerator.UpdateVelocity(kinematicsY, gameTime);
 
             UpdateY(collisionRectangle, accelerator, kinematicsX, kinematicsY, gameTime, map);
         }
@@ -448,7 +447,7 @@ namespace CaveStory
                     onGround = false;
                     break;
                 case MapCollidable.SideType.BottomSide:
-                    onGround = true;
+                    onGround = false;
                     break;
                 case MapCollidable.SideType.LeftSide:
                     break;
@@ -531,6 +530,7 @@ namespace CaveStory
             {
                 kinematicsY.velocity = -JumpSpeed;
             }
+            interacting = false;
         }
 
         public void StopJump()
