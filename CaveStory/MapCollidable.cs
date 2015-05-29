@@ -32,9 +32,11 @@ namespace CaveStory
         }
 
         protected void UpdateX(CollisionRectangle collisionRectangle,
+            IAccelerator accelerator,
             Kinematics kinematicsX, Kinematics kinematicsY,
             GameTime gameTime, Map map)
         {
+            accelerator.UpdateVelocity(kinematicsX, gameTime);
             GameUnit delta = kinematicsX.velocity * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
             if (delta > 0.0f)
@@ -86,9 +88,11 @@ namespace CaveStory
         }
 
         protected void UpdateY(CollisionRectangle collisionRectangle,
+            IAccelerator accelerator,
             Kinematics kinematicsX, Kinematics kinematicsY,
             GameTime gameTime, Map map)
         {
+            accelerator.UpdateVelocity(kinematicsY, gameTime);
             GameUnit delta = kinematicsY.velocity * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
             if (delta > 0)

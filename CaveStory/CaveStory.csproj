@@ -45,6 +45,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccelerationUnit.cs" />
+    <Compile Include="BidirectionalAccelerators.cs" />
+    <Compile Include="ConstantAccelerator.cs" />
+    <Compile Include="FrictionAccelerator.cs" />
+    <Compile Include="IAccelerator.cs" />
     <Compile Include="AngularVelocityUnit.cs" />
     <Compile Include="AnimatedSprite.cs" />
     <Compile Include="Backdrop.cs" />
@@ -95,6 +99,7 @@
     <Compile Include="Units.cs" />
     <Compile Include="VaryingWidthSprite.cs" />
     <Compile Include="VelocityUnit.cs" />
+    <Compile Include="ZeroAccelerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\" />

@@ -77,11 +77,8 @@ namespace CaveStory
         // pixels / millisecond
         static VelocityUnit MaxSpeedX { get { return 0.15859375f; } }
 
-        // Fall Motion
-        // (pixels / millisecond) / millisecond
-        static AccelerationUnit Gravity { get { return 0.00078125f; } }
-        // pixels / millisecond
-        static VelocityUnit MaxSpeedY { get { return 0.2998046875f; } }
+        static BidirectionalAccelerators WalkingAccelerators = new BidirectionalAccelerators(WalkingAcceleration, MaxSpeedX);
+        static FrictionAccelerator FrictionAccelerator = new FrictionAccelerator(Friction);
 
         // Jump Motion
         // pixels / millisecond
@@ -91,6 +88,9 @@ namespace CaveStory
         static AccelerationUnit AirAcceleration { get { return 0.0003125f; } }
         // (pixels / millisecond) / millisecond
         static AccelerationUnit JumpGravity { get { return 0.0003125f; } }
+
+        static BidirectionalAccelerators AirAccelerators = new BidirectionalAccelerators(AirAcceleration, MaxSpeedX);
+        static ConstantAccelerator JumpGravityAccelerator = new ConstantAccelerator(JumpGravity, ConstantAccelerator.TerminalSpeed);
 
         // Sprites
         const string SpriteFilePath = "MyChar";
@@ -364,41 +364,47 @@ namespace CaveStory
 
         public void UpdateX(GameTime gameTime, Map map)
         {
-            AccelerationUnit accX = 0;
-            if (accelerationX < 0)
+            IAccelerator accelerator;
+            if (OnGround)
             {
-                accX = OnGround ? -WalkingAcceleration : -AirAcceleration;
+                if (accelerationX == 0)
+                {
+                    accelerator = FrictionAccelerator;
+                }
+                else if (accelerationX < 0)
+                {
+                    accelerator = WalkingAccelerators.negative;
+                }
+                else
+                {
+                    accelerator = WalkingAccelerators.positive;
+                }
             }
-            else if (accelerationX > 0)
+            else
             {
-                accX = OnGround ? WalkingAcceleration : AirAcceleration;
-            }
-            kinematicsX.velocity += accX * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (accelerationX < 0)
-            {
-                kinematicsX.velocity = Math.Max(kinematicsX.velocity, -MaxSpeedX);
-            }
-            else if (accelerationX > 0)
-            {
-                kinematicsX.velocity = Math.Min(kinematicsX.velocity, MaxSpeedX);
-            }
-            else if (OnGround)
-            {
-                kinematicsX.velocity = kinematicsX.velocity > 0.0f ?
-                    (float)Math.Max(0.0f, kinematicsX.velocity - Friction * gameTime.ElapsedGameTime.TotalMilliseconds) :
-                    (float)Math.Min(0.0f, kinematicsX.velocity + Friction * gameTime.ElapsedGameTime.TotalMilliseconds);
+                if (accelerationX == 0)
+                {
+                    accelerator = ZeroAccelerator.Zero;
+                }
+                else if (accelerationX < 0)
+                {
+                    accelerator = AirAccelerators.negative;
+                }
+                else
+                {
+                    accelerator = AirAccelerators.positive;
+                }
             }
 
-            UpdateX(collisionRectangle, kinematicsX, kinematicsY, gameTime, map);
+            UpdateX(collisionRectangle, accelerator, kinematicsX, kinematicsY, gameTime, map);
         }
 
         public void UpdateY(GameTime gameTime, Map map)
         {
-            AccelerationUnit gravity = jumpActive && kinematicsY.velocity < 0 ?
-                JumpGravity : Gravity;
-            kinematicsY.velocity = (float)Math.Min(kinematicsY.velocity + gravity * gameTime.ElapsedGameTime.TotalMilliseconds, MaxSpeedY);
+            IAccelerator accelerator = jumpActive && kinematicsY.velocity < 0 ? JumpGravityAccelerator : ConstantAccelerator.Gravity;
+            accelerator.UpdateVelocity(kinematicsY, gameTime);
 
-            UpdateY(collisionRectangle, kinematicsX, kinematicsY, gameTime, map);
+            UpdateY(collisionRectangle, accelerator, kinematicsX, kinematicsY, gameTime, map);
         }
 
         protected override void OnCollision(MapCollidable.SideType side, bool isDeltaDirection)
