@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="AccelerationUnit.cs" />
     <Compile Include="BidirectionalAccelerators.cs" />
+    <Compile Include="CompositeCollisionRectangle.cs" />
     <Compile Include="ConstantAccelerator.cs" />
     <Compile Include="FrictionAccelerator.cs" />
     <Compile Include="IAccelerator.cs" />
@@ -53,7 +54,7 @@
     <Compile Include="AnimatedSprite.cs" />
     <Compile Include="Backdrop.cs" />
     <Compile Include="CollisionInfo.cs" />
-    <Compile Include="CollisionRectangle.cs" />
+    <Compile Include="ICollisionRectangle.cs" />
     <Compile Include="CollisionTile.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="DeathCloudParticle.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="ProjectileStarParticle.cs" />
     <Compile Include="ProjectileWallParticle.cs" />
+    <Compile Include="SimpleCollisionRectangle.cs" />
     <Compile Include="Sprite.cs" />
     <Compile Include="SpriteState.cs" />
     <Compile Include="Tile.cs" />

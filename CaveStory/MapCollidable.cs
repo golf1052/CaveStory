@@ -31,7 +31,7 @@ namespace CaveStory
             return info;
         }
 
-        protected void UpdateX(CollisionRectangle collisionRectangle,
+        protected void UpdateX(ICollisionRectangle collisionRectangle,
             IAccelerator accelerator,
             Kinematics kinematicsX, Kinematics kinematicsY,
             GameTime gameTime, Map map)
@@ -87,7 +87,7 @@ namespace CaveStory
             }
         }
 
-        protected void UpdateY(CollisionRectangle collisionRectangle,
+        protected void UpdateY(ICollisionRectangle collisionRectangle,
             IAccelerator accelerator,
             Kinematics kinematicsX, Kinematics kinematicsY,
             GameTime gameTime, Map map)

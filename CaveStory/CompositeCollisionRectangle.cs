@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace CaveStory
 {
-    public class CollisionRectangle
+    public class CompositeCollisionRectangle : ICollisionRectangle
     {
         Rectangle top;
         Rectangle bottom;
@@ -22,7 +22,7 @@ namespace CaveStory
             }
         }
 
-        public CollisionRectangle(Rectangle top, Rectangle bottom,
+        public CompositeCollisionRectangle(Rectangle top, Rectangle bottom,
             Rectangle left, Rectangle right)
         {
             this.top = top;

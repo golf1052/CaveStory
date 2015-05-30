@@ -117,7 +117,7 @@ namespace CaveStory
         GameUnit CollisionBottomWidth { get { return 10; } }
         GameUnit CollisionTopLeft { get { return (Units.TileToGame(1) - CollisionTopWidth) / 2; } }
         GameUnit CollisionBottomLeft { get { return (Units.TileToGame(1) - CollisionBottomWidth) / 2; } }
-        CollisionRectangle collisionRectangle;
+        ICollisionRectangle collisionRectangle;
 
         TimeSpan InvincibleFlashTime { get { return TimeSpan.FromMilliseconds(50); } }
 
@@ -245,7 +245,7 @@ namespace CaveStory
             damageText = new DamageText(Content);
             gunExperienceHud = new GunExperienceHud(Content);
             polarStar = new PolarStar(Content);
-            collisionRectangle = new CollisionRectangle(new Rectangle((int)Math.Round(CollisionTopLeft), (int)Math.Round(CollisionYTop),
+            collisionRectangle = new CompositeCollisionRectangle(new Rectangle((int)Math.Round(CollisionTopLeft), (int)Math.Round(CollisionYTop),
                 (int)Math.Round(CollisionTopWidth), (int)Math.Round(CollisionYHeight / 2)),
                 new Rectangle((int)Math.Round(CollisionBottomLeft), (int)Math.Round(CollisionYTop + CollisionYHeight / 2),
                 (int)Math.Round(CollisionBottomWidth), (int)Math.Round(CollisionYHeight / 2)),
