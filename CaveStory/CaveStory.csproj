@@ -91,6 +91,7 @@
     <Compile Include="PlayerHealth.cs" />
     <Compile Include="PolarStar.cs" />
     <Compile Include="PolarVector.cs" />
+    <Compile Include="PowerDoritoPickup.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectileStarParticle.cs" />
     <Compile Include="ProjectileWallParticle.cs" />

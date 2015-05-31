@@ -24,6 +24,7 @@ namespace CaveStory
         Map map;
         Input input;
         DamageTexts damageTexts;
+        Pickups pickups;
         ParticleSystem frontParticleSystem;
         ParticleSystem entityParticleSystem;
         ParticleTools particleTools;
@@ -47,6 +48,7 @@ namespace CaveStory
             input = new Input();
             damageTexts = new DamageTexts();
             Random = new Random();
+            pickups = new Pickups();
 
             base.Initialize();
         }
@@ -63,6 +65,7 @@ namespace CaveStory
             bat = new FirstCaveBat(Content, Units.TileToGame(7), Units.TileToGame(ScreenHeight / 2 + 1));
             damageTexts.AddDamageable(bat);
             map = Map.CreateTestMap(Content);
+            pickups.Add(new PowerDoritoPickup(Content, 300, 200, PowerDoritoPickup.SizeType.Small));
             base.LoadContent();
         }
 
@@ -152,6 +155,7 @@ namespace CaveStory
 
             Timer.UpdateAll(gameTime);
             damageTexts.Update(gameTime);
+            pickups.Update(gameTime, map);
             frontParticleSystem.Update(gameTime);
             entityParticleSystem.Update(gameTime);
             player.Update(gameTime, map);
@@ -195,6 +199,7 @@ namespace CaveStory
                 bat.Draw(spriteBatch);
             }
             entityParticleSystem.Draw(spriteBatch);
+            pickups.Draw(spriteBatch);
             player.Draw(spriteBatch);
             map.Draw(spriteBatch);
             frontParticleSystem.Draw(spriteBatch);

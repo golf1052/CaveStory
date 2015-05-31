@@ -11,6 +11,11 @@ namespace CaveStory
     {
         HashSet<IPickup> pickups;
 
+        public Pickups()
+        {
+            pickups = new HashSet<IPickup>();
+        }
+
         public void Add(IPickup pickup)
         {
             pickups.Add(pickup);
