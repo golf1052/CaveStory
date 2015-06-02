@@ -562,7 +562,11 @@ namespace CaveStory
 
         public void CollectPickup(IPickup pickup)
         {
-
+            if (pickup.Type == Pickup.PickupType.Experience)
+            {
+                polarStar.CollectExpereince(pickup.Value);
+                gunExperienceHud.ActivateFlash();
+            }
         }
 
         bool SpriteIsVisible()

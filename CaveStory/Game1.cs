@@ -65,7 +65,6 @@ namespace CaveStory
             bat = new FirstCaveBat(Content, Units.TileToGame(7), Units.TileToGame(ScreenHeight / 2 + 1));
             damageTexts.AddDamageable(bat);
             map = Map.CreateTestMap(Content);
-            pickups.Add(new PowerDoritoPickup(Content, 300, 200, PowerDoritoPickup.SizeType.Small));
             base.LoadContent();
         }
 
@@ -167,6 +166,7 @@ namespace CaveStory
                     DeathCloudParticle.CreateRandomDeathCloud(particleTools,
                         bat.CenterX, bat.CenterY,
                         3);
+                    pickups.Add(new PowerDoritoPickup(Content, bat.CenterX, bat.CenterY, PowerDoritoPickup.SizeType.Small));
                     damageTexts.damageTextDict[bat.DamageText] = null;
                     bat = null;
                 }
