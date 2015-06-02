@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace CaveStory
 {
-    public class PowerDoritoPickup : IPickup
+    public class PowerDoritoPickup : MapCollidable, IPickup
     {
         public enum SizeType
         {
@@ -25,10 +25,27 @@ namespace CaveStory
         static TileUnit SourceHeight = 1;
         const int Fps = 14;
         static FrameUnit NumFrames { get { return 6; } }
+        static TimeSpan LifeTime { get { return TimeSpan.FromMilliseconds(8000); } }
+        static TimeSpan FlashTime { get { return TimeSpan.FromMilliseconds(7000); } }
+        static TimeSpan FlashPeriod { get { return TimeSpan.FromMilliseconds(50); } }
+        static VelocityUnit BounceSpeed { get { return 0.225f; } }
+        static FrictionAccelerator Friction { get { return new FrictionAccelerator(0.00002f); } }
+        static SimpleCollisionRectangle[] CollisionRectangles
+        {
+            get
+            {
+                return new SimpleCollisionRectangle[]
+                {
+                    new SimpleCollisionRectangle(new Rectangle(8, 8, 16, 16)),
+                    new SimpleCollisionRectangle(new Rectangle(4, 4, 24, 24)),
+                    new SimpleCollisionRectangle(new Rectangle(0, 0, 32, 32))
+                };
+            }
+        }
 
-        public override PickupType Type { get { return PickupType.Experience; } }
+        public Pickup.PickupType Type { get { return Pickup.PickupType.Experience; } }
 
-        public override int Value
+        public int Value
         {
             get
             {
@@ -40,6 +57,7 @@ namespace CaveStory
         Kinematics kinematicsY;
         AnimatedSprite sprite;
         SizeType size;
+        Timer timer;
 
         public PowerDoritoPickup(ContentManager Content, GameUnit centerX, GameUnit centerY, SizeType size)
         {
@@ -50,22 +68,54 @@ namespace CaveStory
                 Units.TileToPixel(SourceWidth), Units.TileToPixel(SourceHeight),
                 Fps, NumFrames);
             this.size = size;
+            timer = new Timer(LifeTime, true);
         }
 
-        public override Rectangle CollisionRectangle()
+        public Rectangle CollisionRectangle()
         {
-            throw new NotImplementedException();
+            return new Rectangle((int)Math.Round(kinematicsX.position) + CollisionRectangles[(int)size].BoundingBox.Left,
+                (int)Math.Round(kinematicsY.position) + CollisionRectangles[(int)size].BoundingBox.Top,
+                CollisionRectangles[(int)size].BoundingBox.Width,
+                CollisionRectangles[(int)size].BoundingBox.Height);
         }
 
-        public override bool Update(GameTime gameTime, Map map)
+        public bool Update(GameTime gameTime, Map map)
         {
             sprite.Update();
-            return true;
+
+            UpdateY(CollisionRectangles[(int)size], ConstantAccelerator.Gravity,
+                kinematicsX, kinematicsY, gameTime, map);
+            UpdateX(CollisionRectangles[(int)size], Friction,
+                kinematicsX, kinematicsY, gameTime, map);
+            return timer.Active;
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        protected override void OnCollision(SideType side, bool isDeltaDirection)
         {
-            sprite.Draw(spriteBatch, kinematicsX.position, kinematicsY.position);
+            if (side == SideType.TopSide)
+            {
+                kinematicsY.velocity = 0;
+            }
+            else if (side == SideType.BottomSide)
+            {
+                kinematicsY.velocity = -BounceSpeed;
+            }
+            else
+            {
+                kinematicsX.velocity *= -1;
+            }
+        }
+
+        protected override void OnDelta(SideType side)
+        {
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            if (timer.CurrentTime < FlashTime || timer.CurrentTime.Ticks / FlashPeriod.Ticks % 2 == 0)
+            {
+                sprite.Draw(spriteBatch, kinematicsX.position, kinematicsY.position);
+            }   
         }
     }
 }

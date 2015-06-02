@@ -182,6 +182,8 @@ namespace CaveStory
                 }
             }
 
+            pickups.HandleCollisions(player);
+
             if (bat != null && bat.DamageRectangle.Intersects(player.DamageRectangle))
             {
                 player.TakeDamage(bat.ContactDamage);

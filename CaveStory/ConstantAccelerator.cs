@@ -16,7 +16,7 @@ namespace CaveStory
 
         AccelerationUnit acceleration;
         VelocityUnit maxVelocity;
-        public static ConstantAccelerator Gravity = new ConstantAccelerator(GravityAcceleration, TerminalSpeed);
+        public static ConstantAccelerator Gravity { get { return new ConstantAccelerator(GravityAcceleration, TerminalSpeed); } }
 
         public ConstantAccelerator(AccelerationUnit acceleration, VelocityUnit maxVelocity)
         {
