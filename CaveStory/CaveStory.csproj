@@ -48,6 +48,7 @@
     <Compile Include="BidirectionalAccelerators.cs" />
     <Compile Include="CompositeCollisionRectangle.cs" />
     <Compile Include="ConstantAccelerator.cs" />
+    <Compile Include="FlashingPickup.cs" />
     <Compile Include="FrictionAccelerator.cs" />
     <Compile Include="IAccelerator.cs" />
     <Compile Include="AngularVelocityUnit.cs" />

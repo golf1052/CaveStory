@@ -12,8 +12,8 @@ namespace CaveStory
 
         int Value { get; }
         Pickup.PickupType Type { get; }
+        Rectangle CollisionRectangle { get; }
 
-        Rectangle CollisionRectangle();
         void Draw(SpriteBatch spriteBatch);
         bool Update(GameTime gameTime, Map map);
     }

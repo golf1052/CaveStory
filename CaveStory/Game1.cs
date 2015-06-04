@@ -166,7 +166,7 @@ namespace CaveStory
                     DeathCloudParticle.CreateRandomDeathCloud(particleTools,
                         bat.CenterX, bat.CenterY,
                         3);
-                    pickups.Add(new PowerDoritoPickup(Content, bat.CenterX, bat.CenterY, PowerDoritoPickup.SizeType.Small));
+                    pickups.Add(FlashingPickup.HeartPickup(Content, bat.CenterX, bat.CenterY));
                     damageTexts.damageTextDict[bat.DamageText] = null;
                     bat = null;
                 }

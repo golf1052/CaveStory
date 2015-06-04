@@ -40,7 +40,7 @@ namespace CaveStory
         {
             for (int i = 0; i < pickups.Count;)
             {
-                if (player.DamageRectangle.Intersects(pickups.ElementAt(i).CollisionRectangle()))
+                if (player.DamageRectangle.Intersects(pickups.ElementAt(i).CollisionRectangle))
                 {
                     player.CollectPickup(pickups.ElementAt(i));
                     pickups.Remove(pickups.ElementAt(i));

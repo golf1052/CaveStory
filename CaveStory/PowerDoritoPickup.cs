@@ -53,6 +53,17 @@ namespace CaveStory
             }
         }
 
+        public Rectangle CollisionRectangle
+        {
+            get
+            {
+                return new Rectangle((int)Math.Round(kinematicsX.position) + CollisionRectangles[(int)size].BoundingBox.Left,
+                    (int)Math.Round(kinematicsY.position) + CollisionRectangles[(int)size].BoundingBox.Top,
+                    CollisionRectangles[(int)size].BoundingBox.Width,
+                    CollisionRectangles[(int)size].BoundingBox.Height);
+            }
+        }
+
         Kinematics kinematicsX;
         Kinematics kinematicsY;
         AnimatedSprite sprite;
@@ -71,13 +82,7 @@ namespace CaveStory
             timer = new Timer(LifeTime, true);
         }
 
-        public Rectangle CollisionRectangle()
-        {
-            return new Rectangle((int)Math.Round(kinematicsX.position) + CollisionRectangles[(int)size].BoundingBox.Left,
-                (int)Math.Round(kinematicsY.position) + CollisionRectangles[(int)size].BoundingBox.Top,
-                CollisionRectangles[(int)size].BoundingBox.Width,
-                CollisionRectangles[(int)size].BoundingBox.Height);
-        }
+        
 
         public bool Update(GameTime gameTime, Map map)
         {
