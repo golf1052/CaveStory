@@ -8,8 +8,14 @@ using System.Text;
 
 namespace CaveStory
 {
-    public class DamageText
+    public class FloatingNumber
     {
+        public enum NumberType
+        {
+            Damage,
+            Experience
+        }
+
         static VelocityUnit Velocity { get { return -Units.HalfTile / 250; } }
         static TimeSpan DamageTime { get { return TimeSpan.FromMilliseconds(2000); } }
 
@@ -19,13 +25,13 @@ namespace CaveStory
         GameUnit centerX;
         GameUnit centerY;
 
-        private HPUnit damage;
-        public HPUnit Damage
+        private HPUnit val;
+        public HPUnit Value
         {
             set
             {
-                shouldRise = damage == 0;
-                damage += value;
+                shouldRise = val == 0;
+                val += value;
                 if (shouldRise)
                 {
                     offsetY = 0;
@@ -35,14 +41,16 @@ namespace CaveStory
         }
 
         Timer timer;
+        NumberType type;
 
-        public DamageText(ContentManager Content)
+        public FloatingNumber(ContentManager Content, NumberType type)
         {
             this.Content = Content;
             shouldRise = true;
             timer = new Timer(DamageTime);
+            this.type = type;
             offsetY = 0;
-            damage = 0;
+            val = 0;
             centerX = 0;
             centerY = 0;
         }
@@ -51,7 +59,7 @@ namespace CaveStory
         {
             if (timer.Expired)
             {
-                damage = 0;
+                val = 0;
             }
             else if (shouldRise)
             {
@@ -72,9 +80,18 @@ namespace CaveStory
             {
                 return;
             }
-            NumberSprite number = NumberSprite.DamageNumber(Content, damage);
-            number.LoadNumber();
-            number.DrawCentered(spriteBatch, centerX, centerY + offsetY);
+            if (type == NumberType.Damage)
+            {
+                NumberSprite number = NumberSprite.DamageNumber(Content, val);
+                number.LoadNumber();
+                number.DrawCentered(spriteBatch, centerX, centerY + offsetY);
+            }
+            else
+            {
+                NumberSprite number = NumberSprite.ExperienceNumber(Content, val);
+                number.LoadNumber();
+                number.DrawCentered(spriteBatch, centerX, centerY + offsetY);
+            }
         }
     }
 }

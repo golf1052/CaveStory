@@ -9,11 +9,11 @@ namespace CaveStory
 {
     public class DamageTexts
     {
-        public Dictionary<DamageText, IDamageable> damageTextDict;
+        public Dictionary<FloatingNumber, IDamageable> damageTextDict;
 
         public DamageTexts()
         {
-            damageTextDict = new Dictionary<DamageText, IDamageable>();
+            damageTextDict = new Dictionary<FloatingNumber, IDamageable>();
         }
 
         public void AddDamageable(IDamageable damageable)
@@ -44,7 +44,7 @@ namespace CaveStory
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            foreach (KeyValuePair<DamageText, IDamageable> pair in damageTextDict)
+            foreach (KeyValuePair<FloatingNumber, IDamageable> pair in damageTextDict)
             {
                 pair.Key.Draw(spriteBatch);
             }

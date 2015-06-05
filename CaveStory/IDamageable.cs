@@ -9,6 +9,6 @@ namespace CaveStory
     {
         GameUnit CenterX { get; }
         GameUnit CenterY { get; }
-        DamageText DamageText { get; }
+        FloatingNumber DamageText { get; }
     }
 }

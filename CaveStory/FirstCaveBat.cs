@@ -36,8 +36,8 @@ namespace CaveStory
         public HPUnit ContactDamage { get { return 1; } }
 
         Dictionary<BatSpriteState, Sprite> sprites;
-        DamageText damageText;
-        public DamageText DamageText { get { return damageText; } }
+        FloatingNumber damageText;
+        public FloatingNumber DamageText { get { return damageText; } }
 
         GameUnit flightCenterY;
 
@@ -74,7 +74,7 @@ namespace CaveStory
             alive = true;
             flightAngle = 0.0f;
             facing = CaveStory.SpriteState.HorizontalFacing.Right;
-            damageText = new DamageText(Content);
+            damageText = new FloatingNumber(Content, FloatingNumber.NumberType.Damage);
             InitializeSprites(Content);
         }
 
@@ -109,7 +109,7 @@ namespace CaveStory
 
         public void TakeDamage(HPUnit damage)
         {
-            damageText.Damage = damage;
+            damageText.Value = damage;
             alive = false;
         }
 

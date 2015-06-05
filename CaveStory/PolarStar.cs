@@ -349,6 +349,11 @@ namespace CaveStory
             currentExperience = Math.Min(Experiences[Units.MaxGunLevel], currentExperience);
         }
 
+        public void DamageExperience(GunExperienceUnit experience)
+        {
+            currentExperience = Math.Max(0, currentExperience - experience);
+        }
+
         public void StartFire(GameUnit playerX, GameUnit playerY,
             SpriteState.HorizontalFacing horizontalFacing,
             SpriteState.VerticalFacing verticalFacing,

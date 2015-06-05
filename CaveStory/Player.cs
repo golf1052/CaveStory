@@ -187,8 +187,10 @@ namespace CaveStory
         PlayerHealth playerHealth;
         bool interacting;
         Timer invincibleTimer;
-        DamageText damageText;
-        public DamageText DamageText { get { return damageText; } }
+        FloatingNumber damageText;
+        public FloatingNumber DamageText { get { return damageText; } }
+        FloatingNumber experienceText;
+        public FloatingNumber ExperienceText { get { return experienceText; } }
 
         WalkingAnimation walkingAnimation;
 
@@ -242,7 +244,8 @@ namespace CaveStory
             playerHealth = new PlayerHealth(Content);
             interacting = false;
             invincibleTimer = new Timer(InvincibleTime);
-            damageText = new DamageText(Content);
+            damageText = new FloatingNumber(Content, FloatingNumber.NumberType.Damage);
+            experienceText = new FloatingNumber(Content, FloatingNumber.NumberType.Experience);
             gunExperienceHud = new GunExperienceHud(Content);
             polarStar = new PolarStar(Content);
             collisionRectangle = new CompositeCollisionRectangle(new Rectangle((int)Math.Round(CollisionTopLeft), (int)Math.Round(CollisionYTop),
@@ -360,6 +363,9 @@ namespace CaveStory
 
             UpdateX(gameTime, map);
             UpdateY(gameTime, map);
+
+            experienceText.Update(gameTime);
+            experienceText.SetPosition(CenterX, CenterY);
         }
 
         public void UpdateX(GameTime gameTime, Map map)
@@ -515,6 +521,7 @@ namespace CaveStory
 
         public void DrawHud(SpriteBatch spriteBatch)
         {
+            experienceText.Draw(spriteBatch);
             if (SpriteIsVisible())
             {
                 playerHealth.Draw(spriteBatch);
@@ -555,7 +562,8 @@ namespace CaveStory
                 return;
             }
             playerHealth.health.TakeDamage(damage);
-            damageText.Damage = damage;
+            damageText.Value = damage;
+            polarStar.DamageExperience(damage * 2);
             kinematicsY.velocity = Math.Min(kinematicsY.velocity, -ShortJumpSpeed);
             invincibleTimer.Reset();
         }
@@ -565,6 +573,7 @@ namespace CaveStory
             if (pickup.Type == Pickup.PickupType.Experience)
             {
                 polarStar.CollectExpereince(pickup.Value);
+                experienceText.Value = pickup.Value;
                 gunExperienceHud.ActivateFlash();
             }
             else if (pickup.Type == Pickup.PickupType.Health)
