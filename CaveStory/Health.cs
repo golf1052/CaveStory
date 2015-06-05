@@ -37,9 +37,30 @@ namespace CaveStory
         {
             this.damage = damage;
             damageTimer.Reset();
+            ResetFillSprites();
+            return false;
+        }
+
+        public void AddHealth(HPUnit health)
+        {
+            if (damage > health)
+            {
+                damage -= health;
+                health = 0;
+            }
+            else if (damage > 0)
+            {
+                health -= damage;
+                damage = 0;
+            }
+            currentHealth = Math.Min(maxHealth, currentHealth + health);
+            ResetFillSprites();
+        }
+
+        private void ResetFillSprites()
+        {
             healthFillSprite.SetPercentageWidth((float)(currentHealth - damage) / (float)maxHealth);
             damageFillSprite.SetPercentageWidth((float)currentHealth / (float)maxHealth);
-            return false;
         }
 
         public void Draw(SpriteBatch spriteBatch)

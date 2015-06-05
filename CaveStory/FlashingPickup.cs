@@ -27,6 +27,11 @@ namespace CaveStory
         static Rectangle HeartRectangle { get { return new Rectangle(5, 8, 21, 19); } }
         static HPUnit HeartValue { get { return 2; } }
 
+        static TileUnit MultiHeartSourceX { get { return 4; } }
+        static TileUnit MultiHeartSourceY { get { return 5; } }
+        static Rectangle MultiHeartRectangle { get { return new Rectangle(6, 7, 26, 25); } }
+        static HPUnit MultiHeartValue { get { return 6; } }
+
         GameUnit x;
         GameUnit y;
         Timer timer;
@@ -61,6 +66,15 @@ namespace CaveStory
                 HeartSourceX, HeartSourceY,
                 HeartRectangle,
                 HeartValue, Pickup.PickupType.Health);
+        }
+
+        public static IPickup MultiHeartPickup(ContentManager Content, GameUnit centerX, GameUnit centerY)
+        {
+            return new FlashingPickup(Content,
+                centerX, centerY,
+                MultiHeartSourceX, MultiHeartSourceY,
+                MultiHeartRectangle,
+                MultiHeartValue, Pickup.PickupType.Health);
         }
 
         private FlashingPickup(ContentManager Content,

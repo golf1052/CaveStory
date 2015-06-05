@@ -567,6 +567,10 @@ namespace CaveStory
                 polarStar.CollectExpereince(pickup.Value);
                 gunExperienceHud.ActivateFlash();
             }
+            else if (pickup.Type == Pickup.PickupType.Health)
+            {
+                playerHealth.health.AddHealth(pickup.Value);
+            }
         }
 
         bool SpriteIsVisible()
