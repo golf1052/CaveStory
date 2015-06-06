@@ -412,31 +412,31 @@ namespace CaveStory
             UpdateY(collisionRectangle, accelerator, kinematicsX, kinematicsY, gameTime, map);
         }
 
-        protected override void OnCollision(MapCollidable.SideType side, bool isDeltaDirection)
+        protected override void OnCollision(TileInfo.SideType side, bool isDeltaDirection)
         {
             switch (side)
             {
-                case MapCollidable.SideType.TopSide:
+                case TileInfo.SideType.TopSide:
                     if (isDeltaDirection)
                     {
                         kinematicsY.velocity = 0;
                     }
                     particleTools.FrontSystem.AddNewParticle(new HeadBumpParticle(particleTools.Content, CenterX, kinematicsY.position + collisionRectangle.BoundingBox.Top));
                     break;
-                case MapCollidable.SideType.BottomSide:
+                case TileInfo.SideType.BottomSide:
                     onGround = true;
                     if (isDeltaDirection)
                     {
                         kinematicsY.velocity = 0;
                     }
                     break;
-                case MapCollidable.SideType.LeftSide:
+                case TileInfo.SideType.LeftSide:
                     if (isDeltaDirection)
                     {
                         kinematicsX.velocity = 0;
                     }
                     break;
-                case MapCollidable.SideType.RightSide:
+                case TileInfo.SideType.RightSide:
                     if (isDeltaDirection)
                     {
                         kinematicsX.velocity = 0;
@@ -445,19 +445,19 @@ namespace CaveStory
             }
         }
 
-        protected override void OnDelta(MapCollidable.SideType side)
+        protected override void OnDelta(TileInfo.SideType side)
         {
             switch (side)
             {
-                case MapCollidable.SideType.TopSide:
+                case TileInfo.SideType.TopSide:
                     onGround = false;
                     break;
-                case MapCollidable.SideType.BottomSide:
+                case TileInfo.SideType.BottomSide:
                     onGround = false;
                     break;
-                case MapCollidable.SideType.LeftSide:
+                case TileInfo.SideType.LeftSide:
                     break;
-                case MapCollidable.SideType.RightSide:
+                case TileInfo.SideType.RightSide:
                     break;
             }
         }

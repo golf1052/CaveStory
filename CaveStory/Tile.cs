@@ -7,16 +7,10 @@ namespace CaveStory
 {
     public class Tile
     {
-        public enum TileType
-        {
-            AirTile,
-            WallTile
-        }
-
-        public TileType tileType;
+        public TileInfo.TileType tileType;
         public Sprite sprite;
 
-        public Tile(TileType tileType = Tile.TileType.AirTile,
+        public Tile(TileInfo.TileType tileType = TileInfo.TileType.AirTile,
             Sprite sprite = null)
         {
             this.tileType = tileType;

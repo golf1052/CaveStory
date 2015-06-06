@@ -8,21 +8,13 @@ namespace CaveStory
 {
     public abstract class MapCollidable
     {
-        public enum SideType
-        {
-            TopSide,
-            BottomSide,
-            LeftSide,
-            RightSide
-        }
-
         CollisionInfo GetWallCollisionInfo(Map map, Rectangle rectangle)
         {
             CollisionInfo info = new CollisionInfo(false, 0, 0);
             List<CollisionTile> tiles = map.GetCollidingTiles(rectangle);
             for (int i = 0; i < tiles.Count; i++)
             {
-                if (tiles[i].tileType == Tile.TileType.WallTile)
+                if (tiles[i].tileType == TileInfo.TileType.WallTile)
                 {
                     info = new CollisionInfo(true, tiles[i].row, tiles[i].col);
                     break;
@@ -46,12 +38,12 @@ namespace CaveStory
                 if (info.collided)
                 {
                     kinematicsX.position = Units.TileToGame(info.col) - collisionRectangle.BoundingBox.Right;
-                    OnCollision(SideType.RightSide, true);
+                    OnCollision(TileInfo.SideType.RightSide, true);
                 }
                 else
                 {
                     kinematicsX.position += delta;
-                    OnDelta(SideType.RightSide);
+                    OnDelta(TileInfo.SideType.RightSide);
                 }
 
                 info = GetWallCollisionInfo(map, collisionRectangle.LeftCollision(kinematicsX.position, kinematicsY.position, 0));
@@ -59,7 +51,7 @@ namespace CaveStory
                 if (info.collided)
                 {
                     kinematicsX.position = Units.TileToGame(info.col + 1) - collisionRectangle.BoundingBox.Left;
-                    OnCollision(SideType.LeftSide, false);
+                    OnCollision(TileInfo.SideType.LeftSide, false);
                 }
             }
             else
@@ -69,12 +61,12 @@ namespace CaveStory
                 if (info.collided)
                 {
                     kinematicsX.position = Units.TileToGame(info.col + 1) - collisionRectangle.BoundingBox.Left;
-                    OnCollision(SideType.LeftSide, true);
+                    OnCollision(TileInfo.SideType.LeftSide, true);
                 }
                 else
                 {
                     kinematicsX.position += delta;
-                    OnDelta(SideType.LeftSide);
+                    OnDelta(TileInfo.SideType.LeftSide);
                 }
 
                 info = GetWallCollisionInfo(map, collisionRectangle.RightCollision(kinematicsX.position, kinematicsY.position, 0));
@@ -82,7 +74,7 @@ namespace CaveStory
                 if (info.collided)
                 {
                     kinematicsX.position = Units.TileToGame(info.col) - collisionRectangle.BoundingBox.Right;
-                    OnCollision(SideType.RightSide, false);
+                    OnCollision(TileInfo.SideType.RightSide, false);
                 }
             }
         }
@@ -102,12 +94,12 @@ namespace CaveStory
                 if (info.collided)
                 {
                     kinematicsY.position = Units.TileToGame(info.row) - collisionRectangle.BoundingBox.Bottom;
-                    OnCollision(SideType.BottomSide, true);
+                    OnCollision(TileInfo.SideType.BottomSide, true);
                 }
                 else
                 {
                     kinematicsY.position += delta;
-                    OnDelta(SideType.BottomSide);
+                    OnDelta(TileInfo.SideType.BottomSide);
                 }
 
                 info = GetWallCollisionInfo(map, collisionRectangle.TopCollision(kinematicsX.position, kinematicsY.position, 0));
@@ -115,7 +107,7 @@ namespace CaveStory
                 if (info.collided)
                 {
                     kinematicsY.position = Units.TileToGame(info.row + 1) - collisionRectangle.BoundingBox.Top;
-                    OnCollision(SideType.TopSide, false);
+                    OnCollision(TileInfo.SideType.TopSide, false);
                 }
             }
             else
@@ -125,12 +117,12 @@ namespace CaveStory
                 if (info.collided)
                 {
                     kinematicsY.position = Units.TileToGame(info.row + 1) - collisionRectangle.BoundingBox.Top;
-                    OnCollision(SideType.TopSide, true);
+                    OnCollision(TileInfo.SideType.TopSide, true);
                 }
                 else
                 {
                     kinematicsY.position += delta;
-                    OnDelta(SideType.TopSide);
+                    OnDelta(TileInfo.SideType.TopSide);
                 }
 
                 info = GetWallCollisionInfo(map, collisionRectangle.BottomCollision(kinematicsX.position, kinematicsY.position, 0));
@@ -138,13 +130,13 @@ namespace CaveStory
                 if (info.collided)
                 {
                     kinematicsY.position = Units.TileToGame(info.row) - collisionRectangle.BoundingBox.Bottom;
-                    OnCollision(SideType.BottomSide, false);
+                    OnCollision(TileInfo.SideType.BottomSide, false);
                 }
             }
         }
 
-        protected abstract void OnCollision(SideType side, bool isDeltaDirection);
+        protected abstract void OnCollision(TileInfo.SideType side, bool isDeltaDirection);
 
-        protected abstract void OnDelta(SideType side);
+        protected abstract void OnDelta(TileInfo.SideType side);
     }
 }

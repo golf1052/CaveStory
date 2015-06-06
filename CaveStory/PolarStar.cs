@@ -137,7 +137,7 @@ namespace CaveStory
             List<CollisionTile> collidingTiles = map.GetCollidingTiles(CollisionRectangle);
             for (int i = 0; i < collidingTiles.Count; i++)
             {
-                if (collidingTiles[i].tileType == Tile.TileType.WallTile)
+                if (collidingTiles[i].tileType == TileInfo.TileType.WallTile)
                 {
                     Rectangle tileRectangle = new Rectangle((int)Math.Round(Units.TileToGame(collidingTiles[i].col)),
                         (int)Math.Round(Units.TileToGame(collidingTiles[i].row)),

@@ -41,7 +41,7 @@ namespace CaveStory
             }
 
             Sprite sprite = new Sprite(Content, "Stage/PrtCave", Units.TileToPixel(1), 0, Units.TileToPixel(1), Units.TileToPixel(1));
-            Tile tile = new Tile(Tile.TileType.WallTile, sprite);
+            Tile tile = new Tile(TileInfo.TileType.WallTile, sprite);
             TileUnit row = 11;
             for (TileUnit col = 0; col < numCols; col++)
             {

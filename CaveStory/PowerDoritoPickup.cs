@@ -95,13 +95,13 @@ namespace CaveStory
             return timer.Active;
         }
 
-        protected override void OnCollision(SideType side, bool isDeltaDirection)
+        protected override void OnCollision(TileInfo.SideType side, bool isDeltaDirection)
         {
-            if (side == SideType.TopSide)
+            if (side == TileInfo.SideType.TopSide)
             {
                 kinematicsY.velocity = 0;
             }
-            else if (side == SideType.BottomSide)
+            else if (side == TileInfo.SideType.BottomSide)
             {
                 kinematicsY.velocity = -BounceSpeed;
             }
@@ -111,7 +111,7 @@ namespace CaveStory
             }
         }
 
-        protected override void OnDelta(SideType side)
+        protected override void OnDelta(TileInfo.SideType side)
         {
         }
 

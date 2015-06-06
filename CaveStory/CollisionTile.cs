@@ -9,9 +9,9 @@ namespace CaveStory
     {
         public TileUnit row;
         public TileUnit col;
-        public Tile.TileType tileType;
+        public TileInfo.TileType tileType;
 
-        public CollisionTile(TileUnit row, TileUnit col, Tile.TileType tileType)
+        public CollisionTile(TileUnit row, TileUnit col, TileInfo.TileType tileType)
         {
             this.row = row;
             this.col = col;
