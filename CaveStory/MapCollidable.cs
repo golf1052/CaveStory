@@ -8,19 +8,28 @@ namespace CaveStory
 {
     public abstract class MapCollidable
     {
-        CollisionInfo GetWallCollisionInfo(Map map, Rectangle rectangle)
+        GameUnit? TestMapCollision(Map map, Rectangle rectangle, TileInfo.SideType direction)
         {
-            CollisionInfo info = new CollisionInfo(false, 0, 0);
             List<CollisionTile> tiles = map.GetCollidingTiles(rectangle);
             for (int i = 0; i < tiles.Count; i++)
             {
-                if (tiles[i].tileType == TileInfo.TileType.WallTile)
+                TileInfo.SideType side = TileInfo.OppositeSide(direction);
+                GameUnit position;
+                if (TileInfo.Vertical(side))
                 {
-                    info = new CollisionInfo(true, tiles[i].row, tiles[i].col);
-                    break;
+                    position = rectangle.Center.X;
+                }
+                else
+                {
+                    position = rectangle.Center.Y;
+                }
+                GameUnit? maybePosition = tiles[i].TestCollision(side, position);
+                if (maybePosition.HasValue)
+                {
+                    return maybePosition.Value;
                 }
             }
-            return info;
+            return null;
         }
 
         protected void UpdateX(ICollisionRectangle collisionRectangle,
@@ -33,48 +42,60 @@ namespace CaveStory
 
             if (delta > 0.0f)
             {
-                CollisionInfo info = GetWallCollisionInfo(map, collisionRectangle.RightCollision(kinematicsX.position, kinematicsY.position, delta));
+                TileInfo.SideType direction = TileInfo.SideType.RightSide;
+                GameUnit? maybePosition = TestMapCollision(map,
+                    collisionRectangle.RightCollision(kinematicsX.position, kinematicsY.position, delta),
+                    direction);
 
-                if (info.collided)
+                if (maybePosition.HasValue)
                 {
-                    kinematicsX.position = Units.TileToGame(info.col) - collisionRectangle.BoundingBox.Right;
-                    OnCollision(TileInfo.SideType.RightSide, true);
+                    kinematicsX.position = maybePosition.Value - collisionRectangle.BoundingBox.Right;
+                    OnCollision(direction, true);
                 }
                 else
                 {
                     kinematicsX.position += delta;
-                    OnDelta(TileInfo.SideType.RightSide);
+                    OnDelta(direction);
                 }
 
-                info = GetWallCollisionInfo(map, collisionRectangle.LeftCollision(kinematicsX.position, kinematicsY.position, 0));
+                TileInfo.SideType oppositeDirection = TileInfo.OppositeSide(direction);
+                maybePosition = TestMapCollision(map,
+                    collisionRectangle.LeftCollision(kinematicsX.position, kinematicsY.position, 0),
+                    oppositeDirection);
 
-                if (info.collided)
+                if (maybePosition.HasValue)
                 {
-                    kinematicsX.position = Units.TileToGame(info.col + 1) - collisionRectangle.BoundingBox.Left;
-                    OnCollision(TileInfo.SideType.LeftSide, false);
+                    kinematicsX.position = maybePosition.Value - collisionRectangle.BoundingBox.Left;
+                    OnCollision(oppositeDirection, false);
                 }
             }
             else
             {
-                CollisionInfo info = GetWallCollisionInfo(map, collisionRectangle.LeftCollision(kinematicsX.position, kinematicsY.position, delta));
+                TileInfo.SideType direction = TileInfo.SideType.LeftSide;
+                GameUnit? maybePosition = TestMapCollision(map,
+                    collisionRectangle.LeftCollision(kinematicsX.position, kinematicsY.position, delta),
+                    direction);
 
-                if (info.collided)
+                if (maybePosition.HasValue)
                 {
-                    kinematicsX.position = Units.TileToGame(info.col + 1) - collisionRectangle.BoundingBox.Left;
-                    OnCollision(TileInfo.SideType.LeftSide, true);
+                    kinematicsX.position = maybePosition.Value - collisionRectangle.BoundingBox.Left;
+                    OnCollision(direction, true);
                 }
                 else
                 {
                     kinematicsX.position += delta;
-                    OnDelta(TileInfo.SideType.LeftSide);
+                    OnDelta(direction);
                 }
 
-                info = GetWallCollisionInfo(map, collisionRectangle.RightCollision(kinematicsX.position, kinematicsY.position, 0));
+                TileInfo.SideType oppositeDirection = TileInfo.OppositeSide(direction);
+                maybePosition = TestMapCollision(map,
+                    collisionRectangle.RightCollision(kinematicsX.position, kinematicsY.position, 0),
+                    oppositeDirection);
 
-                if (info.collided)
+                if (maybePosition.HasValue)
                 {
-                    kinematicsX.position = Units.TileToGame(info.col) - collisionRectangle.BoundingBox.Right;
-                    OnCollision(TileInfo.SideType.RightSide, false);
+                    kinematicsX.position = maybePosition.Value - collisionRectangle.BoundingBox.Right;
+                    OnCollision(oppositeDirection, false);
                 }
             }
         }
@@ -89,48 +110,60 @@ namespace CaveStory
 
             if (delta > 0)
             {
-                CollisionInfo info = GetWallCollisionInfo(map, collisionRectangle.BottomCollision(kinematicsX.position, kinematicsY.position, delta));
+                TileInfo.SideType direction = TileInfo.SideType.BottomSide;
+                GameUnit? maybePosition = TestMapCollision(map,
+                    collisionRectangle.BottomCollision(kinematicsX.position, kinematicsY.position, delta),
+                    direction);
 
-                if (info.collided)
+                if (maybePosition.HasValue)
                 {
-                    kinematicsY.position = Units.TileToGame(info.row) - collisionRectangle.BoundingBox.Bottom;
-                    OnCollision(TileInfo.SideType.BottomSide, true);
+                    kinematicsY.position = maybePosition.Value - collisionRectangle.BoundingBox.Bottom;
+                    OnCollision(direction, true);
                 }
                 else
                 {
                     kinematicsY.position += delta;
-                    OnDelta(TileInfo.SideType.BottomSide);
+                    OnDelta(direction);
                 }
 
-                info = GetWallCollisionInfo(map, collisionRectangle.TopCollision(kinematicsX.position, kinematicsY.position, 0));
+                TileInfo.SideType oppositeDirection = TileInfo.OppositeSide(direction);
+                maybePosition = TestMapCollision(map,
+                    collisionRectangle.TopCollision(kinematicsX.position, kinematicsY.position, 0),
+                    oppositeDirection);
 
-                if (info.collided)
+                if (maybePosition.HasValue)
                 {
-                    kinematicsY.position = Units.TileToGame(info.row + 1) - collisionRectangle.BoundingBox.Top;
-                    OnCollision(TileInfo.SideType.TopSide, false);
+                    kinematicsY.position = maybePosition.Value - collisionRectangle.BoundingBox.Top;
+                    OnCollision(oppositeDirection, false);
                 }
             }
             else
             {
-                CollisionInfo info = GetWallCollisionInfo(map, collisionRectangle.TopCollision(kinematicsX.position, kinematicsY.position, delta));
+                TileInfo.SideType direction = TileInfo.SideType.TopSide;
+                GameUnit? maybePosition = TestMapCollision(map,
+                    collisionRectangle.TopCollision(kinematicsX.position, kinematicsY.position, delta),
+                    direction);
 
-                if (info.collided)
+                if (maybePosition.HasValue)
                 {
-                    kinematicsY.position = Units.TileToGame(info.row + 1) - collisionRectangle.BoundingBox.Top;
-                    OnCollision(TileInfo.SideType.TopSide, true);
+                    kinematicsY.position = maybePosition.Value - collisionRectangle.BoundingBox.Top;
+                    OnCollision(direction, true);
                 }
                 else
                 {
                     kinematicsY.position += delta;
-                    OnDelta(TileInfo.SideType.TopSide);
+                    OnDelta(direction);
                 }
 
-                info = GetWallCollisionInfo(map, collisionRectangle.BottomCollision(kinematicsX.position, kinematicsY.position, 0));
+                TileInfo.SideType oppositeDirection = TileInfo.OppositeSide(direction);
+                maybePosition = TestMapCollision(map,
+                    collisionRectangle.BottomCollision(kinematicsX.position, kinematicsY.position, 0),
+                    oppositeDirection);
 
-                if (info.collided)
+                if (maybePosition.HasValue)
                 {
-                    kinematicsY.position = Units.TileToGame(info.row) - collisionRectangle.BoundingBox.Bottom;
-                    OnCollision(TileInfo.SideType.BottomSide, false);
+                    kinematicsY.position = maybePosition.Value - collisionRectangle.BoundingBox.Bottom;
+                    OnCollision(oppositeDirection, false);
                 }
             }
         }

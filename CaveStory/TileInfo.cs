@@ -21,7 +21,7 @@ namespace CaveStory
             WallTile
         }
 
-        public SideType OppositeSide(SideType side)
+        public static SideType OppositeSide(SideType side)
         {
             if (side == SideType.TopSide)
             {
@@ -38,17 +38,17 @@ namespace CaveStory
             return SideType.LeftSide;
         }
 
-        public bool Vertical(SideType side)
+        public static bool Vertical(SideType side)
         {
             return side == SideType.TopSide || side == SideType.BottomSide;
         }
 
-        public bool Horizontal(SideType side)
+        public static bool Horizontal(SideType side)
         {
             return !Vertical(side);
         }
 
-        public SideType FromFacing(SpriteState.HorizontalFacing horizontalFacing,
+        public static SideType FromFacing(SpriteState.HorizontalFacing horizontalFacing,
             SpriteState.VerticalFacing verticalFacing)
         {
             if (verticalFacing == SpriteState.VerticalFacing.Up)

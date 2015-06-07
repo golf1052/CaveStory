@@ -137,38 +137,30 @@ namespace CaveStory
             List<CollisionTile> collidingTiles = map.GetCollidingTiles(CollisionRectangle);
             for (int i = 0; i < collidingTiles.Count; i++)
             {
-                if (collidingTiles[i].tileType == TileInfo.TileType.WallTile)
+                TileInfo.SideType direction = TileInfo.FromFacing(horizontalDirection, verticalDirection);
+                TileInfo.SideType side = TileInfo.OppositeSide(direction);
+                GameUnit position = TileInfo.Vertical(side) ?
+                    X : Y;
+                GameUnit? maybePosition = collidingTiles[i].TestCollision(side, position);
+                if (maybePosition.HasValue)
                 {
-                    Rectangle tileRectangle = new Rectangle((int)Math.Round(Units.TileToGame(collidingTiles[i].col)),
-                        (int)Math.Round(Units.TileToGame(collidingTiles[i].row)),
-                        (int)Units.TileToGame(1), (int)Units.TileToGame(1));
                     GameUnit particleX;
-                    GameUnit particleY;
-                    if (verticalDirection == SpriteState.VerticalFacing.Horizontal)
+                    if (TileInfo.Vertical(side))
                     {
-                        if (horizontalDirection == SpriteState.HorizontalFacing.Left)
-                        {
-                            particleX = tileRectangle.Right;
-                        }
-                        else
-                        {
-                            particleX = tileRectangle.Left;
-                        }
-                        particleX -= Units.HalfTile;
-                        particleY = Y;
+                        particleX = position;
                     }
                     else
                     {
-                        if (verticalDirection == SpriteState.VerticalFacing.Up)
-                        {
-                            particleY = tileRectangle.Bottom;
-                        }
-                        else
-                        {
-                            particleY = tileRectangle.Top;
-                        }
-                        particleY -= Units.HalfTile;
-                        particleX = X;
+                        particleX = maybePosition.Value - Units.HalfTile;
+                    }
+                    GameUnit particleY;
+                    if (TileInfo.Vertical(side))
+                    {
+                        particleY = maybePosition.Value - Units.HalfTile;
+                    }
+                    else
+                    {
+                        particleY = position;
                     }
                     particleTools.FrontSystem.AddNewParticle(ProjectileWallParticle.Create(particleTools.Content,
                         particleX, particleY));
