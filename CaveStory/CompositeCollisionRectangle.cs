@@ -31,6 +31,23 @@ namespace CaveStory
             this.right = right;
         }
 
+        public Rectangle Collision(TileInfo.SideType side, GameUnit x, GameUnit y, GameUnit delta)
+        {
+            if (side == TileInfo.SideType.LeftSide)
+            {
+                return LeftCollision(x, y, delta);
+            }
+            if (side == TileInfo.SideType.RightSide)
+            {
+                return RightCollision(x, y, delta);
+            }
+            if (side == TileInfo.SideType.TopSide)
+            {
+                return TopCollision(x, y, delta);
+            }
+            return BottomCollision(x, y, delta);
+        }
+
         public Rectangle LeftCollision(GameUnit x, GameUnit y, GameUnit delta)
         {
             return new Rectangle((int)Math.Round(x + left.Left + delta),

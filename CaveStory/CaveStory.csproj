@@ -96,6 +96,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="ProjectileStarParticle.cs" />
     <Compile Include="ProjectileWallParticle.cs" />
+    <Compile Include="RectangleExtensions.cs" />
     <Compile Include="SimpleCollisionRectangle.cs" />
     <Compile Include="Sprite.cs" />
     <Compile Include="SpriteState.cs" />

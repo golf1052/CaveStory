@@ -8,6 +8,12 @@ namespace CaveStory
 {
     public abstract class MapCollidable
     {
+        public enum AxisType
+        {
+            XAxis,
+            YAxis
+        }
+
         GameUnit? TestMapCollision(Map map, Rectangle rectangle, TileInfo.SideType direction)
         {
             List<CollisionTile> tiles = map.GetCollidingTiles(rectangle);
@@ -32,72 +38,54 @@ namespace CaveStory
             return null;
         }
 
+        private void Update(ICollisionRectangle collisionRectangle,
+            IAccelerator accelerator,
+            Kinematics kinematicsX, Kinematics kinematicsY,
+            GameTime gameTime, Map map,
+            Kinematics kinematics, AxisType axis)
+        {
+            accelerator.UpdateVelocity(kinematics, gameTime);
+            GameUnit delta = kinematics.velocity * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+            TileInfo.SideType direction = axis == AxisType.XAxis ?
+                (delta > 0 ? TileInfo.SideType.RightSide : TileInfo.SideType.LeftSide) :
+                (delta > 0 ? TileInfo.SideType.BottomSide : TileInfo.SideType.TopSide);
+            GameUnit? maybePosition = TestMapCollision(map,
+                collisionRectangle.Collision(direction, kinematicsX.position, kinematicsY.position, delta),
+                direction);
+
+            if (maybePosition.HasValue)
+            {
+                kinematics.position = maybePosition.Value - collisionRectangle.BoundingBox.Side(direction);
+                OnCollision(direction, true);
+            }
+            else
+            {
+                kinematics.position += delta;
+                OnDelta(direction);
+            }
+
+            TileInfo.SideType oppositeDirection = TileInfo.OppositeSide(direction);
+            maybePosition = TestMapCollision(map,
+                collisionRectangle.Collision(oppositeDirection, kinematicsX.position, kinematicsY.position, 0),
+                oppositeDirection);
+
+            if (maybePosition.HasValue)
+            {
+                kinematics.position = maybePosition.Value - collisionRectangle.BoundingBox.Side(oppositeDirection);
+                OnCollision(oppositeDirection, false);
+            }
+        }
+
         protected void UpdateX(ICollisionRectangle collisionRectangle,
             IAccelerator accelerator,
             Kinematics kinematicsX, Kinematics kinematicsY,
             GameTime gameTime, Map map)
         {
-            accelerator.UpdateVelocity(kinematicsX, gameTime);
-            GameUnit delta = kinematicsX.velocity * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-            if (delta > 0.0f)
-            {
-                TileInfo.SideType direction = TileInfo.SideType.RightSide;
-                GameUnit? maybePosition = TestMapCollision(map,
-                    collisionRectangle.RightCollision(kinematicsX.position, kinematicsY.position, delta),
-                    direction);
-
-                if (maybePosition.HasValue)
-                {
-                    kinematicsX.position = maybePosition.Value - collisionRectangle.BoundingBox.Right;
-                    OnCollision(direction, true);
-                }
-                else
-                {
-                    kinematicsX.position += delta;
-                    OnDelta(direction);
-                }
-
-                TileInfo.SideType oppositeDirection = TileInfo.OppositeSide(direction);
-                maybePosition = TestMapCollision(map,
-                    collisionRectangle.LeftCollision(kinematicsX.position, kinematicsY.position, 0),
-                    oppositeDirection);
-
-                if (maybePosition.HasValue)
-                {
-                    kinematicsX.position = maybePosition.Value - collisionRectangle.BoundingBox.Left;
-                    OnCollision(oppositeDirection, false);
-                }
-            }
-            else
-            {
-                TileInfo.SideType direction = TileInfo.SideType.LeftSide;
-                GameUnit? maybePosition = TestMapCollision(map,
-                    collisionRectangle.LeftCollision(kinematicsX.position, kinematicsY.position, delta),
-                    direction);
-
-                if (maybePosition.HasValue)
-                {
-                    kinematicsX.position = maybePosition.Value - collisionRectangle.BoundingBox.Left;
-                    OnCollision(direction, true);
-                }
-                else
-                {
-                    kinematicsX.position += delta;
-                    OnDelta(direction);
-                }
-
-                TileInfo.SideType oppositeDirection = TileInfo.OppositeSide(direction);
-                maybePosition = TestMapCollision(map,
-                    collisionRectangle.RightCollision(kinematicsX.position, kinematicsY.position, 0),
-                    oppositeDirection);
-
-                if (maybePosition.HasValue)
-                {
-                    kinematicsX.position = maybePosition.Value - collisionRectangle.BoundingBox.Right;
-                    OnCollision(oppositeDirection, false);
-                }
-            }
+            Update(collisionRectangle, accelerator,
+                kinematicsX, kinematicsY,
+                gameTime, map,
+                kinematicsX, AxisType.XAxis);
         }
 
         protected void UpdateY(ICollisionRectangle collisionRectangle,
@@ -105,67 +93,10 @@ namespace CaveStory
             Kinematics kinematicsX, Kinematics kinematicsY,
             GameTime gameTime, Map map)
         {
-            accelerator.UpdateVelocity(kinematicsY, gameTime);
-            GameUnit delta = kinematicsY.velocity * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-            if (delta > 0)
-            {
-                TileInfo.SideType direction = TileInfo.SideType.BottomSide;
-                GameUnit? maybePosition = TestMapCollision(map,
-                    collisionRectangle.BottomCollision(kinematicsX.position, kinematicsY.position, delta),
-                    direction);
-
-                if (maybePosition.HasValue)
-                {
-                    kinematicsY.position = maybePosition.Value - collisionRectangle.BoundingBox.Bottom;
-                    OnCollision(direction, true);
-                }
-                else
-                {
-                    kinematicsY.position += delta;
-                    OnDelta(direction);
-                }
-
-                TileInfo.SideType oppositeDirection = TileInfo.OppositeSide(direction);
-                maybePosition = TestMapCollision(map,
-                    collisionRectangle.TopCollision(kinematicsX.position, kinematicsY.position, 0),
-                    oppositeDirection);
-
-                if (maybePosition.HasValue)
-                {
-                    kinematicsY.position = maybePosition.Value - collisionRectangle.BoundingBox.Top;
-                    OnCollision(oppositeDirection, false);
-                }
-            }
-            else
-            {
-                TileInfo.SideType direction = TileInfo.SideType.TopSide;
-                GameUnit? maybePosition = TestMapCollision(map,
-                    collisionRectangle.TopCollision(kinematicsX.position, kinematicsY.position, delta),
-                    direction);
-
-                if (maybePosition.HasValue)
-                {
-                    kinematicsY.position = maybePosition.Value - collisionRectangle.BoundingBox.Top;
-                    OnCollision(direction, true);
-                }
-                else
-                {
-                    kinematicsY.position += delta;
-                    OnDelta(direction);
-                }
-
-                TileInfo.SideType oppositeDirection = TileInfo.OppositeSide(direction);
-                maybePosition = TestMapCollision(map,
-                    collisionRectangle.BottomCollision(kinematicsX.position, kinematicsY.position, 0),
-                    oppositeDirection);
-
-                if (maybePosition.HasValue)
-                {
-                    kinematicsY.position = maybePosition.Value - collisionRectangle.BoundingBox.Bottom;
-                    OnCollision(oppositeDirection, false);
-                }
-            }
+            Update(collisionRectangle, accelerator,
+                kinematicsX, kinematicsY,
+                gameTime, map,
+                kinematicsY, AxisType.YAxis);
         }
 
         protected abstract void OnCollision(TileInfo.SideType side, bool isDeltaDirection);

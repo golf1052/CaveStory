@@ -10,6 +10,8 @@ namespace CaveStory
     {
         Rectangle BoundingBox { get; }
 
+        Rectangle Collision(TileInfo.SideType side, GameUnit x, GameUnit y, GameUnit delta);
+
         Rectangle LeftCollision(GameUnit x, GameUnit y, GameUnit delta);
 
         Rectangle RightCollision(GameUnit x, GameUnit y, GameUnit delta);
