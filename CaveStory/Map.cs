@@ -5,11 +5,25 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections;
 
 namespace CaveStory
 {
     public class Map
     {
+        public enum SlopeTiles
+        {
+            LTT,
+            LTS,
+            RTS,
+            RTT,
+            LBT,
+            LBS,
+            RBS,
+            RBT,
+            NumSlopes
+        }
+
         List<List<Sprite>> backgroundTiles;
         List<List<Tile>> tiles;
         Backdrop backdrop;
@@ -18,6 +32,87 @@ namespace CaveStory
         {
             backgroundTiles = new List<List<Sprite>>();
             tiles = new List<List<Tile>>();
+        }
+
+        public static Map CreateSlopeTestMap(ContentManager Content)
+        {
+            Map map = new Map();
+            map.backdrop = new FixedBackdrop("bkBlue", Content);
+
+            TileUnit numRows = 15;
+            TileUnit numCols = 20;
+
+            map.tiles = new List<List<Tile>>();
+            for (int i = 0; i < numRows; i++)
+            {
+                map.backgroundTiles.Add(new List<Sprite>());
+                map.tiles.Add(new List<Tile>());
+                for (int j = 0; j < numCols; j++)
+                {
+                    map.backgroundTiles[i].Add(null);
+                    map.tiles[i].Add(new Tile());
+                }
+            }
+
+            BitArray tmp = TileInfo.CreateTileType();
+            tmp.Set((int)TileInfo.TileFlag.Wall, true);
+            Tile wallTile = new Tile(tmp, new Sprite(Content, "Stage/PrtCave", Units.TileToPixel(1), 0, Units.TileToPixel(1), Units.TileToPixel(1)));
+            Tile[] slopeTiles = new Tile[(int)SlopeTiles.NumSlopes];
+            for (int i = 0; i < (int)SlopeTiles.NumSlopes; i++)
+            {
+                BitArray a = TileInfo.CreateTileType();
+                a.Set((int)TileInfo.TileFlag.Slope, true);
+                a.Set(i / 2 % 2 == 0 ? (int)TileInfo.TileFlag.LeftSlope : (int)TileInfo.TileFlag.RightSlope, true);
+                a.Set(i / 4 == 0 ? (int)TileInfo.TileFlag.TopSlope : (int)TileInfo.TileFlag.BottomSlope, true);
+                a.Set((i + 1) / 2 % 2 == 0 ? (int)TileInfo.TileFlag.TallSlope : (int)TileInfo.TileFlag.ShortSlope, true);
+                slopeTiles[i] = new Tile(a, new Sprite(Content, "Stage/PrtCave",
+                    Units.TileToPixel((uint)(2 + i % 4)), Units.TileToPixel((uint)(i / 4)),
+                    Units.TileToPixel(1), Units.TileToPixel(1)));
+            }
+            TileUnit row = 11;
+            TileUnit col;
+            for (col = 0; col < numCols; col++)
+            {
+                map.tiles[Convert.ToInt32(row)][Convert.ToInt32(col)] = wallTile;
+            }
+            row--;
+            col = 0;
+            map.tiles[Convert.ToInt32(row)][Convert.ToInt32(col++)] = wallTile;
+            map.tiles[Convert.ToInt32(row)][Convert.ToInt32(col++)] = slopeTiles[(int)SlopeTiles.LBT];
+            map.tiles[Convert.ToInt32(row)][Convert.ToInt32(col++)] = slopeTiles[(int)SlopeTiles.RBT];
+            map.tiles[Convert.ToInt32(row)][Convert.ToInt32(col++)] = wallTile;
+            map.tiles[Convert.ToInt32(row)][Convert.ToInt32(col++)] = slopeTiles[(int)SlopeTiles.LBS];
+            col++;
+            map.tiles[Convert.ToInt32(row)][Convert.ToInt32(col++)] = slopeTiles[(int)SlopeTiles.RBS];
+            map.tiles[Convert.ToInt32(row)][Convert.ToInt32(col++)] = slopeTiles[(int)SlopeTiles.RBT];
+            map.tiles[Convert.ToInt32(row)][Convert.ToInt32(col++)] = wallTile;
+            map.tiles[Convert.ToInt32(row)][Convert.ToInt32(col++)] = slopeTiles[(int)SlopeTiles.LBT];
+            map.tiles[Convert.ToInt32(row)][Convert.ToInt32(col++)] = slopeTiles[(int)SlopeTiles.LBS];
+            map.tiles[Convert.ToInt32(row)][Convert.ToInt32(col++)] = slopeTiles[(int)SlopeTiles.RBS];
+            map.tiles[Convert.ToInt32(row)][Convert.ToInt32(col++)] = slopeTiles[(int)SlopeTiles.RBT];
+            map.tiles[Convert.ToInt32(row)][Convert.ToInt32(col)] = wallTile;
+            map.tiles[Convert.ToInt32(row - 1)][Convert.ToInt32(col++)] = slopeTiles[(int)SlopeTiles.RBS];
+            map.tiles[Convert.ToInt32(row)][Convert.ToInt32(col)] = wallTile;
+            map.tiles[Convert.ToInt32(row - 1)][Convert.ToInt32(col++)] = slopeTiles[(int)SlopeTiles.RBT];
+            map.tiles[Convert.ToInt32(row - 1)][Convert.ToInt32(col++)] = wallTile;
+            col++;
+            map.tiles[Convert.ToInt32(row)][Convert.ToInt32(col++)] = slopeTiles[(int)SlopeTiles.RBS];
+            map.tiles[Convert.ToInt32(row)][Convert.ToInt32(col++)] = wallTile;
+            col = 0;
+            row -= 3;
+            map.tiles[Convert.ToInt32(row - 1)][Convert.ToInt32(col)] = wallTile;
+            map.tiles[Convert.ToInt32(row)][Convert.ToInt32(col++)] = wallTile;
+            map.tiles[Convert.ToInt32(row - 1)][Convert.ToInt32(col)] = wallTile;
+            map.tiles[Convert.ToInt32(row)][Convert.ToInt32(col++)] = slopeTiles[(int)SlopeTiles.LTT];
+            map.tiles[Convert.ToInt32(row - 1)][Convert.ToInt32(col)] = wallTile;
+            map.tiles[Convert.ToInt32(row)][Convert.ToInt32(col++)] = slopeTiles[(int)SlopeTiles.LTS];
+            map.tiles[Convert.ToInt32(row - 1)][Convert.ToInt32(col)] = wallTile;
+            map.tiles[Convert.ToInt32(row)][Convert.ToInt32(col++)] = slopeTiles[(int)SlopeTiles.RTS];
+            map.tiles[Convert.ToInt32(row - 1)][Convert.ToInt32(col)] = wallTile;
+            map.tiles[Convert.ToInt32(row)][Convert.ToInt32(col++)] = slopeTiles[(int)SlopeTiles.RTT];
+            map.tiles[Convert.ToInt32(row - 1)][Convert.ToInt32(col)] = wallTile;
+            map.tiles[Convert.ToInt32(row)][Convert.ToInt32(col++)] = wallTile;
+            return map;
         }
 
         public static Map CreateTestMap(ContentManager Content)
@@ -41,7 +136,9 @@ namespace CaveStory
             }
 
             Sprite sprite = new Sprite(Content, "Stage/PrtCave", Units.TileToPixel(1), 0, Units.TileToPixel(1), Units.TileToPixel(1));
-            Tile tile = new Tile(TileInfo.TileType.WallTile, sprite);
+            BitArray tmp = TileInfo.CreateTileType();
+            tmp.Set((int)TileInfo.TileFlag.Wall, true);
+            Tile tile = new Tile(tmp, sprite);
             TileUnit row = 11;
             for (TileUnit col = 0; col < numCols; col++)
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,9 +10,9 @@ namespace CaveStory
     {
         private TileUnit row;
         private TileUnit col;
-        private TileInfo.TileType tileType;
+        private BitArray tileType;
 
-        public CollisionTile(TileUnit row, TileUnit col, TileInfo.TileType tileType)
+        public CollisionTile(TileUnit row, TileUnit col, BitArray tileType)
         {
             this.row = row;
             this.col = col;
@@ -29,7 +30,7 @@ namespace CaveStory
         /// </returns>
         public GameUnit? TestCollision(TileInfo.SideType side, GameUnit position)
         {
-            if (tileType == TileInfo.TileType.WallTile)
+            if (tileType[(int)TileInfo.TileFlag.Wall])
             {
                 if (side == TileInfo.SideType.TopSide)
                 {

@@ -64,7 +64,7 @@ namespace CaveStory
             damageTexts.AddDamageable(player);
             bat = new FirstCaveBat(Content, Units.TileToGame(7), Units.TileToGame(ScreenHeight / 2 + 1));
             damageTexts.AddDamageable(bat);
-            map = Map.CreateTestMap(Content);
+            map = Map.CreateSlopeTestMap(Content);
 
             pickups.Add(new PowerDoritoPickup(Content, bat.CenterX, bat.CenterY, PowerDoritoPickup.SizeType.Medium));
             pickups.Add(new PowerDoritoPickup(Content, bat.CenterX, bat.CenterY, PowerDoritoPickup.SizeType.Medium));

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,10 +16,23 @@ namespace CaveStory
             RightSide
         }
 
-        public enum TileType
+        public enum TileFlag
         {
-            AirTile,
-            WallTile
+            Empty,
+            Wall,
+            Slope,
+            LeftSlope,
+            RightSlope,
+            TopSlope,
+            BottomSlope,
+            TallSlope,
+            ShortSlope,
+            LastTileFlag
+        }
+
+        public static BitArray CreateTileType()
+        {
+            return new BitArray((int)TileFlag.LastTileFlag);
         }
 
         public static SideType OppositeSide(SideType side)
