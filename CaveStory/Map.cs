@@ -163,17 +163,29 @@ namespace CaveStory
             return map;
         }
 
-        public List<CollisionTile> GetCollidingTiles(Rectangle rectangle)
+        public List<CollisionTile> GetCollidingTiles(Rectangle rectangle, TileInfo.SideType direction)
         {
-            TileUnit firstRow = Units.GameToTile(rectangle.Top);
-            TileUnit lastRow = Units.GameToTile(rectangle.Bottom);
-            TileUnit firstCol = Units.GameToTile(rectangle.Left);
-            TileUnit lastCol = Units.GameToTile(rectangle.Right);
+            TileUnit firstPrimary = Units.GameToTile(rectangle.Side(TileInfo.OppositeSide(direction)));
+            TileUnit lastPrimary = Units.GameToTile(rectangle.Side(direction));
+            int primaryIncr = direction == TileInfo.SideType.BottomSide || direction == TileInfo.SideType.RightSide ?
+                1 : -1;
+
+            bool horizontal = TileInfo.Horizontal(direction);
+            TileUnit sMin = Units.GameToTile(horizontal ? rectangle.Top : rectangle.Left);
+            TileUnit sMid = Units.GameToTile(horizontal ? rectangle.Center.Y : rectangle.Center.X);
+            TileUnit sMax = Units.GameToTile(horizontal ? rectangle.Bottom : rectangle.Right);
+
+            bool sPositive = sMid - sMin < sMax - sMid;
+            int secondaryIncr = sPositive ? 1 : -1;
+            TileUnit firstSecondary = sPositive ? sMin : sMax;
+            TileUnit lastSecondary = sPositive ? sMin : sMax;
             List<CollisionTile> collisionTiles = new List<CollisionTile>();
-            for (TileUnit row = firstRow; row <= lastRow; row++)
+            for (TileUnit primary = firstPrimary; primary != lastPrimary + primaryIncr; primary = Convert.ToUInt32(Convert.ToInt32(primary) + primaryIncr))
             {
-                for (TileUnit col = firstCol; col <= lastCol; col++)
+                for (TileUnit secondary = firstSecondary; secondary != lastSecondary + secondaryIncr; secondary = Convert.ToUInt32(Convert.ToInt32(secondary) + secondaryIncr))
                 {
+                    TileUnit row = !horizontal ? primary : secondary;
+                    TileUnit col = horizontal ? primary : secondary;
                     collisionTiles.Add(new CollisionTile(row, col, tiles[Convert.ToInt32(row)][Convert.ToInt32(col)].tileType));
                 }
             }

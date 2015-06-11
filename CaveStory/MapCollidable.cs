@@ -16,7 +16,7 @@ namespace CaveStory
 
         GameUnit? TestMapCollision(Map map, Rectangle rectangle, TileInfo.SideType direction)
         {
-            List<CollisionTile> tiles = map.GetCollidingTiles(rectangle);
+            List<CollisionTile> tiles = map.GetCollidingTiles(rectangle, direction);
             for (int i = 0; i < tiles.Count; i++)
             {
                 TileInfo.SideType side = TileInfo.OppositeSide(direction);

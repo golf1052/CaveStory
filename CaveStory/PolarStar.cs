@@ -134,10 +134,10 @@ namespace CaveStory
         {
             offset += (float)gameTime.ElapsedGameTime.TotalMilliseconds * ProjectileSpeed;
 
-            List<CollisionTile> collidingTiles = map.GetCollidingTiles(CollisionRectangle);
+            TileInfo.SideType direction = TileInfo.FromFacing(horizontalDirection, verticalDirection);
+            List<CollisionTile> collidingTiles = map.GetCollidingTiles(CollisionRectangle, direction);
             for (int i = 0; i < collidingTiles.Count; i++)
             {
-                TileInfo.SideType direction = TileInfo.FromFacing(horizontalDirection, verticalDirection);
                 TileInfo.SideType side = TileInfo.OppositeSide(direction);
                 GameUnit position = TileInfo.Vertical(side) ?
                     X : Y;
