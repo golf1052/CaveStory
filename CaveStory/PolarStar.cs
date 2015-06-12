@@ -135,19 +135,23 @@ namespace CaveStory
             offset += (float)gameTime.ElapsedGameTime.TotalMilliseconds * ProjectileSpeed;
 
             TileInfo.SideType direction = TileInfo.FromFacing(horizontalDirection, verticalDirection);
-            List<CollisionTile> collidingTiles = map.GetCollidingTiles(CollisionRectangle, direction);
+            Rectangle rectangle = CollisionRectangle;
+            List<CollisionTile> collidingTiles = map.GetCollidingTiles(rectangle, direction);
             for (int i = 0; i < collidingTiles.Count; i++)
             {
                 TileInfo.SideType side = TileInfo.OppositeSide(direction);
-                GameUnit position = TileInfo.Vertical(side) ?
+                GameUnit perpendicularPosition = TileInfo.Vertical(side) ?
                     X : Y;
-                GameUnit? maybePosition = collidingTiles[i].TestCollision(side, position);
+                GameUnit leadingPosition = rectangle.Side(direction);
+                bool shouldTestSlopes = true;
+                GameUnit? maybePosition = collidingTiles[i].TestCollision(side, perpendicularPosition,
+                    leadingPosition, shouldTestSlopes);
                 if (maybePosition.HasValue)
                 {
                     GameUnit particleX;
                     if (TileInfo.Vertical(side))
                     {
-                        particleX = position;
+                        particleX = perpendicularPosition;
                     }
                     else
                     {
@@ -160,7 +164,7 @@ namespace CaveStory
                     }
                     else
                     {
-                        particleY = position;
+                        particleY = perpendicularPosition;
                     }
                     particleTools.FrontSystem.AddNewParticle(ProjectileWallParticle.Create(particleTools.Content,
                         particleX, particleY));

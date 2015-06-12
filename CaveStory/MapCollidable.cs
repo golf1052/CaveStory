@@ -20,16 +20,19 @@ namespace CaveStory
             for (int i = 0; i < tiles.Count; i++)
             {
                 TileInfo.SideType side = TileInfo.OppositeSide(direction);
-                GameUnit position;
+                GameUnit perpendicularPosition;
                 if (TileInfo.Vertical(side))
                 {
-                    position = rectangle.Center.X;
+                    perpendicularPosition = rectangle.Center.X;
                 }
                 else
                 {
-                    position = rectangle.Center.Y;
+                    perpendicularPosition = rectangle.Center.Y;
                 }
-                GameUnit? maybePosition = tiles[i].TestCollision(side, position);
+                GameUnit leadingPosition = rectangle.Side(direction);
+                bool shouldTestSlopes = TileInfo.Vertical(side);
+                GameUnit? maybePosition = tiles[i].TestCollision(side, perpendicularPosition,
+                    leadingPosition, shouldTestSlopes);
                 if (maybePosition.HasValue)
                 {
                     return maybePosition.Value;

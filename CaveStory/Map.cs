@@ -167,8 +167,7 @@ namespace CaveStory
         {
             TileUnit firstPrimary = Units.GameToTile(rectangle.Side(TileInfo.OppositeSide(direction)));
             TileUnit lastPrimary = Units.GameToTile(rectangle.Side(direction));
-            int primaryIncr = direction == TileInfo.SideType.BottomSide || direction == TileInfo.SideType.RightSide ?
-                1 : -1;
+            int primaryIncr = TileInfo.IsMax(direction) ? 1 : -1;
 
             bool horizontal = TileInfo.Horizontal(direction);
             TileUnit sMin = Units.GameToTile(horizontal ? rectangle.Top : rectangle.Left);

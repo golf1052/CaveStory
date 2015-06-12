@@ -79,5 +79,32 @@ namespace CaveStory
             }
             return SideType.RightSide;
         }
+
+        public static TileFlag SlopeFlagFromSide(SideType side)
+        {
+            if (side == SideType.LeftSide)
+            {
+                return TileFlag.LeftSlope;
+            }
+            if (side == SideType.RightSide)
+            {
+                return TileFlag.RightSlope;
+            }
+            if (side == SideType.TopSide)
+            {
+                return TileFlag.TopSlope;
+            }
+            return TileFlag.BottomSlope;
+        }
+
+        public static bool IsMin(SideType side)
+        {
+            return !IsMax(side);
+        }
+
+        public static bool IsMax(SideType side)
+        {
+            return side == SideType.RightSide || side == SideType.BottomSide;
+        }
     }
 }
