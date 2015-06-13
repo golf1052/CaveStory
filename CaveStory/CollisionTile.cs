@@ -12,6 +12,8 @@ namespace CaveStory
         private TileUnit col;
         private BitArray tileType;
 
+        public BitArray TileType { get { return tileType; } }
+
         public CollisionTile(TileUnit row, TileUnit col, BitArray tileType)
         {
             this.row = row;
@@ -27,27 +29,32 @@ namespace CaveStory
         /// <param name="leadingPosition">Position of the leading edge of the colliding entity</param>
         /// <param name="shouldTestSlopes">whether slopes should be considered for collision</param>
         /// <returns>
-        /// Returns null if there was no collision
+        /// isColliding is true if there was a collision
         /// Returns the position of the collision on the same axis of side
         /// </returns>
-        public GameUnit? TestCollision(TileInfo.SideType side, GameUnit perpendicularPosition,
+        public TestCollisionInfo TestCollision(TileInfo.SideType side, GameUnit perpendicularPosition,
             GameUnit leadingPosition, bool shouldTestSlopes)
         {
+            TestCollisionInfo info = new TestCollisionInfo(false, leadingPosition);
             if (tileType[(int)TileInfo.TileFlag.Wall])
             {
+                info.isColliding = true;
                 if (side == TileInfo.SideType.TopSide)
                 {
-                    return Units.TileToGame(row);
+                    info.position = Units.TileToGame(row);
                 }
-                if (side == TileInfo.SideType.BottomSide)
+                else if (side == TileInfo.SideType.BottomSide)
                 {
-                    return Units.TileToGame(row + 1);
+                    info.position = Units.TileToGame(row + 1);
                 }
-                if (side == TileInfo.SideType.LeftSide)
+                else if (side == TileInfo.SideType.LeftSide)
                 {
-                    return Units.TileToGame(col);
+                    info.position = Units.TileToGame(col);
                 }
-                return Units.TileToGame(col + 1);
+                else
+                {
+                    info.position = Units.TileToGame(col + 1);
+                }
             }
             else if (shouldTestSlopes && tileType[(int)TileInfo.TileFlag.Slope] &&
                 !tileType[(int)TileInfo.SlopeFlagFromSide(side)])
@@ -64,12 +71,10 @@ namespace CaveStory
                     leadingPosition <= calculatedPosition :
                     leadingPosition >= calculatedPosition;
 
-                if (isColliding)
-                {
-                    return calculatedPosition;
-                }
+                info.isColliding = isColliding;
+                info.position = calculatedPosition;
             }
-            return null;
+            return info;
         }
 
         public float GetSlope(BitArray tileType)

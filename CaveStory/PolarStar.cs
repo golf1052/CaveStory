@@ -144,9 +144,9 @@ namespace CaveStory
                     rectangle.Center.X : rectangle.Center.Y;
                 GameUnit leadingPosition = rectangle.Side(direction);
                 bool shouldTestSlopes = true;
-                GameUnit? maybePosition = collidingTiles[i].TestCollision(side, perpendicularPosition,
+                TestCollisionInfo testInfo = collidingTiles[i].TestCollision(side, perpendicularPosition,
                     leadingPosition, shouldTestSlopes);
-                if (maybePosition.HasValue)
+                if (testInfo.isColliding)
                 {
                     GameUnit collisionX;
                     if (TileInfo.Vertical(side))
@@ -155,12 +155,12 @@ namespace CaveStory
                     }
                     else
                     {
-                        collisionX = maybePosition.Value;
+                        collisionX = testInfo.position;
                     }
                     GameUnit collisionY;
                     if (TileInfo.Vertical(side))
                     {
-                        collisionY = maybePosition.Value;
+                        collisionY = testInfo.position;
                     }
                     else
                     {

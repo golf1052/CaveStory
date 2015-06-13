@@ -101,6 +101,7 @@
     <Compile Include="SimpleCollisionRectangle.cs" />
     <Compile Include="Sprite.cs" />
     <Compile Include="SpriteState.cs" />
+    <Compile Include="TestCollisionInfo.cs" />
     <Compile Include="Tile.cs" />
     <Compile Include="TileInfo.cs" />
     <Compile Include="TileUnit.cs" />

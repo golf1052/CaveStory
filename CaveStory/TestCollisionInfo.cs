@@ -1,20 +1,19 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace CaveStory
 {
-    public struct CollisionInfo
+    public struct TestCollisionInfo
     {
+        public bool isColliding;
         public GameUnit position;
-        public BitArray tileType;
 
-        public CollisionInfo(GameUnit position, BitArray tileType)
+        public TestCollisionInfo(bool isColliding, GameUnit position)
         {
+            this.isColliding = isColliding;
             this.position = position;
-            this.tileType = tileType;
         }
     }
 }

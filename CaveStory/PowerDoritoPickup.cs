@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -88,14 +89,14 @@ namespace CaveStory
         {
             sprite.Update();
 
-            UpdateY(CollisionRectangles[(int)size], ConstantAccelerator.Gravity,
-                kinematicsX, kinematicsY, gameTime, map);
             UpdateX(CollisionRectangles[(int)size], Friction,
                 kinematicsX, kinematicsY, gameTime, map);
+            UpdateY(CollisionRectangles[(int)size], ConstantAccelerator.Gravity,
+                kinematicsX, kinematicsY, gameTime, map, null);
             return timer.Active;
         }
 
-        protected override void OnCollision(TileInfo.SideType side, bool isDeltaDirection)
+        protected override void OnCollision(TileInfo.SideType side, bool isDeltaDirection, BitArray tileType)
         {
             if (side == TileInfo.SideType.TopSide)
             {

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Collections;
 
 namespace CaveStory
 {
@@ -132,7 +133,7 @@ namespace CaveStory
         int accelerationX;
         SpriteState.HorizontalFacing horizontalFacing;
         SpriteState.VerticalFacing intendedVerticalFacing;
-        private bool onGround;
+        private BitArray maybeGroundTile;
         public SpriteState.MotionType MotionType
         {
             get
@@ -158,11 +159,7 @@ namespace CaveStory
         {
             get
             {
-                return onGround;
-            }
-            set
-            {
-                onGround = value;
+                return maybeGroundTile != null;
             }
         }
 
@@ -239,7 +236,7 @@ namespace CaveStory
             horizontalFacing = SpriteState.HorizontalFacing.Left;
             intendedVerticalFacing = SpriteState.VerticalFacing.Horizontal;
             walkingAnimation = new WalkingAnimation();
-            onGround = false;
+            maybeGroundTile = null;
             jumpActive = false;
             playerHealth = new PlayerHealth(Content);
             interacting = false;
@@ -409,10 +406,10 @@ namespace CaveStory
         {
             IAccelerator accelerator = jumpActive && kinematicsY.velocity < 0 ? JumpGravityAccelerator : ConstantAccelerator.Gravity;
 
-            UpdateY(collisionRectangle, accelerator, kinematicsX, kinematicsY, gameTime, map);
+            UpdateY(collisionRectangle, accelerator, kinematicsX, kinematicsY, gameTime, map, maybeGroundTile);
         }
 
-        protected override void OnCollision(TileInfo.SideType side, bool isDeltaDirection)
+        protected override void OnCollision(TileInfo.SideType side, bool isDeltaDirection, BitArray tileType)
         {
             switch (side)
             {
@@ -424,7 +421,7 @@ namespace CaveStory
                     }
                     break;
                 case TileInfo.SideType.BottomSide:
-                    onGround = true;
+                    maybeGroundTile = tileType;
                     if (isDeltaDirection)
                     {
                         kinematicsY.velocity = 0;
@@ -450,10 +447,8 @@ namespace CaveStory
             switch (side)
             {
                 case TileInfo.SideType.TopSide:
-                    onGround = false;
-                    break;
                 case TileInfo.SideType.BottomSide:
-                    onGround = false;
+                    maybeGroundTile = null;
                     break;
                 case TileInfo.SideType.LeftSide:
                     break;

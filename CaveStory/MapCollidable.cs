@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,8 @@ namespace CaveStory
             YAxis
         }
 
-        GameUnit? TestMapCollision(Map map, Rectangle rectangle, TileInfo.SideType direction)
+        CollisionInfo? TestMapCollision(Map map, Rectangle rectangle,
+            TileInfo.SideType direction, BitArray maybeGroundTile)
         {
             List<CollisionTile> tiles = map.GetCollidingTiles(rectangle, direction);
             for (int i = 0; i < tiles.Count; i++)
@@ -31,11 +33,25 @@ namespace CaveStory
                 }
                 GameUnit leadingPosition = rectangle.Side(direction);
                 bool shouldTestSlopes = TileInfo.Vertical(side);
-                GameUnit? maybePosition = tiles[i].TestCollision(side, perpendicularPosition,
+                TestCollisionInfo testInfo = tiles[i].TestCollision(side, perpendicularPosition,
                     leadingPosition, shouldTestSlopes);
-                if (maybePosition.HasValue)
+                if (testInfo.isColliding)
                 {
-                    return maybePosition.Value;
+                    CollisionInfo info = new CollisionInfo(testInfo.position, tiles[i].TileType);
+                    return info;
+                }
+                else if (maybeGroundTile != null && direction == TileInfo.SideType.BottomSide)
+                {
+                    BitArray tallSlope = TileInfo.CreateTileType();
+                    tallSlope.Set((int)TileInfo.TileFlag.Slope, true);
+                    tallSlope.Set((int)TileInfo.TileFlag.TallSlope, true);
+                    if ((maybeGroundTile[(int)TileInfo.TileFlag.Slope] && tiles[i].TileType[(int)TileInfo.TileFlag.Slope]) ||
+                        (maybeGroundTile[(int)TileInfo.TileFlag.Wall] &&
+                        (tallSlope.And(tiles[i].TileType).Equals(tallSlope))))
+                    {
+                        CollisionInfo info = new CollisionInfo(testInfo.position, tiles[i].TileType);
+                        return info;
+                    }
                 }
             }
             return null;
@@ -45,6 +61,7 @@ namespace CaveStory
             IAccelerator accelerator,
             Kinematics kinematicsX, Kinematics kinematicsY,
             GameTime gameTime, Map map,
+            BitArray maybeGroundTile,
             Kinematics kinematics, AxisType axis)
         {
             accelerator.UpdateVelocity(kinematics, gameTime);
@@ -53,14 +70,14 @@ namespace CaveStory
             TileInfo.SideType direction = axis == AxisType.XAxis ?
                 (delta > 0 ? TileInfo.SideType.RightSide : TileInfo.SideType.LeftSide) :
                 (delta > 0 ? TileInfo.SideType.BottomSide : TileInfo.SideType.TopSide);
-            GameUnit? maybePosition = TestMapCollision(map,
+            CollisionInfo? maybeInfo = TestMapCollision(map,
                 collisionRectangle.Collision(direction, kinematicsX.position, kinematicsY.position, delta),
-                direction);
+                direction, maybeGroundTile);
 
-            if (maybePosition.HasValue)
+            if (maybeInfo.HasValue)
             {
-                kinematics.position = maybePosition.Value - collisionRectangle.BoundingBox.Side(direction);
-                OnCollision(direction, true);
+                kinematics.position = maybeInfo.Value.position - collisionRectangle.BoundingBox.Side(direction);
+                OnCollision(direction, true, maybeInfo.Value.tileType);
             }
             else
             {
@@ -68,16 +85,16 @@ namespace CaveStory
                 OnDelta(direction);
             }
 
-            maybePosition = null;
+            maybeInfo = null;
             TileInfo.SideType oppositeDirection = TileInfo.OppositeSide(direction);
-            maybePosition = TestMapCollision(map,
+            maybeInfo = TestMapCollision(map,
                 collisionRectangle.Collision(oppositeDirection, kinematicsX.position, kinematicsY.position, 0),
-                oppositeDirection);
+                oppositeDirection, null);
 
-            if (maybePosition.HasValue)
+            if (maybeInfo.HasValue)
             {
-                kinematics.position = maybePosition.Value - collisionRectangle.BoundingBox.Side(oppositeDirection);
-                OnCollision(oppositeDirection, false);
+                kinematics.position = maybeInfo.Value.position - collisionRectangle.BoundingBox.Side(oppositeDirection);
+                OnCollision(oppositeDirection, false, maybeInfo.Value.tileType);
             }
         }
 
@@ -89,21 +106,24 @@ namespace CaveStory
             Update(collisionRectangle, accelerator,
                 kinematicsX, kinematicsY,
                 gameTime, map,
+                null,
                 kinematicsX, AxisType.XAxis);
         }
 
         protected void UpdateY(ICollisionRectangle collisionRectangle,
             IAccelerator accelerator,
             Kinematics kinematicsX, Kinematics kinematicsY,
-            GameTime gameTime, Map map)
+            GameTime gameTime, Map map,
+            BitArray maybeGroundTile)
         {
             Update(collisionRectangle, accelerator,
                 kinematicsX, kinematicsY,
                 gameTime, map,
+                maybeGroundTile,
                 kinematicsY, AxisType.YAxis);
         }
 
-        protected abstract void OnCollision(TileInfo.SideType side, bool isDeltaDirection);
+        protected abstract void OnCollision(TileInfo.SideType side, bool isDeltaDirection, BitArray tileType);
 
         protected abstract void OnDelta(TileInfo.SideType side);
     }
