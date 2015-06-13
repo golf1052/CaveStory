@@ -420,8 +420,8 @@ namespace CaveStory
                     if (isDeltaDirection)
                     {
                         kinematicsY.velocity = 0;
+                        particleTools.FrontSystem.AddNewParticle(new HeadBumpParticle(particleTools.Content, CenterX, kinematicsY.position + collisionRectangle.BoundingBox.Top));
                     }
-                    particleTools.FrontSystem.AddNewParticle(new HeadBumpParticle(particleTools.Content, CenterX, kinematicsY.position + collisionRectangle.BoundingBox.Top));
                     break;
                 case TileInfo.SideType.BottomSide:
                     onGround = true;

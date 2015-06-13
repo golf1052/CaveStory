@@ -63,6 +63,11 @@ namespace CaveStory
                 bool isColliding = TileInfo.IsMax(side) ?
                     leadingPosition <= calculatedPosition :
                     leadingPosition >= calculatedPosition;
+
+                if (isColliding)
+                {
+                    return calculatedPosition;
+                }
             }
             return null;
         }
@@ -75,8 +80,8 @@ namespace CaveStory
             BitArray leftBottom = TileInfo.CreateTileType();
             leftBottom.Set((int)TileInfo.TileFlag.LeftSlope, true);
             leftBottom.Set((int)TileInfo.TileFlag.BottomSlope, true);
-            bool isPositive = ((rightTop.And(tileType)) == rightTop) ||
-                ((leftBottom.And(tileType)) == leftBottom);
+            bool isPositive = ((rightTop.And(tileType).IsEqual(rightTop)) ||
+                (leftBottom.And(tileType).IsEqual(leftBottom)));
             return isPositive ? 0.5f : -0.5f;
         }
 
@@ -90,8 +95,8 @@ namespace CaveStory
             rightBottomShort.Set((int)TileInfo.TileFlag.RightSlope, true);
             rightBottomShort.Set((int)TileInfo.TileFlag.BottomSlope, true);
             rightBottomShort.Set((int)TileInfo.TileFlag.ShortSlope, true);
-            if ((leftTopTall.And(tileType)) == leftTopTall ||
-                (rightBottomShort.And(tileType)) == rightBottomShort)
+            if ((leftTopTall.And(tileType).IsEqual(leftTopTall)) ||
+                (rightBottomShort.And(tileType).IsEqual(rightBottomShort)))
             {
                 return Units.TileToGame(1);
             }
@@ -104,8 +109,8 @@ namespace CaveStory
             rightTopShort.Set((int)TileInfo.TileFlag.RightSlope, true);
             rightTopShort.Set((int)TileInfo.TileFlag.TopSlope, true);
             rightTopShort.Set((int)TileInfo.TileFlag.ShortSlope, true);
-            if ((leftBottomTall.And(tileType)) == leftBottomTall ||
-                (rightTopShort.And(tileType)) == rightTopShort)
+            if (leftBottomTall.And(tileType).IsEqual(leftBottomTall) ||
+                rightTopShort.And(tileType).IsEqual(rightTopShort))
             {
                 return 0.0f;
             }

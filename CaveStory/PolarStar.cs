@@ -141,33 +141,33 @@ namespace CaveStory
             {
                 TileInfo.SideType side = TileInfo.OppositeSide(direction);
                 GameUnit perpendicularPosition = TileInfo.Vertical(side) ?
-                    X : Y;
+                    rectangle.Center.X : rectangle.Center.Y;
                 GameUnit leadingPosition = rectangle.Side(direction);
                 bool shouldTestSlopes = true;
                 GameUnit? maybePosition = collidingTiles[i].TestCollision(side, perpendicularPosition,
                     leadingPosition, shouldTestSlopes);
                 if (maybePosition.HasValue)
                 {
-                    GameUnit particleX;
+                    GameUnit collisionX;
                     if (TileInfo.Vertical(side))
                     {
-                        particleX = perpendicularPosition;
+                        collisionX = perpendicularPosition;
                     }
                     else
                     {
-                        particleX = maybePosition.Value - Units.HalfTile;
+                        collisionX = maybePosition.Value;
                     }
-                    GameUnit particleY;
+                    GameUnit collisionY;
                     if (TileInfo.Vertical(side))
                     {
-                        particleY = maybePosition.Value - Units.HalfTile;
+                        collisionY = maybePosition.Value;
                     }
                     else
                     {
-                        particleY = perpendicularPosition;
+                        collisionY = perpendicularPosition;
                     }
                     particleTools.FrontSystem.AddNewParticle(ProjectileWallParticle.Create(particleTools.Content,
-                        particleX, particleY));
+                        collisionX - Units.HalfTile, collisionY - Units.HalfTile));
                     return false;
                 }
             }

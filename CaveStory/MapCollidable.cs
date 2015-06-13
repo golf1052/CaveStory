@@ -68,6 +68,7 @@ namespace CaveStory
                 OnDelta(direction);
             }
 
+            maybePosition = null;
             TileInfo.SideType oppositeDirection = TileInfo.OppositeSide(direction);
             maybePosition = TestMapCollision(map,
                 collisionRectangle.Collision(oppositeDirection, kinematicsX.position, kinematicsY.position, 0),
