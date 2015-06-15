@@ -48,6 +48,7 @@
     <Compile Include="BidirectionalAccelerators.cs" />
     <Compile Include="CompositeCollisionRectangle.cs" />
     <Compile Include="ConstantAccelerator.cs" />
+    <Compile Include="Dimensions2D.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="FlashingPickup.cs" />
     <Compile Include="FrictionAccelerator.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="IPickup.cs" />
     <Compile Include="IProjectile.cs" />
     <Compile Include="Kinematics.cs" />
+    <Compile Include="Kinematics2D.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="MapCollidable.cs" />
     <Compile Include="MSUnit.cs" />
@@ -93,6 +95,7 @@
     <Compile Include="PlayerHealth.cs" />
     <Compile Include="PolarStar.cs" />
     <Compile Include="PolarVector.cs" />
+    <Compile Include="Position2D.cs" />
     <Compile Include="PowerDoritoPickup.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectileStarParticle.cs" />
@@ -103,11 +106,13 @@
     <Compile Include="SpriteState.cs" />
     <Compile Include="TestCollisionInfo.cs" />
     <Compile Include="Tile.cs" />
+    <Compile Include="Tile2D.cs" />
     <Compile Include="TileInfo.cs" />
     <Compile Include="TileUnit.cs" />
     <Compile Include="Timer.cs" />
     <Compile Include="Units.cs" />
     <Compile Include="VaryingWidthSprite.cs" />
+    <Compile Include="Velocity2D.cs" />
     <Compile Include="VelocityUnit.cs" />
     <Compile Include="ZeroAccelerator.cs" />
   </ItemGroup>
