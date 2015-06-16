@@ -24,5 +24,15 @@ namespace CaveStory
         {
             return new Tile2D(v);
         }
+
+        public Vector2 ToGameUnit2D()
+        {
+            return new Vector2(Units.TileToGame((uint)value.X), Units.TileToGame((uint)value.Y));
+        }
+
+        public Vector2 ToPixelUnit2D()
+        {
+            return new Vector2(Units.TileToPixel((uint)value.X), Units.TileToPixel((uint)value.Y));
+        }
     }
 }

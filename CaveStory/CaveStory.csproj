@@ -84,6 +84,7 @@
     <Compile Include="IProjectile.cs" />
     <Compile Include="Kinematics.cs" />
     <Compile Include="Kinematics2D.cs" />
+    <Compile Include="Line.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="MapCollidable.cs" />
     <Compile Include="MSUnit.cs" />

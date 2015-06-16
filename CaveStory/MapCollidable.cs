@@ -9,10 +9,19 @@ namespace CaveStory
 {
     public abstract class MapCollidable
     {
+        public List<Tile2D> debugCollidingTiles;
+        public List<Tile2D> debugOppositeCollidingTiles;
+
         public enum AxisType
         {
             XAxis,
             YAxis
+        }
+
+        public MapCollidable()
+        {
+            debugCollidingTiles = new List<Tile2D>();
+            debugOppositeCollidingTiles = new List<Tile2D>();
         }
 
         CollisionInfo? TestMapCollision(Map map, Rectangle rectangle,
@@ -37,7 +46,7 @@ namespace CaveStory
                     leadingPosition, shouldTestSlopes);
                 if (testInfo.isColliding)
                 {
-                    CollisionInfo info = new CollisionInfo(testInfo.position, tiles[i].TileType);
+                    CollisionInfo info = new CollisionInfo(testInfo.position, tiles[i].Position, tiles[i].TileType);
                     return info;
                 }
                 else if (maybeGroundTile != null && direction == TileInfo.SideType.BottomSide)
@@ -49,7 +58,7 @@ namespace CaveStory
                         (maybeGroundTile[(int)TileInfo.TileFlag.Wall] &&
                         (tallSlope.And(tiles[i].TileType).Equals(tallSlope))))
                     {
-                        CollisionInfo info = new CollisionInfo(testInfo.position, tiles[i].TileType);
+                        CollisionInfo info = new CollisionInfo(testInfo.position, tiles[i].Position, tiles[i].TileType);
                         return info;
                     }
                 }
@@ -77,6 +86,7 @@ namespace CaveStory
             if (maybeInfo.HasValue)
             {
                 kinematics.position = maybeInfo.Value.position - collisionRectangle.BoundingBox.Side(direction);
+                debugCollidingTiles.Add(maybeInfo.Value.tilePosition);
                 OnCollision(direction, true, maybeInfo.Value.tileType);
             }
             else
@@ -94,6 +104,7 @@ namespace CaveStory
             if (maybeInfo.HasValue)
             {
                 kinematics.position = maybeInfo.Value.position - collisionRectangle.BoundingBox.Side(oppositeDirection);
+                debugOppositeCollidingTiles.Add(maybeInfo.Value.tilePosition);
                 OnCollision(oppositeDirection, false, maybeInfo.Value.tileType);
             }
         }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace CaveStory
 {
@@ -13,6 +14,7 @@ namespace CaveStory
         private BitArray tileType;
 
         public BitArray TileType { get { return tileType; } }
+        public Tile2D Position { get { return new Tile2D(new Vector2(col, row)); } }
 
         public CollisionTile(TileUnit row, TileUnit col, BitArray tileType)
         {

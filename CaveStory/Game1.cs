@@ -47,7 +47,8 @@ namespace CaveStory
             objectIdGen = new ObjectIDGenerator();
             input = new Input();
             damageTexts = new DamageTexts();
-            Random = new Random();
+            int seed = 507450343;
+            Random = new Random(seed);
             pickups = new Pickups();
 
             base.Initialize();
@@ -156,6 +157,8 @@ namespace CaveStory
                 player.StopFire();
             }
 
+            player.debugCollidingTiles.Clear();
+            player.debugOppositeCollidingTiles.Clear();
             Timer.UpdateAll(gameTime);
             damageTexts.Update(gameTime);
             pickups.Update(gameTime, map);
@@ -209,8 +212,35 @@ namespace CaveStory
             player.Draw(spriteBatch);
             map.Draw(spriteBatch);
             frontParticleSystem.Draw(spriteBatch);
+
+            foreach (Tile2D tile in player.debugCollidingTiles)
+            {
+                Position2D position = tile.ToPixelUnit2D();
+                Rectangle rectangle = RectangleExtensions.NewRectangle(position, new Tile2D(new Vector2(1)).ToPixelUnit2D());
+                DrawRectangleOutline(rectangle, 1, Color.Red);
+            }
+
+            foreach (Tile2D tile in player.debugOppositeCollidingTiles)
+            {
+                Position2D position = tile.ToPixelUnit2D();
+                Rectangle rectangle = RectangleExtensions.NewRectangle(position, new Tile2D(new Vector2(1)).ToPixelUnit2D());
+                DrawRectangleOutline(rectangle, 1, Color.Green);
+            }
             damageTexts.Draw(spriteBatch);
             player.DrawHud(spriteBatch);
+        }
+
+        public void DrawRectangleOutline(Rectangle rectangle, GameUnit thickness, Color color)
+        {
+            List<Line> lines = new List<Line>();
+            lines.Add(new Line(graphics, new Vector2(rectangle.Left, rectangle.Top), new Vector2(rectangle.Left, rectangle.Bottom), thickness));
+            lines.Add(new Line(graphics, new Vector2(rectangle.Left, rectangle.Bottom), new Vector2(rectangle.Right, rectangle.Bottom), thickness));
+            lines.Add(new Line(graphics, new Vector2(rectangle.Right, rectangle.Bottom), new Vector2(rectangle.Right, rectangle.Top), thickness));
+            lines.Add(new Line(graphics, new Vector2(rectangle.Right, rectangle.Top), new Vector2(rectangle.Left, rectangle.Top), thickness));
+            foreach (Line line in lines)
+            {
+                line.Draw(spriteBatch, color);
+            }
         }
 
         protected override void Draw(GameTime gameTime)
