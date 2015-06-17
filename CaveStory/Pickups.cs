@@ -9,7 +9,7 @@ namespace CaveStory
 {
     public class Pickups
     {
-        HashSet<IPickup> pickups;
+        public HashSet<IPickup> pickups;
 
         public Pickups()
         {

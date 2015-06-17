@@ -71,7 +71,7 @@ namespace CaveStory
         SizeType size;
         Timer timer;
 
-        public PowerDoritoPickup(ContentManager Content, GameUnit centerX, GameUnit centerY, SizeType size)
+        public PowerDoritoPickup(ContentManager Content, GameUnit centerX, GameUnit centerY, SizeType size) : base(CollisionType.BouncingCollision)
         {
             kinematicsX = new Kinematics(centerX - Units.HalfTile, (Game1.Random.Next(0, 11) - 5) * 0.025f);
             kinematicsY = new Kinematics(centerY - Units.HalfTile, (Game1.Random.Next(0, 11) - 5) * 0.025f);

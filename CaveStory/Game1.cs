@@ -67,9 +67,9 @@ namespace CaveStory
             damageTexts.AddDamageable(bat);
             map = Map.CreateSlopeTestMap(Content);
 
-            //pickups.Add(new PowerDoritoPickup(Content, bat.CenterX, bat.CenterY, PowerDoritoPickup.SizeType.Medium));
-            //pickups.Add(new PowerDoritoPickup(Content, bat.CenterX, bat.CenterY, PowerDoritoPickup.SizeType.Medium));
-            //pickups.Add(new PowerDoritoPickup(Content, bat.CenterX, bat.CenterY, PowerDoritoPickup.SizeType.Medium));
+            pickups.Add(new PowerDoritoPickup(Content, bat.CenterX, bat.CenterY, PowerDoritoPickup.SizeType.Medium));
+            pickups.Add(new PowerDoritoPickup(Content, bat.CenterX, bat.CenterY, PowerDoritoPickup.SizeType.Medium));
+            pickups.Add(new PowerDoritoPickup(Content, bat.CenterX, bat.CenterY, PowerDoritoPickup.SizeType.Medium));
             base.LoadContent();
         }
 
@@ -200,19 +200,8 @@ namespace CaveStory
             base.Update(gameTime);
         }
 
-        public void Draw()
+        public void DebugDraw()
         {
-            map.DrawBackground(spriteBatch);
-            if (bat != null)
-            {
-                bat.Draw(spriteBatch);
-            }
-            entityParticleSystem.Draw(spriteBatch);
-            pickups.Draw(spriteBatch);
-            player.Draw(spriteBatch);
-            map.Draw(spriteBatch);
-            frontParticleSystem.Draw(spriteBatch);
-
             foreach (Tile2D tile in player.debugCollidingTiles)
             {
                 Position2D position = tile.ToPixelUnit2D();
@@ -226,6 +215,42 @@ namespace CaveStory
                 Rectangle rectangle = RectangleExtensions.NewRectangle(position, new Tile2D(new Vector2(1)).ToPixelUnit2D());
                 DrawRectangleOutline(rectangle, 1, Color.Green);
             }
+
+            foreach (IPickup pickup in pickups.pickups)
+            {
+                if (pickup.Type == Pickup.PickupType.Experience)
+                {
+                    PowerDoritoPickup dorito = (PowerDoritoPickup)pickup;
+                    foreach (Tile2D tile in dorito.debugCollidingTiles)
+                    {
+                        Position2D position = tile.ToPixelUnit2D();
+                        Rectangle rectangle = RectangleExtensions.NewRectangle(position, new Tile2D(new Vector2(1)).ToPixelUnit2D());
+                        DrawRectangleOutline(rectangle, 1, Color.Red);
+                    }
+
+                    foreach (Tile2D tile in dorito.debugOppositeCollidingTiles)
+                    {
+                        Position2D position = tile.ToPixelUnit2D();
+                        Rectangle rectangle = RectangleExtensions.NewRectangle(position, new Tile2D(new Vector2(1)).ToPixelUnit2D());
+                        DrawRectangleOutline(rectangle, 1, Color.Green);
+                    }
+                }
+            }
+        }
+
+        public void Draw()
+        {
+            map.DrawBackground(spriteBatch);
+            if (bat != null)
+            {
+                bat.Draw(spriteBatch);
+            }
+            entityParticleSystem.Draw(spriteBatch);
+            pickups.Draw(spriteBatch);
+            player.Draw(spriteBatch);
+            map.Draw(spriteBatch);
+            frontParticleSystem.Draw(spriteBatch);
+            DebugDraw();
             damageTexts.Draw(spriteBatch);
             player.DrawHud(spriteBatch);
         }

@@ -9,8 +9,15 @@ namespace CaveStory
 {
     public abstract class MapCollidable
     {
+        public enum CollisionType
+        {
+            BouncingCollision,
+            StickyCollision
+        }
+
         public List<Tile2D> debugCollidingTiles;
         public List<Tile2D> debugOppositeCollidingTiles;
+        CollisionType collisionType;
 
         public enum AxisType
         {
@@ -18,13 +25,14 @@ namespace CaveStory
             YAxis
         }
 
-        public MapCollidable()
+        public MapCollidable(CollisionType collisionType)
         {
             debugCollidingTiles = new List<Tile2D>();
             debugOppositeCollidingTiles = new List<Tile2D>();
+            this.collisionType = collisionType;
         }
 
-        CollisionInfo? TestMapCollision(Map map, Rectangle rectangle,
+        CollisionInfo? TestMapStickyCollision(Map map, Rectangle rectangle,
             TileInfo.SideType direction, BitArray maybeGroundTile)
         {
             List<CollisionTile> tiles = map.GetCollidingTiles(rectangle, direction);
@@ -66,6 +74,46 @@ namespace CaveStory
             return null;
         }
 
+        CollisionInfo? TestMapBouncingCollision(Map map, Rectangle rectangle,
+            TileInfo.SideType direction, BitArray maybeGroundTile)
+        {
+            List<CollisionTile> tiles = map.GetCollidingTiles(rectangle, direction);
+            CollisionInfo? result = null;
+            for (int i = 0; i < tiles.Count; i++)
+            {
+                TileInfo.SideType side = TileInfo.OppositeSide(direction);
+                GameUnit perpendicularPosition;
+                if (TileInfo.Vertical(side))
+                {
+                    perpendicularPosition = rectangle.Center.X;
+                }
+                else
+                {
+                    perpendicularPosition = rectangle.Center.Y;
+                }
+                GameUnit leadingPosition = rectangle.Side(direction);
+                bool shouldTestSlopes = TileInfo.Vertical(side);
+                TestCollisionInfo testInfo = tiles[i].TestCollision(side, perpendicularPosition,
+                    leadingPosition, shouldTestSlopes);
+                if (testInfo.isColliding)
+                {
+                    bool shouldReplaceResult = true;
+                    if (result.HasValue)
+                    {
+                        shouldReplaceResult = TileInfo.IsMin(side) ?
+                            testInfo.position < result.Value.position :
+                            testInfo.position > result.Value.position;
+                    }
+                    if (shouldReplaceResult)
+                    {
+                        CollisionInfo info = new CollisionInfo(testInfo.position, tiles[i].Position, tiles[i].TileType);
+                        result = info;
+                    }
+                }
+            }
+            return result;
+        }
+
         private void Update(ICollisionRectangle collisionRectangle,
             IAccelerator accelerator,
             Kinematics kinematicsX, Kinematics kinematicsY,
@@ -73,13 +121,23 @@ namespace CaveStory
             BitArray maybeGroundTile,
             Kinematics kinematics, AxisType axis)
         {
+            Func<Map, Rectangle, TileInfo.SideType, BitArray, CollisionInfo?> testMapCollisionFunc;
+            if (collisionType == CollisionType.BouncingCollision)
+            {
+                testMapCollisionFunc = TestMapBouncingCollision;
+            }
+            else
+            {
+                testMapCollisionFunc = TestMapStickyCollision;
+            }
+
             accelerator.UpdateVelocity(kinematics, gameTime);
             GameUnit delta = kinematics.velocity * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
             TileInfo.SideType direction = axis == AxisType.XAxis ?
                 (delta > 0 ? TileInfo.SideType.RightSide : TileInfo.SideType.LeftSide) :
                 (delta > 0 ? TileInfo.SideType.BottomSide : TileInfo.SideType.TopSide);
-            CollisionInfo? maybeInfo = TestMapCollision(map,
+            CollisionInfo? maybeInfo = testMapCollisionFunc(map,
                 collisionRectangle.Collision(direction, kinematicsX.position, kinematicsY.position, delta),
                 direction, maybeGroundTile);
 
@@ -97,7 +155,7 @@ namespace CaveStory
 
             maybeInfo = null;
             TileInfo.SideType oppositeDirection = TileInfo.OppositeSide(direction);
-            maybeInfo = TestMapCollision(map,
+            maybeInfo = testMapCollisionFunc(map,
                 collisionRectangle.Collision(oppositeDirection, kinematicsX.position, kinematicsY.position, 0),
                 oppositeDirection, null);
 

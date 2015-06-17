@@ -225,7 +225,7 @@ namespace CaveStory
             }
         }
 
-        public Player(ContentManager Content, ParticleTools particleTools, GameUnit x, GameUnit y)
+        public Player(ContentManager Content, ParticleTools particleTools, GameUnit x, GameUnit y) : base(CollisionType.StickyCollision)
         {
             sprites = new Dictionary<SpriteState, Sprite>();
             InitializeSprites(Content);
